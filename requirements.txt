@@ -1,0 +1,5 @@
+scipy
+mpmath
+biopython
+mmh3
+matplotlib
