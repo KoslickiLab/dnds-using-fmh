@@ -10,3 +10,6 @@ conda create -y --name dnds
 conda install -y --name dnds -c conda-forge -c bioconda --file requirements.txt
 conda activate dnds
 ```
+
+## Running
+To run, simply invoke the `test_script.py` script. Other scripts are supporting scripts.
