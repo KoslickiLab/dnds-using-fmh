@@ -2,38 +2,10 @@
 
 from more_itertools import sliced
 
-complementaryDNA = {"A":"T", "C":"G", "G":"C", "T":"A"}
-
-stop_codons = ['TAA', 'TAG', 'TGA']
-
-codontab = {
-    'TCA': 'S', 'TCC': 'S', 'TCG': 'S', 'TCT': 'S', 'AGC': 'S', 'AGT': 'S',    # Serine
-    'TTC': 'F', 'TTT': 'F',                                                    # Phenilalanine
-    'TTA': 'L', 'TTG': 'L', 'CTA': 'L', 'CTC': 'L', 'CTG': 'L', 'CTT': 'L',    # Leucine
-    'TAC': 'Y', 'TAT': 'Y',                                                    # Tirosine
-    'TAA': '*', 'TAG': '*', 'TGA': '*',                                        # Stop
-    'TGC': 'C', 'TGT': 'C',                                                    # Cisteine
-    'TGG': 'W',                                                                # Tryptophane
-    'CCA': 'P', 'CCC': 'P', 'CCG': 'P', 'CCT': 'P',                            # Proline
-    'CAC': 'H', 'CAT': 'H',                                                    # Histidine
-    'CAA': 'Q', 'CAG': 'Q',                                                    # Glutamine
-    'CGA': 'R', 'CGC': 'R', 'CGG': 'R', 'CGT': 'R',                            # Arginine
-    'ATA': 'I', 'ATC': 'I', 'ATT': 'I',                                        # Isoleucine
-    'ATG': 'M',                                                                # Methionine
-    'ACA': 'T', 'ACC': 'T', 'ACG': 'T', 'ACT': 'T',                            # Threonine
-    'AAC': 'N', 'AAT': 'N',                                                    # Asparagine
-    'AAA': 'K', 'AAG': 'K',                                                    # Lysine
-    'AGA': 'R', 'AGG': 'R',                                                    # Arginine
-    'GTA': 'V', 'GTC': 'V', 'GTG': 'V', 'GTT': 'V',                            # Valine
-    'GCA': 'A', 'GCC': 'A', 'GCG': 'A', 'GCT': 'A',                            # Alanine
-    'GAC': 'D', 'GAT': 'D',                                                    # Aspartic Acid
-    'GAA': 'E', 'GAG': 'E',                                                    # Glutamic Acid
-    'GGA': 'G', 'GGC': 'G', 'GGG': 'G', 'GGT': 'G'                             # Glycine
-}
-
-def reverse_complement(nt_seq, **complementaryDNA):
+def reverse_complement(nt_seq):
     """Function reports the reverse complement of a DNA sequence"""
-    reverse = nt_seq[::-1]
+    complementaryDNA = {"A":"T", "C":"G", "G":"C", "T":"A"}
+    reverse = nt_seq[::-1].upper()
     complement = ''
     for base in reverse:
         complement += complementaryDNA[base]
@@ -41,30 +13,61 @@ def reverse_complement(nt_seq, **complementaryDNA):
 
 def frame_cds(nt_seq,frame):
     """Function reports the coding sequence of a reading frame"""
-    if frame < 3:
-        coding_seq = list(sliced(sequence[frame:],3))    
-    elif frame > 2:
+    if frame < 4:
+        coding_seq = list(sliced(nt_seq[frame-1:].upper(),3))    
+    elif frame > 3:
         sequence = reverse_complement(nt_seq)
-        coding_seq = list(sliced(sequence[frame-3:],3))
+        coding_seq = list(sliced(sequence[frame-4:],3))
     return(coding_seq)
 
-def listORFs(cds, **stop_codons):
+def listORFs(cds):
     """Function reports a list of ORFs found in a reading frame"""
+    stop_codons = ['TAA', 'TAG', 'TGA']
     ORFs = []
     tempORFs = []
     for codon in cds:
         if codon == 'ATG':
             tempORFs.append(codon)
         elif codon in stop_codons:
-            ORFs.append(tempORFs)
-            tempORFs = []
-        elif codon != 'ATG' and codon not in stop_codons:
             if tempORFs:
-                tempORFs.append(codon)
+                ORFs.append(tempORFs)
+            tempORFs = []
+        elif codon != 'ATG' and codon not in stop_codons and len(codon) == 3:
+            if len(codon) == 3:
+                if tempORFs:
+                    tempORFs.append(codon)
+            else:
+                tempORFs = []
     return(ORFs)
 
-def translate_ORFs(cds_seq, **codontab):
+def translate_ORFs(cds_seq):
     """Function translates open reading frames using the coding sequence"""
+
+    codontab = {
+        'TCA': 'S', 'TCC': 'S', 'TCG': 'S', 'TCT': 'S', 'AGC': 'S', 'AGT': 'S',    # Serine
+        'TTC': 'F', 'TTT': 'F',                                                    # Phenilalanine
+        'TTA': 'L', 'TTG': 'L', 'CTA': 'L', 'CTC': 'L', 'CTG': 'L', 'CTT': 'L',    # Leucine
+        'TAC': 'Y', 'TAT': 'Y',                                                    # Tirosine
+        'TAA': '*', 'TAG': '*', 'TGA': '*',                                        # Stop
+        'TGC': 'C', 'TGT': 'C',                                                    # Cisteine
+        'TGG': 'W',                                                                # Tryptophane
+        'CCA': 'P', 'CCC': 'P', 'CCG': 'P', 'CCT': 'P',                            # Proline
+        'CAC': 'H', 'CAT': 'H',                                                    # Histidine
+        'CAA': 'Q', 'CAG': 'Q',                                                    # Glutamine
+        'CGA': 'R', 'CGC': 'R', 'CGG': 'R', 'CGT': 'R',                            # Arginine
+        'ATA': 'I', 'ATC': 'I', 'ATT': 'I',                                        # Isoleucine
+        'ATG': 'M',                                                                # Methionine
+        'ACA': 'T', 'ACC': 'T', 'ACG': 'T', 'ACT': 'T',                            # Threonine
+        'AAC': 'N', 'AAT': 'N',                                                    # Asparagine
+        'AAA': 'K', 'AAG': 'K',                                                    # Lysine
+        'AGA': 'R', 'AGG': 'R',                                                    # Arginine
+        'GTA': 'V', 'GTC': 'V', 'GTG': 'V', 'GTT': 'V',                            # Valine
+        'GCA': 'A', 'GCC': 'A', 'GCG': 'A', 'GCT': 'A',                            # Alanine
+        'GAC': 'D', 'GAT': 'D',                                                    # Aspartic Acid
+        'GAA': 'E', 'GAG': 'E',                                                    # Glutamic Acid
+        'GGA': 'G', 'GGC': 'G', 'GGG': 'G', 'GGT': 'G'                             # Glycine
+    }
+
     translation=[]
     for codon in cds_seq:
         if codon in codontab:
@@ -74,15 +77,16 @@ def translate_ORFs(cds_seq, **codontab):
 
 def CDS_from_six_reading_frames_ORFs(nt_seq):
     """Function reports a dictionary for all ORFs found in the six reading frames of a DNA sequence"""
-    six_reading_frames_ORFS = {1 : None, 2 : None, 3 : None, 4 : None, 5 : None, 6 : None}
-    reading_frame_to_ORF_to_CDS = []
+    six_reading_frames_ORFS = {1 : [], 2 : [], 3 : [], 4 : [], 5 : [], 6 : []}
     for frame in range(0,6):
-        cds_seq = frame_cds(nt_seq, frame)
-        ORFs_list = istORFs(cds_seq)
-        for ORF in ORFs_list:
-            translation = translate_cds(ORF)
-            reading_frame_to_ORF_to_CDS.append(translation)
-        six_reading_frames_ORFS[frame+1] = reading_frame_to_ORF_to_CDS
+        reading_frame_to_ORF_to_CDS = []
+        cds_seq = frame_cds(nt_seq, frame+1)
+        ORFs_list = listORFs(cds_seq)
+        if ORFs_list:
+            for ORF in ORFs_list:
+                translation = translate_ORFs(ORF)
+                reading_frame_to_ORF_to_CDS.append(translation)
+            six_reading_frames_ORFS[frame+1] = reading_frame_to_ORF_to_CDS
     return(six_reading_frames_ORFS)
 
 def translation_file(INFILE,OUTPUT_FILENAME='ORFs.faa'):
