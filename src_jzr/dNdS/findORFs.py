@@ -89,8 +89,10 @@ def CDS_from_six_reading_frames_ORFs(nt_seq):
             six_reading_frames_ORFS[frame+1] = reading_frame_to_ORF_to_CDS
     return(six_reading_frames_ORFS)
 
-def translation_file(INFILE,OUTPUT_FILENAME='ORFs.faa'):
+def ORFs_file(INFILE,OUTPUT_FILENAME='ORFs.faa'):
     """Function outputs a fasta file with ORFs found"""
+    with open(INFILE, 'r', encoding="utf-8") as infile:
+        lines = infile.readlines()
     with open(OUTPUT_FILENAME, 'w', encoding="utf-8") as output:
         for line in lines:
             if line[0] == '>':
@@ -99,7 +101,8 @@ def translation_file(INFILE,OUTPUT_FILENAME='ORFs.faa'):
                 sequence = line.strip('\n').upper()
                 ORFs = CDS_from_six_reading_frames_ORFs(sequence)
                 for frame in ORFs:
-                    for ORF in range(len(ORFs[frame])):
-                            output.write(''.join(filter(str.isalnum, temp))+'_'+frame+ORF+'\n')
-                            OUTPUT_FILENAME.write(''.join(ORFs[ORF])+'\n')
-    OUTPUT_FILENAME.close()
+                    if ORFs[frame]:
+                        for ORF in range(len(ORFs[frame])):
+                            output.write(''.join(filter(str.isalnum, temp))+'_'+str(frame)+str(ORF)+'\n')
+                            output.write(''.join(ORFs[frame][ORF])+'\n')
+    output.close()
