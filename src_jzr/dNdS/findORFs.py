@@ -103,6 +103,7 @@ def ORFs_file(INFILE,OUTPUT_FILENAME='ORFs.faa'):
                 for frame in ORFs:
                     if ORFs[frame]:
                         for ORF in range(len(ORFs[frame])):
-                            output.write(''.join(filter(str.isalnum, temp))+'_'+str(frame)+str(ORF)+'\n')
-                            output.write(''.join(ORFs[frame][ORF])+'\n')
+                            name = "".join(filter(str.isalnum, temp))
+                            output.write(''.join(">"+name+'_'+str(ORF)+str(frame)+'\n'))
+                            output.write(''.join(ORFs[frame][ORF]+'\n'))
     output.close()
