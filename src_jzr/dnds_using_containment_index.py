@@ -22,7 +22,6 @@ def main(args):
         """The fasta input file does not have open reading frames identified"""
         findORFs.ORFs_file(genome,results+'ORFs_Fasta1.faa')
         findORFs.ORFs_file(samples,results+'ORFs_Fasta2.faa')
-
     elif args.predict == "orf":
         """The first fasta file does not have open reading frames identified"""
         print("Getting ORFs for sample input",time.time())
@@ -31,15 +30,16 @@ def main(args):
     if os.path.exists(results+"ORFs_samples.faa"):
         print("Running sourmash sketch...",time.time())
         predictORF.sketch(genome, results+"ORFs_samples.faa",kmer_size=kmers,outputfile1=results+"ref-genome.sig", outputfile2=results+"samples.sig.zip")
-        cmd3 = f"sourmash sig collect {results}*.sig* --manifest-format csv -o {results}MANIFEST.csv"
+        cmd3 = f"unzip {results}samples.sig.zip" #produces SOURMASH-MANIFEST.csv
         subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
-
     else:
         print("File does not exist. Stop analysis.")
 
-    if os.path.exists(results+"MANIFEST.csv") and os.path.exists(results+"samples.sig.zip") and os.path.exists(results+"ref-genome.sig"):
+    if os.path.exists(results+"SOURMASH-MANIFEST.csv") and os.path.exists(results+"samples.sig.zip") and os.path.exists(results+"ref-genome.sig"):
         print("Running sourmash search...",time.time())
-        predictORF.search(MANIFEST_CSV_FILE=results+"MANIFEST.csv", sig1=results+"ref-genome.sig", sig2=results+"samples.sig.zip",output_directory=results+"md5/")
+        cmd4 = f"mkdir {results}md5"
+        subprocess.run(cmd4, stdout=subprocess.PIPE, shell=True)
+        predictORF.search(MANIFEST_CSV_FILE=results+"SOURMASH-MANIFEST.csv", sig1=results+"ref-genome.sig", sig2=results+"samples.sig.zip",output_directory=results+"md5/")
     else:
         print("File does not exist. Stop analysis.")
 
