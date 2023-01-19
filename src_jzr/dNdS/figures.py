@@ -92,6 +92,7 @@ def CIbox(input="containment.csv",kmers=[7,14,21,28,35,42,49,56,63,70],wd="resul
         df = df.sort_values(by=['query', "ksize", "max_containment"],ascending=False)
         df = df.groupby(["query","ksize"]).head(1).reset_index(drop=True)
         frame_1_containment = df['frame'].value_counts()[0]
+
         if i < 21: #kmers 21 and above report only containment index of 1
             frame_x_containment = df['frame'].value_counts()[1]
         else:
