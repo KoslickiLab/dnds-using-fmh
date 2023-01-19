@@ -26,33 +26,49 @@ def sketch(inputfile1, inputfile2, kmer_size=7,scaledfile1=100, scaledfile2=1, o
     cmd2=f"sourmash sketch protein -p {kmer_sizes},scaled={scaledfile2} {inputfile2} --singleton -o {outputfile2}"
     subprocess.run(cmd2, stdout=subprocess.PIPE, shell=True)
 
-def prefetch(sig1, sig2, kmer_size=7, Tbp=1, OUTPUT_FILENAME='prefetch_res.csv'):
-    """Function that create MANIFEST CSV file"""
+# I dont need this function for reproducibility
+#def index(query_sig, kmer_size=7):
+#    kmer_sizes = get_kmer_argument(kmer_size).replace("k=","").split(",")
+        
+#    if len(kmer_sizes) > 1:
+#        with open("/home/grads/jzr5814/data/index.txt", 'w', encoding="utf-8") as output:
+#            for kmer in kmer_sizes:
+#                cmdindex=f"sourmash index --protein --ksize {kmer} {kmer}_dtb {query_sig}"
+#                output.write(cmdindex+"\n")
+#            output.close()
+#        cmd_parallel_index = f"parallel -d '\n' < /home/grads/jzr5814/data/index.txt"
+#        subprocess.run(cmd_parallel_index, stdout=subprocess.PIPE, shell=True)
+#    else:
+#        cmdindex=f"sourmash index --protein --ksize {kmer_size} {kmer_size}_dtb {query_sig}"
+#        subprocess.run(cmdindex, stdout=subprocess.PIPE, shell=True)
+
+def prefetch(ref_sig, query_sig, kmer_size=7, Tbp=1, OUTPUT_FILENAME='prefetch_res.csv'):
     kmer_sizes = get_kmer_argument(kmer_size).replace("k=","").split(",")
         
     if len(kmer_sizes) > 1:
-        with open("/home/grads/jzr5814/data/prefetch.txt", 'w', encoding="utf-8") as output:
+        with open("prefetch.txt", 'w', encoding="utf-8") as output:
             for kmer in kmer_sizes:
-                cmd1=f"sourmash prefetch {sig1} {sig2} --protein -o /home/grads/jzr5814/data/prefetch_res_{kmer}.csv --threshold-bp {Tbp} -k {kmer}" 
+                cmd1=f"sourmash prefetch {ref_sig} {query_sig} --protein --o prefetch_res_{kmer}.csv --threshold-bp {Tbp} --ksize {kmer}" 
                 output.write(cmd1+"\n")
             output.close()
-        cmd2 = f"parallel -d '\n' < /home/grads/jzr5814/data/prefetch.txt"
-        subprocess.run(cmd2, stdout=subprocess.PIPE, shell=True)
+        cmd2c = f"parallel -d '\n' < prefetch.txt"
+        subprocess.run(cmd2c, stdout=subprocess.PIPE, shell=True)
     else:
-        cmd=f"sourmash prefetch {sig1} {sig2} --protein -o /home/grads/jzr5814/data/prefetch_res.csv --threshold-bp {Tbp} -k {kmer_size}"
+        cmd=f"sourmash prefetch {ref_sig} {query_sig} --protein --o prefetch_res.csv --threshold-bp {Tbp} --ksize {kmer_size}"
         subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
 
-def search(MANIFEST_CSV_FILE, sig1, sig2, output_directory):
-    """Function that reports containment index of signature files"""
+#depreciation
+#def search(MANIFEST_CSV_FILE, ref_sig, query_sig, output_directory):
+#    """Function that reports containment index of signature files"""
 
-    with open(MANIFEST_CSV_FILE, 'r', encoding='utf-8') as file:
-     lines = file.readlines()
-     for line in lines:
-         if line[0] != "#" and line[0]!='':
-             md5_temp = line.split(',')[1]
-             if md5_temp!='md5':
-                 cmd = f"sourmash search --md5 {md5_temp} {sig2} {sig1} --containment -o {output_directory}/{md5_temp}.csv"
-                 subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
+#    with open(MANIFEST_CSV_FILE, 'r', encoding='utf-8') as file:
+#     lines = file.readlines()
+#     for line in lines:
+#         if line[0] != "#" and line[0]!='':
+#             md5_temp = line.split(',')[1]
+#             if md5_temp!='md5':
+#                 cmd = f"sourmash search --md5 {md5_temp} {query_sig} {ref_sig} --containment -o {output_directory}/{md5_temp}.csv"
+#                 subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
 
 def predict_ORF(md5_csv):
     """Function that predicts ORF"""
