@@ -30,8 +30,8 @@ def main(args):
     if os.path.exists(results+"ORFs_samples.faa"):
         print("Running sourmash sketch...",time.time())
         predictORF.sketch(genome, results+"ORFs_samples.faa",kmer_size=kmers,ref_sig=results+"ref-genome7-70.sig.zip", query_sig=results+"orfs7-70.sig.zip")
-        cmd3 = f"unzip {results}samples.sig.zip" #produces SOURMASH-MANIFEST.csv
-        subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
+    #    cmd3 = f"unzip {results}samples.sig.zip" #produces SOURMASH-MANIFEST.csv
+    #    subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
     else:
         print("File does not exist. Stop analysis.")
 
