@@ -3,7 +3,7 @@
 
 import argparse, time, os, subprocess
 from django.urls import path 
-from dNdS import findORFs, predictORF, estimatedNdS
+from dNdS import findORFs, predictORF, estimatedNdS, reportCI
 
 def main(args):
     """MVC Controller for metagenomic dN/dS estimation
@@ -29,7 +29,7 @@ def main(args):
 
     if os.path.exists(results+"ORFs_samples.faa"):
         print("Running sourmash sketch...",time.time())
-        predictORF.sketch(genome, results+"ORFs_samples.faa",kmer_size=kmers,ref_sig=results+"refref-genome7-70.sig.zip", query_sig=results+"orfs7-70.sig.zip")
+        predictORF.sketch(genome, results+"ORFs_samples.faa",kmer_size=kmers,ref_sig=results+"ref-genome7-70.sig.zip", query_sig=results+"orfs7-70.sig.zip")
         cmd3 = f"unzip {results}samples.sig.zip" #produces SOURMASH-MANIFEST.csv
         subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
     else:
@@ -55,6 +55,10 @@ def main(args):
     reportCI.produce_containment_csv(wd=results)
     reportCI.prep(data=results+'results_kmers.csv',output=results+"containment.csv")
     reportCI.analysis(data=results+"containment.csv",output=results+"CIdict.pickle")
+
+    #create figures of CI analysis
+    figures.CIhist(data=results+"CIdict.pickle",wd=results)
+    figures.CIbox(input=results+"containment.csv",wd=results)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
