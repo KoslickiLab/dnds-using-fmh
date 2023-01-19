@@ -42,7 +42,7 @@ def sketch(inputfile1, inputfile2, kmer_size=7,scaledfile1=100, scaledfile2=1, o
 #        cmdindex=f"sourmash index --protein --ksize {kmer_size} {kmer_size}_dtb {query_sig}"
 #        subprocess.run(cmdindex, stdout=subprocess.PIPE, shell=True)
 
-def prefetch(ref_sig, query_sig, kmer_size=7, Tbp=1, OUTPUT_FILENAME='prefetch_res.csv'):
+def prefetch(ref_sig, query_sig, kmer_size=7, Tbp=1, OUTPUT_FILENAME='prefetch_res.csv'): #this does not have a output directory for files
     kmer_sizes = get_kmer_argument(kmer_size).replace("k=","").split(",")
         
     if len(kmer_sizes) > 1:
