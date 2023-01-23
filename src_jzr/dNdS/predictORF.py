@@ -22,8 +22,8 @@ def sketch(inputfile1, inputfile2, kmer_size=7,scaledfile1=100, scaledfile2=1, o
     cmd1=f"sourmash sketch protein -p {kmer_sizes},scaled={scaledfile1} {inputfile1} -o {outputfile1}"
     print(cmd1)
     subprocess.run(cmd1, stdout=subprocess.PIPE, shell=True)
-
     cmd2=f"sourmash sketch protein -p {kmer_sizes},scaled={scaledfile2} {inputfile2} --singleton -o {outputfile2}"
+    print(cmd2)
     subprocess.run(cmd2, stdout=subprocess.PIPE, shell=True)
 
 # I dont need this function for reproducibility
@@ -42,13 +42,13 @@ def sketch(inputfile1, inputfile2, kmer_size=7,scaledfile1=100, scaledfile2=1, o
 #        cmdindex=f"sourmash index --protein --ksize {kmer_size} {kmer_size}_dtb {query_sig}"
 #        subprocess.run(cmdindex, stdout=subprocess.PIPE, shell=True)
 
-def prefetch(ref_sig, query_sig, kmer_size=7, Tbp=1, OUTPUT_FILENAME='prefetch_res.csv'): #this does not have a output directory for files
+def prefetch(ref_sig, query_sig, kmer_size=7, Tbp=1, wd='data/', OUTPUT_FILENAME='prefetch_res.csv'): #this does not have a output directory for files
     kmer_sizes = get_kmer_argument(kmer_size).replace("k=","").split(",")
         
     if len(kmer_sizes) > 1:
         with open("prefetch.txt", 'w', encoding="utf-8") as output:
             for kmer in kmer_sizes:
-                cmd1=f"sourmash prefetch {ref_sig} {query_sig} --protein --o prefetch_res_{kmer}.csv --threshold-bp {Tbp} --ksize {kmer}" 
+                cmd1=f"sourmash prefetch {wd}{ref_sig} {wd}{query_sig} --protein --o {wd}prefetch_res_{kmer}.csv --threshold-bp {Tbp} --ksize {kmer}" 
                 output.write(cmd1+"\n")
             output.close()
         cmd2c = f"parallel -d '\n' < prefetch.txt"
