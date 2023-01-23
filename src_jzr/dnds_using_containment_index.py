@@ -17,6 +17,7 @@ def main(args):
     samples = args.fasta2
     kmers = args.k
     results = args.wd
+    sd1 = args.scaled1
     
     if args.predict == "orfs":
         """The fasta input file does not have open reading frames identified"""
@@ -27,11 +28,17 @@ def main(args):
         print("Getting ORFs for sample input",time.time())
         findORFs.ORFs_file(samples, results+"ORFs_samples.faa")
 
+    print('Ready to sketch!')
     if os.path.exists(results+"ORFs_samples.faa"):
         print("Running sourmash sketch...",time.time())
-        predictORF.sketch(genome, results+"ORFs_samples.faa",kmer_size=kmers,ref_sig=results+"ref-genome7-70.sig.zip", query_sig=results+"orfs7-70.sig.zip")
-    #    cmd3 = f"unzip {results}samples.sig.zip" #produces SOURMASH-MANIFEST.csv
-    #    subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
+        predictORF.sketch(genome, results+"ORFs_samples.faa",kmer_size=kmers,outputfile1=results+"ref-genome7-70.sig.zip", outputfile2=results+"orfs7-70.sig.zip")
+        cmd3 = f"unzip {results}samples.sig.zip" #produces SOURMASH-MANIFEST.csv
+        subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
+    if os.path.exists(results+samples):
+        print("Running sourmash sketch...",time.time())
+        predictORF.sketch(genome, samples, kmer_size=kmers, scaledfile1=sd1, outputfile1=results+"ref-genome7-70.sig.zip", outputfile2=results+"orfs7-70.sig.zip")
+        cmd3 = f"unzip {results}samples.sig.zip" #produces SOURMASH-MANIFEST.csv
+        subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
     else:
         print("File does not exist. Stop analysis.")
 
@@ -43,9 +50,10 @@ def main(args):
     #else:
     #    print("File does not exist. Stop analysis.")
 
+    print('Ready to prefetch!')
     if os.path.exists(results+"orfs7-70.sig.zip"):
         print("Running sourmash prefetch...",time.time())
-        predictORF.prefetch(query_sig=results+"orfs7-70.sig.zip", ref_sig=results+"ref-genome7-70.sig.zip",kmer_size=kmers)
+        predictORF.prefetch(query_sig="orfs7-70.sig.zip", ref_sig="ref-genome7-70.sig.zip",kmer_size=kmers,wd=results)
     else:
         print("File does not exist. Stop analysis.")
         print(os.path.exists(results+"orfs7-70.sig.zip"))
@@ -54,11 +62,11 @@ def main(args):
     # report highest and second highest containment index in dictionary pickle file
     reportCI.produce_containment_csv(wd=results)
     reportCI.prep(data=results+'results_kmers.csv',output=results+"containment.csv")
-    reportCI.analysis(data=results+"containment.csv",output=results+"CIdict.pickle")
+    reportCI.analysis_frame01(data=results+"containment.csv",output=results+"CIdict.pickle")
 
     #create figures of CI analysis
     figures.CIhist(data=results+"CIdict.pickle",wd=results)
-    figures.CIbox(input=results+"containment.csv",wd=results)
+    figures.CIbox_frame01(input=results+"containment.csv",wd=results)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
