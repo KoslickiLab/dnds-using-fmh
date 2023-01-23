@@ -2,78 +2,77 @@ import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import seaborn as sns
+import warnings
 
-def CIhist(data="dictionary.pickle",wd="data/"):
+def CIbox_frame01(data="dictionary.pickle",wd="data/"):
     with open(data, 'rb') as handle:
         unserialized_data = pickle.load(handle)
-        
-    df = pd.DataFrame.from_dict(unserialized_data).T.explode('highest')
-    df.reset_index(inplace=True)
-    df = df.set_index([df.index, 'index'])['highest'].unstack()
-    df = df.apply(lambda x: pd.Series(x.dropna().values))
+    warnings.filterwarnings('ignore')
+    #box plot #1
 
-    vals, names, xs = [],[],[]
-    for i, col in enumerate(df.columns):
-        vals.append(df[col].values)
-        names.append(str(col)+"-mer")
-        xs.append(np.random.normal(i + 1, 0.04, df[col].values.shape[0]))  # adds jitter to the data points - can be adjusted
+    df1 = pd.DataFrame.from_dict(unserialized_data).T.explode('highest')
+    df1.reset_index(inplace=True)
+    df1 = df1.set_index([df1.index, 'index'])['highest'].unstack()
+    df1 = df1.apply(lambda x: pd.Series(x.dropna().values))
 
-    plt.figure(figsize=(18,10))
+    vals1, names1, xs1 = [],[],[]
+    for i, col in enumerate(df1.columns):
+        vals1.append(df1[col].values)
+        names1.append(str(col)+"-mer")
+        xs1.append(np.random.normal(i + 1, 0.04, df1[col].values.shape[0]))  # adds jitter to the data points - can be adjusted
 
-    plt.boxplot(vals, labels=names)
+    # box plot #2
 
-    palette = ['red', 'gray', 'blue', 'yellow','orange','purple','brown','pink','olive','cyan']
+    df2 = pd.DataFrame.from_dict(unserialized_data).T.explode('2ndhighest')
+    df2.reset_index(inplace=True)
+    df2 = df2.set_index([df2.index, 'index'])['2ndhighest'].unstack()
+    df2 = df2.apply(lambda x: pd.Series(x.dropna().values))
 
-    for x, val, c in zip(xs, vals, palette):
-        plt.scatter(x, val, alpha=0.4, color=c)
+    vals2, names2, xs2 = [],[],[]
+    for i, col in enumerate(df2.columns):
+        vals2.append(df2[col].values)
+        names2.append(str(col)+"-mer")
+        xs2.append(np.random.normal(i + 1, 0.04, df2[col].values.shape[0]))  # adds jitter to the data points - can be adjusted
 
-    plt.grid(visible=None)
-    plt.xticks(rotation=45,fontsize=15)
-    plt.yticks(fontsize=12)
-    plt.ylim(0,1.1)
-
-    plt.gca().spines['right'].set_visible(False)
-    plt.gca().spines['top'].set_visible(False)
-
-    plt.title("Highest Containment Index Across Kmers Reported by Sourmash",fontsize=20)
-    plt.ylabel('Containment Index',fontsize=15)
-
-    plt.savefig(wd+'Highest_Containment_Index_Correct_ORF.jpeg',bbox_inches='tight')
-
-    df = pd.DataFrame.from_dict(unserialized_data).T.explode('2ndhighest')
-    df.reset_index(inplace=True)
-    df = df.set_index([df.index, 'index'])['2ndhighest'].unstack()
-    df = df.apply(lambda x: pd.Series(x.dropna().values))
-
-    vals, names, xs = [],[],[]
-    for i, col in enumerate(df.columns):
-        vals.append(df[col].values)
-        names.append(str(col)+"-mer")
-        xs.append(np.random.normal(i + 1, 0.04, df[col].values.shape[0]))  # adds jitter to the data points - can be adjusted
-
-    plt.figure(figsize=(18,10))
-
-    plt.boxplot(vals, labels=names)
+    fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(10, 10))
+    bplot1 = ax1.boxplot(vals1, labels=names1, notch=False, showmeans=False)
+    bplot2 = ax2.boxplot(vals2, labels=names2, notch=False, showmeans=False)
 
     palette = ['red', 'gray', 'blue', 'yellow','orange','purple','brown','pink','olive','cyan']
 
-    for x, val, c in zip(xs, vals, palette):
-        plt.scatter(x, val, alpha=0.4, color=c)
+    for xA, xB, valA, valB, c in zip(xs1, xs2, vals1, vals2, palette):
+        ax1.scatter(xA, valA, alpha=0.4, color=c)
+        ax2.scatter(xB, valB, alpha=0.4, color=c)
 
-    plt.grid(visible=None)
-    plt.xticks(rotation=45,fontsize=15)
-    plt.yticks(fontsize=12)
-    plt.ylim(0,1.1)
+    sns.set_style("whitegrid")
+    ind = np.arange(11) 
+    for ax in fig.get_axes():
+        ax.grid(visible=None)
+        ax.set_xticks(ticks=ind,labels=['','k7','k14','k21','k28','k35','k42','k49','k56','k63','k70'],fontsize=15)
+        ax.set_ylim(0,1.1)
 
-    plt.gca().spines['right'].set_visible(False)
-    plt.gca().spines['top'].set_visible(False)
+    fig.suptitle("Highest andf Second Highest Containment Indexes\nReported for the Correct ORFs Across Kmers by Sourmash",fontsize=20)
+    fig.text(0.07,0.5,'Containment Index',ha='center',va='center',rotation='vertical',fontsize=15)
 
-    plt.title("Second Highest Containment Index Across Kmers Reported by Sourmash",fontsize=20)
-    plt.ylabel('Containment Index',fontsize=15)
+    fig.savefig(wd+"boxplot.jpeg",bbox_inches='tight')
 
-    plt.savefig(wd+"Second_Highest_Containment_Index_Reported_Sourmash.jpeg",bbox_inches='tight')
+def CIbox_wrongORFs(data="dictionary.pickle",wd="data/"):
+    with open(data, 'rb') as handle:
+        unserialized_data = pickle.load(handle)
+    warnings.filterwarnings('ignore')
 
-def CIbox(input="containment.csv",kmers=[7,14,21,28,35,42,49,56,63,70],wd="results/"):
+    df1 =pd.DataFrame(dict([ (k,pd.Series(v)) for k,v in unserialized_data.items() ]))
+    df1 = pd.DataFrame.from_dict(df1)
+    plt.boxplot(df1)
+    plt.savefig("test_wrong.jpeg")
+#    df1.reset_index(inplace=True)
+#    print(df1.head())
+    #df1.reset_index(inplace=True)
+    #df1 = df1.set_index([df1.index, 'index'])['highest'].unstack()
+    #df1 = df1.apply(lambda x: pd.Series(x.dropna().values))
+
+def CIhist(input="containment.csv",kmers=[7,14,21,28,35,42,49,56,63,70],wd="results/"):
     data = pd.read_csv(input,sep=",")
 
     def frame(x):
