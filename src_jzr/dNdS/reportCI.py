@@ -2,7 +2,7 @@ import pickle, os, glob, subprocess
 import pandas as pd
 
 def produce_containment_csv(wd):
-    cmd1 = f"awk '(NR == 1) || (FNR > 1)' {wd}/prefetch_res_*.csv | cut -d ',' -f 3,7,14,15 | tr '_' ',' | sed 's/max,containment/max_containment/' > {wd}results_kmers.csv"
+    cmd1 = f"awk '(NR == 1) || (FNR > 1)' {wd}prefetch_res_*.csv | cut -d ',' -f 3,7,14,15 | tr '_' ',' | sed 's/max,containment/max_containment/' > {wd}results_kmers.csv"
     subprocess.run(cmd1, stdout=subprocess.PIPE, shell=True)
 
 def frame(x):
@@ -17,7 +17,7 @@ def prep(data,output="containment.csv"):
 
     kmers_data.to_csv(output)
 
-def analysis(data,output="CIdict.pickle"):
+def analysis_frame01(data,output="CIdict_frame01.pickle"):
     temp_sample = ''
     ignore_sample=''
     dictionary={}
@@ -26,7 +26,7 @@ def analysis(data,output="CIdict.pickle"):
         if temp_sample!=row["query"]:
             temp_sample = row["query"]
             if row["ksize"] not in dictionary:
-                if row['frame'] == 'frame_01':
+                if row['frame'] == 'frame_01': 
                     dictionary[row['ksize']] = {'highest':[],'2ndhighest':[]}
                     dictionary[row['ksize']]['highest'].append(row['max_containment'])
                 else:
@@ -34,7 +34,7 @@ def analysis(data,output="CIdict.pickle"):
                         dictionary[row['ksize']]['2ndhighest'].append(row['max_containment'])
                         ignore_sample=temp_sample
             elif row["ksize"] in dictionary:
-                if row['frame'] == 'frame_01':
+                if row['frame'] == 'frame_01': 
                     dictionary[row['ksize']]['highest'].append(row['max_containment'])
                 else:
                     if ignore_sample != temp_sample:
@@ -42,12 +42,12 @@ def analysis(data,output="CIdict.pickle"):
                         ignore_sample=temp_sample
         elif temp_sample==row["query"]:
             if row["ksize"] not in dictionary:
-                if row['frame'] == 'frame_01':
+                if row['frame'] == 'frame_01': 
                     dictionary[row['ksize']] = {'highest':[],'2ndhighest':[]}
                 else:
                     dictionary[row['ksize']]['2ndhighest'].append(row['max_containment'])
             elif row["ksize"] in dictionary:
-                if row['frame'] == 'frame_01':
+                if row['frame'] == 'frame_01': 
                     dictionary[row['ksize']]['highest'].append(row['max_containment'])
                 else:
                     if ignore_sample != temp_sample:
@@ -58,4 +58,25 @@ def analysis(data,output="CIdict.pickle"):
         pickle.dump(dictionary, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
+def analysis_wrongFrames(data,output="CIdict_wrongframes.pickle"):
+    temp_sample = ''
+    ignore_sample=''
+    dictionary={}
+    kmers_data = pd.read_csv(data,sep=",")
+    #print(kmers_data.describe())
+    correctFrames_df1 = kmers_data[kmers_data["frame"] == "frame_01"][['max_containment','ksize','frame']]
+    correctFrames_df1.to_csv('correctFrames_df1.csv')
+    wrongFrames_df = kmers_data[kmers_data["frame"] != "frame_01"][['max_containment','ksize','frame']]
+    wrongFrames_df.to_csv('wrongFrames_df.csv')
+    for index, row in wrongFrames_df.iterrows():
+        if row['ksize'] not in dictionary:
+            dictionary[row['ksize']] = []
+            dictionary[row['ksize']].append(row['max_containment'])
+        else:
+            dictionary[row['ksize']].append(row['max_containment'])
+
+    print(dictionary)
+
+    with open(output, 'wb') as handle:
+        pickle.dump(dictionary, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
