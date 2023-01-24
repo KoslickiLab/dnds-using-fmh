@@ -109,7 +109,7 @@ def just_six_reading_frame_translation(nt_seq):
     for frame in range(0,6):
         frame_seq = frame_cds(nt_seq, frame+1)
         frame_translation = translate_ORFs(frame_seq)
-        print(frame_translation)
+        #print(frame_translation)
         six_reading_frames_dict[frame+1] = frame_translation
     return(six_reading_frames_dict)
 
