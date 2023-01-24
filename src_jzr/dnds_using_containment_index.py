@@ -14,7 +14,7 @@ def main(args):
     """
 
     genome = args.fasta1
-    samples = args.fasta2
+    samples = args.fasta2 #queries
     kmers = args.k
     results = args.wd
     sd1 = args.scaled1
@@ -27,21 +27,27 @@ def main(args):
         """The first fasta file does not have open reading frames identified"""
         print("Getting ORFs for sample input",time.time())
         findORFs.ORFs_file(samples, results+"ORFs_samples.faa")
+    elif args.predict == "frame":
+        """Create fasta file with six reading frames of each sequence"""
+        print("Obtain six reading frames for each query")
+        findORFs.reading_frames_file(samples, results+"query_frames.faa")
+        query = results+"query_frames.faa"
 
     print('Ready to sketch!')
-    if os.path.exists(results+"ORFs_samples.faa"):
+    if os.path.exists(query):
         print("Running sourmash sketch...",time.time())
-        predictORF.sketch(genome, results+"ORFs_samples.faa",kmer_size=kmers,outputfile1=results+"ref-genome7-70.sig.zip", outputfile2=results+"orfs7-70.sig.zip")
-        cmd3 = f"unzip {results}samples.sig.zip" #produces SOURMASH-MANIFEST.csv
+        predictORF.sketch(genome, query,kmer_size=kmers,outputfile1=results+"ref-genome.sig", outputfile2=results+"queries.sig.zip")
+        cmd3 = f"unzip {results}queries.sig.zip" #produces SOURMASH-MANIFEST.csv
         subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
-    if os.path.exists(results+samples):
-        print("Running sourmash sketch...",time.time())
-        predictORF.sketch(genome, samples, kmer_size=kmers, scaledfile1=sd1, outputfile1=results+"ref-genome7-70.sig.zip", outputfile2=results+"orfs7-70.sig.zip")
-        cmd3 = f"unzip {results}samples.sig.zip" #produces SOURMASH-MANIFEST.csv
-        subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
+    #if os.path.exists(results+samples):
+    #    print("Running sourmash sketch...",time.time())
+    #    predictORF.sketch(genome, samples, kmer_size=kmers, scaledfile1=sd1, outputfile1=results+"ref-genome.sig", outputfile2=results+"queries.sig.zip")
+    #    cmd3 = f"unzip {results}samples.sig.zip" #produces SOURMASH-MANIFEST.csv
+    #    subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
     else:
         print("File does not exist. Stop analysis.")
 
+    #this is not part of pipeline
     #if os.path.exists(results+"SOURMASH-MANIFEST.csv") and os.path.exists(results+"samples.sig.zip") and os.path.exists(results+"ref-genome.sig"):
     #    print("Running sourmash search...",time.time())
     #    cmd4 = f"mkdir {results}md5"
@@ -51,13 +57,13 @@ def main(args):
     #    print("File does not exist. Stop analysis.")
 
     print('Ready to prefetch!')
-    if os.path.exists(results+"orfs7-70.sig.zip"):
+    if os.path.exists(results+"queries.sig.zip"):
         print("Running sourmash prefetch...",time.time())
-        predictORF.prefetch(query_sig="orfs7-70.sig.zip", ref_sig="ref-genome7-70.sig.zip",kmer_size=kmers,wd=results)
+        predictORF.prefetch(query_sig="queries.sig.zip", ref_sig="ref-genome.sig",kmer_size=kmers,wd=results)
     else:
         print("File does not exist. Stop analysis.")
-        print(os.path.exists(results+"orfs7-70.sig.zip"))
-        print(os.path.exists(results+"ref-genome7-70.sig.zip"))
+        print(os.path.exists(results+"queries.sig.zip"))
+        print(os.path.exists(results+"ref-genome.sig"))
 
     # report highest and second highest containment index in dictionary pickle file
     reportCI.produce_containment_csv(wd=results)
@@ -88,7 +94,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--predict',
         default = 'orf',
-        choices=['', 'orf', 'orfs'],
+        choices=['', 'orf', 'orfs','frame'],
         help = 'Flagged when fasta files need open reading frames prediction for all fasta files (orfs), for the first fasta file (orfs1), or for the second fasta file (orfs2)'
     )
 
