@@ -89,7 +89,6 @@ def CDS_from_six_reading_frames_ORFs(nt_seq):
             six_reading_frames_ORFS[frame+1] = reading_frame_to_ORF_to_CDS
     return(six_reading_frames_ORFS)
 
-
 def six_reading_frames_ORFs(nt_seq):
     """Function reports a dictionary for all ORFs found in the six reading frames of a DNA sequence"""
     six_reading_frames_ORFS = {1 : [], 2 : [], 3 : [], 4 : [], 5 : [], 6 : []}
@@ -103,6 +102,15 @@ def six_reading_frames_ORFs(nt_seq):
                 reading_frame_to_ORF_to_CDS.append(join_ORF)
             six_reading_frames_ORFS[frame+1] = reading_frame_to_ORF_to_CDS
     return(six_reading_frames_ORFS)
+
+def just_six_reading_frames(nt_seq):
+    """Function reports a dictionary for all ORFs found in the six reading frames of a DNA sequence"""
+    six_reading_frames_dict = {1 : '', 2 : '', 3 : '', 4 : '', 5 : '', 6 : ''}
+    for frame in range(0,6):
+        frame_seq = frame_cds(nt_seq, frame+1)
+        frame_translation = translate_ORFs(frame_seq)
+        six_reading_frames_dict[frame+1] = frame_translation
+    return(six_reading_frames_dict)
 
 # This function is to obtain the nulceotide sequence of the ORF, it is not part of the pipeline
 #def ORFs_untranslated_file(INFILE,OUTPUT_FILENAME='ORFs_nottranslated.faa'):
@@ -124,7 +132,6 @@ def six_reading_frames_ORFs(nt_seq):
 #                            output.write(''.join(ORFs[frame][ORF]+'\n'))
 #    output.close()
 
-
 def ORFs_file(INFILE,OUTPUT_FILENAME='ORFs.faa'):
     """Function outputs a fasta file with ORFs found"""
     with open(INFILE, 'r', encoding="utf-8") as infile:
@@ -142,4 +149,22 @@ def ORFs_file(INFILE,OUTPUT_FILENAME='ORFs.faa'):
                             name = "".join(filter(str.isalnum, temp))
                             output.write(''.join(">"+name+'_'+str(ORF)+str(frame)+'\n'))
                             output.write(''.join(ORFs[frame][ORF]+'\n'))
+    output.close()
+
+def reading_frames_file(INFILE,OUTPUT_FILENAME='reading_frames.faa'):
+    """Function outputs a fasta file with ORFs found"""
+    with open(INFILE, 'r', encoding="utf-8") as infile:
+        lines = infile.readlines()
+    with open(OUTPUT_FILENAME, 'w', encoding="utf-8") as output:
+        for line in lines:
+            if line[0] == '>':
+                temp = line.strip('\n')
+            else:
+                sequence = line.strip('\n').upper()
+                frame_seqs= frame_cds(sequence)
+                for frame_key in frame_seqs:
+                    name = "".join(filter(str.isalnum, temp))
+                    frame = frame_seqs[frame_key]
+                    output.write(''.join(">"+name+'_'+str(frame)+'\n'))
+                    output.write(frame+'\n')
     output.close()
