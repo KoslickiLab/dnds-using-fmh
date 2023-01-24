@@ -1,7 +1,7 @@
 import pytest
 import unittest
 
-from dNdS.findORFs import reverse_complement, frame_cds, listORFs, translate_ORFs, CDS_from_six_reading_frames_ORFs
+from dNdS.findORFs import reverse_complement, frame_cds, listORFs, translate_ORFs, CDS_from_six_reading_frames_ORFs, just_six_reading_frame_translation
 
 def test_reverse_complement():
     """Test reverse complement function"""
@@ -33,3 +33,6 @@ def test_CDS_from_six_reading_frames_ORFs():
     assert CDS_from_six_reading_frames_ORFs("ATGaataatgcgaagTTttcctaa") == {1:["MNNAKFS"],2:[],3:[],4:[],5:[],6:[]}
     assert CDS_from_six_reading_frames_ORFs("ATGAAGTTTTAAGCGAAGATGGCGTAGGCG") == {1:["MKF","MA"],2:[],3:[],4:[],5:[],6:[]}
     assert CDS_from_six_reading_frames_ORFs("ATGATGAAGTTTTAAGCGAAGATGGCGTAGGCG") == {1:["MMKF","MA"],2:[],3:[],4:[],5:[],6:[]}
+
+def test_just_six_reading_frame_translation():
+    assert just_six_reading_frame_translation("ATGaataattaa") == {1:"MNN*",2:"*II",3:"E*L",4:"LIIH",5:"*LF",6:"NYS"}
