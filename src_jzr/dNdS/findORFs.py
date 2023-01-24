@@ -103,12 +103,13 @@ def six_reading_frames_ORFs(nt_seq):
             six_reading_frames_ORFS[frame+1] = reading_frame_to_ORF_to_CDS
     return(six_reading_frames_ORFS)
 
-def just_six_reading_frames(nt_seq):
+def just_six_reading_frame_translation(nt_seq):
     """Function reports a dictionary for all ORFs found in the six reading frames of a DNA sequence"""
     six_reading_frames_dict = {1 : '', 2 : '', 3 : '', 4 : '', 5 : '', 6 : ''}
     for frame in range(0,6):
         frame_seq = frame_cds(nt_seq, frame+1)
         frame_translation = translate_ORFs(frame_seq)
+        print(frame_translation)
         six_reading_frames_dict[frame+1] = frame_translation
     return(six_reading_frames_dict)
 
@@ -161,10 +162,10 @@ def reading_frames_file(INFILE,OUTPUT_FILENAME='reading_frames.faa'):
                 temp = line.strip('\n')
             else:
                 sequence = line.strip('\n').upper()
-                frame_seqs= frame_cds(sequence)
-                for frame_key in frame_seqs:
+                frame_CDS_seqs= just_six_reading_frame_translation(sequence)
+                for frame_key in frame_CDS_seqs:
                     name = "".join(filter(str.isalnum, temp))
-                    frame = frame_seqs[frame_key]
+                    frame = frame_CDS_seqs[frame_key]
                     output.write(''.join(">"+name+'_'+str(frame)+'\n'))
                     output.write(frame+'\n')
     output.close()
