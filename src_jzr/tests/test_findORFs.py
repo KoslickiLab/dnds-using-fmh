@@ -36,3 +36,4 @@ def test_CDS_from_six_reading_frames_ORFs():
 
 def test_just_six_reading_frame_translation():
     assert just_six_reading_frame_translation("ATGaataattaa") == {1:"MNN*",2:"*II",3:"E*L",4:"LIIH",5:"*LF",6:"NYS"}
+
