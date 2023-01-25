@@ -13,20 +13,24 @@ def main(args):
     -
     """
 
-    genome = args.fasta1
-    samples = args.fasta2 #queries
+    genome = args.ref_fasta #reference
+    samples = args.query_fasta #queries
     kmers = args.k
     results = args.wd
     sd1 = args.scaled1
     
-    if args.predict == "orfs":
+    #if args.predict == "orfs":
+    #    """The fasta input file does not have open reading frames identified"""
+    #    findORFs.ORFs_file(genome,results+'ORFs_ref_fasta.faa')
+    #    findORFs.ORFs_file(samples,results+'ORFs_query_fasta.faa')
+    #elif args.predict == "orf":
+    #    """The first fasta file does not have open reading frames identified"""
+    #    print("Getting ORFs for sample input",time.time())
+    #    findORFs.ORFs_file(samples, results+"ORFs_samples.faa")
+    if args.predict == "frames":
         """The fasta input file does not have open reading frames identified"""
-        findORFs.ORFs_file(genome,results+'ORFs_Fasta1.faa')
-        findORFs.ORFs_file(samples,results+'ORFs_Fasta2.faa')
-    elif args.predict == "orf":
-        """The first fasta file does not have open reading frames identified"""
-        print("Getting ORFs for sample input",time.time())
-        findORFs.ORFs_file(samples, results+"ORFs_samples.faa")
+        findORFs.ORFs_file(genome,results+'ref.faa')
+        findORFs.reading_frames_file(samples,results+'query_frames.faa')
     elif args.predict == "frame":
         """Create fasta file with six reading frames of each sequence"""
         print("Obtain six reading frames for each query")
@@ -36,12 +40,12 @@ def main(args):
     print('Ready to sketch!')
     if os.path.exists(query):
         print("Running sourmash sketch...",time.time())
-        predictORF.sketch(genome, query,kmer_size=kmers,outputfile1=results+"ref-genome.sig", outputfile2=results+"queries.sig.zip")
+        predictORF.sketch(genome, query,kmer_size=kmers,ref_output=results+"ref-genome.sig", query_output=results+"queries.sig.zip")
         cmd3 = f"unzip {results}queries.sig.zip" #produces SOURMASH-MANIFEST.csv
         subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
     #if os.path.exists(results+samples):
     #    print("Running sourmash sketch...",time.time())
-    #    predictORF.sketch(genome, samples, kmer_size=kmers, scaledfile1=sd1, outputfile1=results+"ref-genome.sig", outputfile2=results+"queries.sig.zip")
+    #    predictORF.sketch(genome, samples, kmer_size=kmers, scaledfile1=sd1, ref_output=results+"ref-genome.sig", query_output=results+"queries.sig.zip")
     #    cmd3 = f"unzip {results}samples.sig.zip" #produces SOURMASH-MANIFEST.csv
     #    subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
     else:
@@ -80,13 +84,13 @@ if __name__ == "__main__":
     ) 
 
     parser.add_argument(
-        '--fasta1',
+        '--ref_fasta',
         type = str,
         help = 'First fasta file used for dN/dS estimation'
     )
 
     parser.add_argument(
-        '--fasta2',
+        '--query_fasta',
         type = str,
         help = 'Second fasta file used for dN/dS estimation'
     )
