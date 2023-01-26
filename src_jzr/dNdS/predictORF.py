@@ -15,16 +15,29 @@ def get_kmer_argument(kmer_list):
         kmers_arg = kmers[0]
     return(kmers_arg)
 
-def sketch(ref_input, query_input, kmer_size=7,scaledfile1=100, scaledfile2=1, ref_output="ref-genome.sig", query_output="samples.sig.zip"):
+def sketch(ref_input, query_input, kmer_size=7,scaledfile1=100, scaledfile2=1, ref_output="ref-genome.sig", query_output="samples.sig.zip", moltype, trnslt):
     """Function that skatches signatures for refernce genome and sample"""
     kmer_sizes = get_kmer_argument(kmer_size)
 
-    cmd1=f"sourmash sketch translate {ref_input} -p {kmer_sizes},scaled={scaledfile1} -o {ref_output}"
-    print(cmd1)
-    subprocess.run(cmd1, stdout=subprocess.PIPE, shell=True)
-    cmd2=f"sourmash sketch protein {query_input} -p {kmer_sizes},scaled={scaledfile2} --singleton -o {query_output}"
-    print(cmd2)
-    subprocess.run(cmd2, stdout=subprocess.PIPE, shell=True)
+    if moltype == "protein":
+        cmd1=f"sourmash sketch translate {ref_input} -p {kmer_sizes},scaled={scaledfile1} -o {ref_output}"
+        print(cmd1)
+        subprocess.run(cmd1, stdout=subprocess.PIPE, shell=True)
+        if trnslt == 'no':
+            cmd2=f"sourmash sketch protein {query_input} -p {kmer_sizes},scaled={scaledfile2} --singleton -o {query_output}"
+            print(cmd2)
+            subprocess.run(cmd2, stdout=subprocess.PIPE, shell=True)
+        if trnslt == 'yes':
+            cmd2=f"sourmash sketch translate {query_input} -p {kmer_sizes},scaled={scaledfile2} --singleton -o {query_output}"
+            print(cmd2)
+            subprocess.run(cmd2, stdout=subprocess.PIPE, shell=True)
+    elif moltype == "dna":
+        cmd1=f"sourmash sketch dna {ref_input} -p {kmer_sizes},scaled={scaledfile1} -o {ref_output}"
+        print(cmd1)
+        subprocess.run(cmd1, stdout=subprocess.PIPE, shell=True)
+        cmd2=f"sourmash sketch dna {query_input} -p {kmer_sizes},scaled={scaledfile2} --singleton -o {query_output}"
+        print(cmd2)
+        subprocess.run(cmd2, stdout=subprocess.PIPE, shell=True)
 
 # I dont need this function for reproducibility
 #def index(query_sig, kmer_size=7):
