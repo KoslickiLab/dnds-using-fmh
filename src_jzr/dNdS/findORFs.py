@@ -166,6 +166,6 @@ def reading_frames_file(INFILE,OUTPUT_FILENAME='reading_frames.faa'):
                 for frame_key in frame_CDS_seqs:
                     name = "".join(filter(str.isalnum, temp))
                     frame = frame_CDS_seqs[frame_key]
-                    output.write(''.join(">"+name+'_'+str(frame)+'\n'))
+                    output.write(''.join(">"+name+'_'+str(frame_key)+'\n'))
                     output.write(frame+'\n')
     output.close()
