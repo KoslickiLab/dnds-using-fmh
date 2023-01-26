@@ -19,10 +19,10 @@ def sketch(ref_input, query_input, kmer_size=7,scaledfile1=100, scaledfile2=1, r
     """Function that skatches signatures for refernce genome and sample"""
     kmer_sizes = get_kmer_argument(kmer_size)
 
-    cmd1=f"sourmash sketch translate {kmer_sizes},scaled={scaledfile1} {ref_input} -o {ref_output}"
+    cmd1=f"sourmash sketch translate {ref_input} -p {kmer_sizes},scaled={scaledfile1} -o {ref_output}"
     print(cmd1)
     subprocess.run(cmd1, stdout=subprocess.PIPE, shell=True)
-    cmd2=f"sourmash sketch protein -p {kmer_sizes},scaled={scaledfile2} {query_input} --singleton -o {query_output}"
+    cmd2=f"sourmash sketch protein {query_input} -p {kmer_sizes},scaled={scaledfile2} --singleton -o {query_output}"
     print(cmd2)
     subprocess.run(cmd2, stdout=subprocess.PIPE, shell=True)
 
