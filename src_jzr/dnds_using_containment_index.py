@@ -18,6 +18,8 @@ def main(args):
     kmers = args.k
     results = args.wd
     sd1 = args.scaled1
+    mltyp = args.moltype
+    trnslt = args.translate
     
     #if args.predict == "orfs":
     #    """The fasta input file does not have open reading frames identified"""
@@ -27,16 +29,21 @@ def main(args):
     #    """The first fasta file does not have open reading frames identified"""
     #    print("Getting ORFs for sample input",time.time())
     #    findORFs.ORFs_file(samples, results+"ORFs_samples.faa")
-    if args.predict == "frame":
-        """Create fasta file with six reading frames of each sequence"""
-        print("Obtain six reading frames for each query")
-        findORFs.reading_frames_file(samples, results+"query_frames.faa")
-        query = results+"query_frames.faa"
+    if args.moltype == 'protein':
+        print('Analyzing protein sequences')
+        if args.predict == "frame":
+            """Create fasta file with six reading frames of each sequence"""
+            print("Obtain six reading frames for each query")
+            findORFs.reading_frames_file(samples, results+"query_frames.faa")
+            query = results+"query_frames.faa"
+    elif args.moltype == 'dna':
+            print('Analyzing DNA sequences')
+            query = samples
 
     print('Ready to sketch!')
     if os.path.exists(query):
         print("Running sourmash sketch...",time.time())
-        predictORF.sketch(genome, query,kmer_size=kmers,ref_output=results+"ref-genome.sig", query_output=results+"queries.sig.zip")
+        predictORF.sketch(genome, query,kmer_size=kmers,ref_output=results+"ref-genome.sig", query_output=results+"queries.sig.zip",moltype=mltyp,trnslt)
         cmd3 = f"unzip {results}queries.sig.zip" #produces SOURMASH-MANIFEST.csv
         subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
     #if os.path.exists(results+samples):
@@ -65,14 +72,15 @@ def main(args):
         print(os.path.exists(results+"queries.sig.zip"))
         print(os.path.exists(results+"ref-genome.sig"))
 
+    ### The following functions are to evaluate and produce figures for frame prediction analysis
     # report highest and second highest containment index in dictionary pickle file
-    reportCI.produce_containment_csv(wd=results)
-    reportCI.prep(data=results+'results_kmers.csv',output=results+"containment.csv")
-    reportCI.analysis_frame01(data=results+"containment.csv",output=results+"CIdict.pickle")
+    #reportCI.produce_containment_csv(wd=results)
+    #reportCI.prep(data=results+'results_kmers.csv',output=results+"containment.csv")
+    #reportCI.analysis_frame01(data=results+"containment.csv",output=results+"CIdict.pickle")
 
     #create figures of CI analysis
-    figures.CIhist(data=results+"CIdict.pickle",wd=results)
-    figures.CIbox_frame01(input=results+"containment.csv",wd=results)
+    #figures.CIhist(data=results+"CIdict.pickle",wd=results)
+    #figures.CIbox_frame01(input=results+"containment.csv",wd=results)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -134,6 +142,19 @@ if __name__ == "__main__":
     parser.add_argument(
         '--wd',
         help = 'Output files from sourmash program'
+    )
+
+    parser.add_argument(
+        '--moltype',
+        choices = ['protein','dna'],
+        help = 'Indicate if protein or DNA sequences are being used'
+    )
+
+    parser.add_argument(
+        '--translate',
+        default = 'no'
+        choices = ['yes','no'],
+        help = 'Indicate we are translating both ref and query sequences.'
     )
 
     args = parser.parse_args()
