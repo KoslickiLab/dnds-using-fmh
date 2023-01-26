@@ -15,7 +15,7 @@ def get_kmer_argument(kmer_list):
         kmers_arg = kmers[0]
     return(kmers_arg)
 
-def sketch(ref_input, query_input, kmer_size=7,scaledfile1=100, scaledfile2=1, ref_output="ref-genome.sig", query_output="samples.sig.zip", moltype, trnslt):
+def sketch(ref_input, query_input, kmer_size=7,scaledfile1=100, scaledfile2=1, ref_output="ref-genome.sig", query_output="samples.sig.zip", moltype='protein', translate='no'):
     """Function that skatches signatures for refernce genome and sample"""
     kmer_sizes = get_kmer_argument(kmer_size)
 
@@ -23,11 +23,11 @@ def sketch(ref_input, query_input, kmer_size=7,scaledfile1=100, scaledfile2=1, r
         cmd1=f"sourmash sketch translate {ref_input} -p {kmer_sizes},scaled={scaledfile1} -o {ref_output}"
         print(cmd1)
         subprocess.run(cmd1, stdout=subprocess.PIPE, shell=True)
-        if trnslt == 'no':
+        if translate == 'no':
             cmd2=f"sourmash sketch protein {query_input} -p {kmer_sizes},scaled={scaledfile2} --singleton -o {query_output}"
             print(cmd2)
             subprocess.run(cmd2, stdout=subprocess.PIPE, shell=True)
-        if trnslt == 'yes':
+        if translate == 'yes':
             cmd2=f"sourmash sketch translate {query_input} -p {kmer_sizes},scaled={scaledfile2} --singleton -o {query_output}"
             print(cmd2)
             subprocess.run(cmd2, stdout=subprocess.PIPE, shell=True)
@@ -59,12 +59,12 @@ def prefetch(ref_sig, query_sig, kmer_size=7, Tbp=1, wd='data/', OUTPUT_FILENAME
     kmer_sizes = get_kmer_argument(kmer_size).replace("k=","").split(",")
         
     if len(kmer_sizes) > 1:
-        with open("prefetch.txt", 'w', encoding="utf-8") as output:
+        with open(f"{wd}prefetch.txt", 'w', encoding="utf-8") as output:
             for kmer in kmer_sizes:
                 cmd1=f"sourmash prefetch {wd}{ref_sig} {wd}{query_sig} --protein --o {wd}prefetch_res_{kmer}.csv --threshold-bp {Tbp} --ksize {kmer}" 
                 output.write(cmd1+"\n")
             output.close()
-        cmd2c = f"parallel -d '\n' < prefetch.txt"
+        cmd2c = f"parallel -d '\n' < {wd}prefetch.txt"
         subprocess.run(cmd2c, stdout=subprocess.PIPE, shell=True)
     else:
         cmd=f"sourmash prefetch {ref_sig} {query_sig} --protein --o prefetch_res.csv --threshold-bp {Tbp} --ksize {kmer_size}"
