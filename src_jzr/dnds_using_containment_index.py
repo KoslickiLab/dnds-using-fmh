@@ -27,11 +27,7 @@ def main(args):
     #    """The first fasta file does not have open reading frames identified"""
     #    print("Getting ORFs for sample input",time.time())
     #    findORFs.ORFs_file(samples, results+"ORFs_samples.faa")
-    if args.predict == "frames":
-        """The fasta input file does not have open reading frames identified"""
-        findORFs.ORFs_file(genome,results+'ref.faa')
-        findORFs.reading_frames_file(samples,results+'query_frames.faa')
-    elif args.predict == "frame":
+    if args.predict == "frame":
         """Create fasta file with six reading frames of each sequence"""
         print("Obtain six reading frames for each query")
         findORFs.reading_frames_file(samples, results+"query_frames.faa")
