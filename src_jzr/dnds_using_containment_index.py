@@ -43,9 +43,9 @@ def main(args):
     print('Ready to sketch!')
     if os.path.exists(query):
         print("Running sourmash sketch...",time.time())
-        predictORF.sketch(genome, query,kmer_size=kmers,ref_output=results+"ref-genome.sig", query_output=results+"queries.sig.zip",moltype=mltyp,trnslt)
-        cmd3 = f"unzip {results}queries.sig.zip" #produces SOURMASH-MANIFEST.csv
-        subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
+        predictORF.sketch(genome, query,kmer_size=kmers,ref_output=results+"ref-genome.sig", query_output=results+"queries.sig.zip",moltype=mltyp,translate=trnslt)
+        #cmd3 = f"unzip {results}queries.sig.zip" #produces SOURMASH-MANIFEST.csv How do I output to a directory
+        #subprocess.run(cmd3, stdout=subprocess.PIPE, shell=True)
     #if os.path.exists(results+samples):
     #    print("Running sourmash sketch...",time.time())
     #    predictORF.sketch(genome, samples, kmer_size=kmers, scaledfile1=sd1, ref_output=results+"ref-genome.sig", query_output=results+"queries.sig.zip")
@@ -146,13 +146,14 @@ if __name__ == "__main__":
 
     parser.add_argument(
         '--moltype',
+        default = 'protein',
         choices = ['protein','dna'],
         help = 'Indicate if protein or DNA sequences are being used'
     )
 
     parser.add_argument(
         '--translate',
-        default = 'no'
+        default = 'no',
         choices = ['yes','no'],
         help = 'Indicate we are translating both ref and query sequences.'
     )
