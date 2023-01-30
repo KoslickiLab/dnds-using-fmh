@@ -6,7 +6,64 @@ import seaborn as sns
 import warnings
 from matplotlib.pyplot import figure
 
+def CIbox_frames(frame_1data="frame1_CI.csv",frame_xdata="framex_CI.csv",wd="data/"):
+    df1 = pd.read_csv(frame_1data,sep=',').pivot(index='index',columns='ksize')[['max_containment']]
+    df2 = pd.read_csv(frame_xdata,sep=',').pivot(index='index',columns='ksize')[['max_containment']]
+    
+    #box plot #1
 
+    bx_plotvals1, vals1, names1, xs1 = [],[],[],[]
+    for i, col in enumerate(df1.columns):
+        #print(col)
+        vals1.append(df1[col].values)
+        #print(df1[col].values)
+        bx_plotvals1.append(df1[col][~np.isnan(df1[col].values)])
+        names1.append(str(col)+"-mer")
+        xs1.append(np.random.normal(i + 1, 0.04, df1[col].values.shape[0]))  # adds jitter to the data points - can be adjusted
+
+    # box plot #2
+
+    bx_plotvals2, vals2, names2, xs2 = [],[],[], []
+    for i, col in enumerate(df2.columns):
+        vals2.append(df2[col].values)
+        bx_plotvals2.append(df2[col][~np.isnan(df2[col].values)])
+        names2.append(str(col)+"-mer")
+        xs2.append(np.random.normal(i + 1, 0.04, df2[col].values.shape[0]))  # adds jitter to the data points - can be adjusted
+
+    fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(10, 10))
+
+    ##### Set style options here #####
+    sns.set_style("whitegrid")  # "white","dark","darkgrid","ticks"
+    boxprops = dict(linestyle='-', linewidth=1.5, color='black')
+    flierprops = dict(marker='o', markersize=1,
+                  linestyle='none')
+    whiskerprops = dict(color='black')
+    capprops = dict(color='black')
+    medianprops = dict(linewidth=1.5, linestyle='-', color='black')
+
+    bplot1 = ax1.boxplot(bx_plotvals1, labels=names1, notch=False, boxprops=boxprops, whiskerprops=whiskerprops,capprops=capprops, flierprops=flierprops, medianprops=medianprops,showmeans=False)
+
+    bplot2 = ax2.boxplot(bx_plotvals2, labels=names2, notch=False, boxprops=boxprops, whiskerprops=whiskerprops,capprops=capprops, flierprops=flierprops, medianprops=medianprops,showmeans=False)
+
+    palette = ['red', 'gray', 'blue', 'yellow','orange','purple','brown','pink','olive','cyan']
+
+    for xA, xB, valA, valB, c in zip(xs1, xs2, vals1, vals2, palette):
+        ax1.scatter(xA, valA, alpha=0.4, color=c)
+        ax2.scatter(xB, valB, alpha=0.4, color=c)
+
+    sns.set_style("whitegrid")
+    ind = np.arange(11) 
+    for ax in fig.get_axes():
+        ax.grid(visible=None)
+        ax.set_xticks(ticks=ind,labels=['','k7','k14','k21','k28','k35','k42','k49','k56','k63','k70'],fontsize=15)
+        ax.set_ylim(0,1.1)
+
+    fig.suptitle("All Frame 1 vs All Other Frames",fontsize=20)
+    fig.text(0.07,0.5,'Containment Index',ha='center',va='center',rotation='vertical',fontsize=15)
+
+    fig.savefig(wd+"boxplot_frame1_vs_framex.jpeg",bbox_inches='tight')
+
+#depreciated worried this function does not produce desired plot
 def CIbox_frame01(data="dictionary.pickle",wd="data/"):
     with open(data, 'rb') as handle:
         unserialized_data = pickle.load(handle)
@@ -18,9 +75,10 @@ def CIbox_frame01(data="dictionary.pickle",wd="data/"):
     df1 = df1.set_index([df1.index, 'index'])['highest'].unstack()
     df1 = df1.apply(lambda x: pd.Series(x.dropna().values))
 
-    vals1, names1, xs1 = [],[],[]
+    bx_plotvals1, vals1, names1, xs1 = [],[],[], []
     for i, col in enumerate(df1.columns):
         vals1.append(df1[col].values)
+        bx_plotvals1.append(df1[col][~np.isnan(df1[col].values)])
         names1.append(str(col)+"-mer")
         xs1.append(np.random.normal(i + 1, 0.04, df1[col].values.shape[0]))  # adds jitter to the data points - can be adjusted
 
@@ -31,15 +89,26 @@ def CIbox_frame01(data="dictionary.pickle",wd="data/"):
     df2 = df2.set_index([df2.index, 'index'])['2ndhighest'].unstack()
     df2 = df2.apply(lambda x: pd.Series(x.dropna().values))
 
-    vals2, names2, xs2 = [],[],[]
+    bx_plotvals2, vals2, names2, xs2 = [],[],[], []
     for i, col in enumerate(df2.columns):
         vals2.append(df2[col].values)
+        bx_plotvals2.append(df2[col][~np.isnan(df2[col].values)])
         names2.append(str(col)+"-mer")
         xs2.append(np.random.normal(i + 1, 0.04, df2[col].values.shape[0]))  # adds jitter to the data points - can be adjusted
 
     fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, figsize=(10, 10))
-    bplot1 = ax1.boxplot(vals1, labels=names1, notch=False, showmeans=False)
-    bplot2 = ax2.boxplot(vals2, labels=names2, notch=False, showmeans=False)
+
+    ##### Set style options here #####
+    sns.set_style("whitegrid")  # "white","dark","darkgrid","ticks"
+    boxprops = dict(linestyle='-', linewidth=1.5, color='black')
+    flierprops = dict(marker='o', markersize=1,
+                  linestyle='none')
+    whiskerprops = dict(color='black')
+    capprops = dict(color='black')
+    medianprops = dict(linewidth=1.5, linestyle='-', color='black')
+
+    bplot1 = ax1.boxplot(bx_plotvals1, labels=names1, notch=False, showmeans=False)
+    bplot2 = ax2.boxplot(bx_plotvals2, labels=names2, notch=False, showmeans=False)
 
     palette = ['red', 'gray', 'blue', 'yellow','orange','purple','brown','pink','olive','cyan']
 
@@ -62,22 +131,34 @@ def CIbox_frame01(data="dictionary.pickle",wd="data/"):
 def CIboxplots_frames(data="containment.csv",kmers=[7,14,21,28,35,42,49,56,63,70],wd="results/"):
     #produce a figures of all containment indexes by ksizes
     df = pd.read_csv(data,sep=",").pivot(index='Unnamed: 0',columns='ksize')[['max_containment']]
-
-    vals, names, xs = [],[],[]
+    print(df.describe())
+    bx_vals, vals, names, xs = [],[],[], []
     for i, col in enumerate(df.columns):
         vals.append(df[col].values)
+        bx_vals.append(df[col][~np.isnan(df[col].values)])
         names.append(str(col[1])+'mer')
         xs.append(np.random.normal(i + 1, 0.04, df[col].values.shape[0]))  # adds jitter to the data points - can be adjusted
 
     figure(figsize=(20,10),dpi=200)
 
-    plt.boxplot(boxplot_vals, labels=names)
+    ##### Set style options here #####
+    sns.set_style("whitegrid")  # "white","dark","darkgrid","ticks"
+    boxprops = dict(linestyle='-', linewidth=1.5, color='black')
+    flierprops = dict(marker='o', markersize=1,
+                  linestyle='none')
+    whiskerprops = dict(color='black')
+    capprops = dict(color='black')
+    medianprops = dict(linewidth=1.5, linestyle='-', color='black')
+    
+    plt.boxplot(bx_vals, labels=names, notch=False, boxprops=boxprops, whiskerprops=whiskerprops,capprops=capprops, flierprops=flierprops, medianprops=medianprops,showmeans=False)
 
     palette = ['red', 'gray', 'blue', 'yellow','orange','purple','brown','pink','olive','cyan']
 
     for x, val, c in zip(xs, vals, palette):
         plt.scatter(x, val, alpha=0.4, color=c)
-
+    
+    plt.ylabel("Containment Index", fontweight='normal', fontsize=14)
+    plt.title("Containment Index Across K-sizes", fontsize=20,fontweight='normal')
     plt.savefig(wd+"boxplot_all_frames.jpeg",bbox_inches='tight')
 
 def CIbox_wrongORFs(data="dictionary.pickle",wd="data/"):
