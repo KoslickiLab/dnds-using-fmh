@@ -17,7 +17,19 @@ def prep(data,output="containment.csv"):
 
     kmers_data.to_csv(output,encoding='utf-8')
 
-def analysis_frame01(data,output="CIdict_frame01.pickle"):
+def extract_frame1(data="containment.csv",output="frame1_containment.csv"):
+    #Produce csv file of frame 1 containmemt indexes
+    frame1_data = pd.read_csv(data,sep=",").reset_index()
+    frame1_data = frame1_data[frame1_data['frame'] == 'frame_1']
+    frame1_data[['index','max_containment','frame','ksize']].to_csv(output,encoding='utf-8',index=False)
+
+def extract_frameX(data="containment.csv",output="frameX_containment.csv"):
+    #Produce csv file of excluded frame 1 containmemt indexes
+    framex_data = pd.read_csv(data,sep=",").reset_index()
+    framex_data = framex_data[framex_data['frame'] != 'frame_1']
+    framex_data[['index','max_containment','frame','ksize']].to_csv(output,encoding='utf-8',index=False)
+
+def analysis_frame1(data,output="CIdict_frame01.pickle"):
     temp_sample = ''
     ignore_sample=''
     dictionary={}
@@ -27,14 +39,14 @@ def analysis_frame01(data,output="CIdict_frame01.pickle"):
             temp_sample = row["query"]
             if row["ksize"] not in dictionary:
                 dictionary[row['ksize']] = {'highest':[],'2ndhighest':[]}
-                if row['frame'] == 'frame_01': 
+                if row['frame'] == 'frame_1': 
                     dictionary[row['ksize']]['highest'].append(row['max_containment'])
                 else:
                     if ignore_sample != temp_sample:
                         dictionary[row['ksize']]['2ndhighest'].append(row['max_containment'])
                         ignore_sample=temp_sample
             elif row["ksize"] in dictionary:
-                if row['frame'] == 'frame_01': 
+                if row['frame'] == 'frame_1': 
                     dictionary[row['ksize']]['highest'].append(row['max_containment'])
                 else:
                     if ignore_sample != temp_sample:
@@ -43,12 +55,53 @@ def analysis_frame01(data,output="CIdict_frame01.pickle"):
         elif temp_sample==row["query"]:
             if row["ksize"] not in dictionary:
                 dictionary[row['ksize']] = {'highest':[],'2ndhighest':[]}
-                if row['frame'] == 'frame_01': 
+                if row['frame'] == 'frame_1': 
                     dictionary[row['ksize']]['highest'].append(row['max_containment'])
                 else:
                     dictionary[row['ksize']]['2ndhighest'].append(row['max_containment'])
             elif row["ksize"] in dictionary:
-                if row['frame'] == 'frame_01': 
+                if row['frame'] == 'frame_1': 
+                    dictionary[row['ksize']]['highest'].append(row['max_containment'])
+                else:
+                    if ignore_sample != temp_sample:
+                        dictionary[row['ksize']]['2ndhighest'].append(row['max_containment'])
+                        ignore_sample=temp_sample
+
+    with open(output, 'wb') as handle:
+        pickle.dump(dictionary, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+def analysis_frame1(data,output="CIdict_frame01.pickle"):
+    temp_sample = ''
+    ignore_sample=''
+    dictionary={}
+    kmers_data = pd.read_csv(data,sep=",")
+    for index, row in kmers_data.iterrows():
+        if temp_sample!=row["query"]:
+            temp_sample = row["query"]
+            if row["ksize"] not in dictionary:
+                dictionary[row['ksize']] = {'highest':[],'2ndhighest':[]}
+                if row['frame'] == 'frame_1': 
+                    dictionary[row['ksize']]['highest'].append(row['max_containment'])
+                else:
+                    if ignore_sample != temp_sample:
+                        dictionary[row['ksize']]['2ndhighest'].append(row['max_containment'])
+                        ignore_sample=temp_sample
+            elif row["ksize"] in dictionary:
+                if row['frame'] == 'frame_1': 
+                    dictionary[row['ksize']]['highest'].append(row['max_containment'])
+                else:
+                    if ignore_sample != temp_sample:
+                        dictionary[row['ksize']]['2ndhighest'].append(row['max_containment'])
+                        ignore_sample=temp_sample
+        elif temp_sample==row["query"]:
+            if row["ksize"] not in dictionary:
+                dictionary[row['ksize']] = {'highest':[],'2ndhighest':[]}
+                if row['frame'] == 'frame_1': 
+                    dictionary[row['ksize']]['highest'].append(row['max_containment'])
+                else:
+                    dictionary[row['ksize']]['2ndhighest'].append(row['max_containment'])
+            elif row["ksize"] in dictionary:
+                if row['frame'] == 'frame_1': 
                     dictionary[row['ksize']]['highest'].append(row['max_containment'])
                 else:
                     if ignore_sample != temp_sample:
