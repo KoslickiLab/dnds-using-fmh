@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 import warnings
+from matplotlib.pyplot import figure
+
 
 def CIbox_frame01(data="dictionary.pickle",wd="data/"):
     with open(data, 'rb') as handle:
@@ -57,6 +59,27 @@ def CIbox_frame01(data="dictionary.pickle",wd="data/"):
 
     fig.savefig(wd+"boxplot.jpeg",bbox_inches='tight')
 
+def CIboxplots_frames(data="containment.csv",kmers=[7,14,21,28,35,42,49,56,63,70],wd="results/"):
+    #produce a figures of all containment indexes by ksizes
+    df = pd.read_csv(data,sep=",").pivot(index='Unnamed: 0',columns='ksize')[['max_containment']]
+
+    vals, names, xs = [],[],[]
+    for i, col in enumerate(df.columns):
+        vals.append(df[col].values)
+        names.append(str(col[1])+'mer')
+        xs.append(np.random.normal(i + 1, 0.04, df[col].values.shape[0]))  # adds jitter to the data points - can be adjusted
+
+    figure(figsize=(20,10),dpi=200)
+
+    plt.boxplot(boxplot_vals, labels=names)
+
+    palette = ['red', 'gray', 'blue', 'yellow','orange','purple','brown','pink','olive','cyan']
+
+    for x, val, c in zip(xs, vals, palette):
+        plt.scatter(x, val, alpha=0.4, color=c)
+
+    plt.savefig(wd+"boxplot_all_frames.jpeg",bbox_inches='tight')
+
 def CIbox_wrongORFs(data="dictionary.pickle",wd="data/"):
     with open(data, 'rb') as handle:
         unserialized_data = pickle.load(handle)
@@ -72,8 +95,15 @@ def CIbox_wrongORFs(data="dictionary.pickle",wd="data/"):
     #df1 = df1.set_index([df1.index, 'index'])['highest'].unstack()
     #df1 = df1.apply(lambda x: pd.Series(x.dropna().values))
 
-def CIhist(input="containment.csv",kmers=[7,14,21,28,35,42,49,56,63,70],wd="results/"):
-    data = pd.read_csv(input,sep=",")
+def CIhist(data="containment.csv",kmers=[7,14,21,28,35,42,49,56,63,70],wd="results/"):
+    #with open(data_input) as f:
+    #    print(f)
+    data = pd.read_csv(data,sep=",")
+    print(data.describe())
+    #data = pd.read_csv(data_input,encoding_errors='ignore')
+    print('hi')
+    print(data)
+    print('hi')
 
     def frame(x):
         return(x[-7:])
@@ -90,6 +120,9 @@ def CIhist(input="containment.csv",kmers=[7,14,21,28,35,42,49,56,63,70],wd="resu
         df["ksize"] = pd.to_numeric(df["ksize"])
         df = df.sort_values(by=['query', "ksize", "max_containment"],ascending=False)
         df = df.groupby(["query","ksize"]).head(1).reset_index(drop=True)
+        print(df.describe())
+        print(df['frame'].value_counts())
+        print(df['frame'].value_counts()[0])
         frame_1_containment = df['frame'].value_counts()[0]
 
         if i < 21: #kmers 21 and above report only containment index of 1
