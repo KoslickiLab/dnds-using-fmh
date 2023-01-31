@@ -13,15 +13,21 @@ ref_output=${wd}ref.sig
 samp_output=${wd}query.sig.zip
 ref_scaled=1
 samp_scaled=1
-tbp=1
+#K=7
 
-sourmash sketch protein -p k=7,k=14,k=21,k=28,k=35,k=42,k=49,k=56,k=63,k=70,scaled=$ref_scaled $ref -o $ref_output
+#Input are protein sequences
+#sourmash sketch protein -p k=7,k=14,k=21,k=28,k=35,k=42,k=49,k=56,k=63,k=70,scaled=$ref_scaled $ref -o $ref_output
+#sourmash sketch protein -p k=7,k=14,k=21,k=28,k=35,k=42,k=49,k=56,k=63,k=70,scaled=$samp_scaled $samples --singleton -o $samp_output
 
-sourmash sketch protein -p k=7,k=14,k=21,k=28,k=35,k=42,k=49,k=56,k=63,k=70,scaled=$samp_scaled $samples --singleton -o $samp_output
+#Input are DNA sequences
+sourmash sketch translate -p k=7,k=14,k=21,k=28,k=35,k=42,k=49,k=56,k=63,k=70,scaled=$ref_scaled $ref -o $ref_output
+sourmash sketch translate -p k=7,k=14,k=21,k=28,k=35,k=42,k=49,k=56,k=63,k=70,scaled=$samp_scaled $samples --singleton -o $samp_output
+
+#nohup sourmash compare $ref_output $samp_output --containment --protein --o ${wd}compare${K}.mat --csv ${wd}compare${K}.csv  --ksize $K > ${wd}compare${K}.txt 2>&1 &
 
 for K in 7 14 21 28 35 42 49 56 62 70 
 do
 
-    nohup sourmash compare $ref_output $samp_output --containment --protein --o ${wd}compare${K}.mat --ksize $K > ${wd}compare${K}.txt 2>&1 & #assign to diff log files
+    nohup sourmash compare $ref_output $samp_output --containment --protein --o ${wd}compare${K}.mat --csv ${wd}compare${K}.csv --ksize $K > ${wd}compare${K}.txt 2>&1 & #assign to diff log files
 
 done
