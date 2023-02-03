@@ -1,7 +1,7 @@
 import pytest
 import unittest
 
-from dNdS.dNdS import calc_Pnt, calc_PdN, calc_nomutation, calc_PdS, dNdS_ratio
+from dNdS.reportdNdS import calc_Pnt, calc_PdN, calc_nomutation, calc_PdS, dNdS_ratio
 
 def test_calc_Pnt():
     """Test calculation for P_nt"""
@@ -21,5 +21,4 @@ def test_calc_PdS():
 
 def test_dNdS_ratio():
     """Test calculation for dN/dS ratio using containment indexes"""
-    assert dNdS_ratio(0,0,7) == 1 
-
+    assert dNdS_ratio(0,0,7) == 1
