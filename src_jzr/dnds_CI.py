@@ -15,7 +15,6 @@ def main(args):
     output = args.o
 
     ### Obtain containment from matrix files produced by sourmash compare
-    print(nt_compare)
     nt_df = reportCI.grab_containment_from_mat(mat_df=nt_compare,ksize=ksize)
     protein_df = reportCI.grab_containment_from_mat(mat_df=protein_compare,ksize=ksize)
 
