@@ -21,13 +21,15 @@ def extract_frame1(data="containment.csv",output="frame1_containment.csv"):
     #Produce csv file of frame 1 containmemt indexes
     frame1_data = pd.read_csv(data,sep=",").reset_index()
     frame1_data = frame1_data[frame1_data['frame'] == 'frame_1']
-    frame1_data[['index','max_containment','frame','ksize']].to_csv(output,encoding='utf-8',index=False)
+#    frame1_data[['index','max_containment','frame','ksize']].to_csv(output,encoding='utf-8',index=False) #columns based off of prefetch results
+    frame1_data[['index','containment','frame','ksize']].to_csv(output,encoding='utf-8',index=False)
 
 def extract_frameX(data="containment.csv",output="frameX_containment.csv"):
     #Produce csv file of excluded frame 1 containmemt indexes
     framex_data = pd.read_csv(data,sep=",").reset_index()
     framex_data = framex_data[framex_data['frame'] != 'frame_1']
-    framex_data[['index','max_containment','frame','ksize']].to_csv(output,encoding='utf-8',index=False)
+#    framex_data[['index','max_containment','frame','ksize']].to_csv(output,encoding='utf-8',index=False) #columns based off of prefetch results
+    framex_data[['index','containment','frame','ksize']].to_csv(output,encoding='utf-8',index=False)
 
 def analysis_frame1(data,output="CIdict_frame01.pickle"):
     temp_sample = ''
