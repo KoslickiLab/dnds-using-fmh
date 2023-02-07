@@ -1,8 +1,8 @@
 #!/bin/bash
 set -eoux pipefail
 
-ref=../../data/uniprotkb.fasta
-samples=../../data/query_frames.faa #found in /data/jzr5814/data/frame_analysis_using_bash_script
+ref=/data/jzr5814/data/uniprotkb.fasta
+samples=/data/jzr5814/data/frame_analysis_using_bash_script/query_frames.faa #found in /data/jzr5814/data/frame_analysis_using_bash_script
 ref_scaled=100
 samp_scaled=1
 wd=/data/jzr5814/data/frame_analysis_using_bash_script/compare_by_multiple_jobs/test2/
