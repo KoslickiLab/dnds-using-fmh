@@ -6,9 +6,11 @@ import seaborn as sns
 import warnings
 from matplotlib.pyplot import figure
 
-def CIbox_frames(frame_1data="frame1_CI.csv",frame_xdata="framex_CI.csv",wd="data/"):
-    df1 = pd.read_csv(frame_1data,sep=',').pivot(index='index',columns='ksize')[['max_containment']]
-    df2 = pd.read_csv(frame_xdata,sep=',').pivot(index='index',columns='ksize')[['max_containment']]
+def CIbox_frames(frame_1data="frame1_CI.csv",frame_xdata="framex_CI.csv",wd="data/",output='boxplot_frame1_vs_framex.jpeg'):
+#    df1 = pd.read_csv(frame_1data,sep=',').pivot(index='index',columns='ksize')[['max_containment']] #columns based off of prefetch results
+#    df2 = pd.read_csv(frame_xdata,sep=',').pivot(index='index',columns='ksize')[['max_containment']] #columns based off of prefetch results
+    df1 = pd.read_csv(frame_1data,sep=',').pivot(index='index',columns='ksize')[['containment']]
+    df2 = pd.read_csv(frame_xdata,sep=',').pivot(index='index',columns='ksize')[['containment']]
     
     #box plot #1
 
@@ -58,10 +60,10 @@ def CIbox_frames(frame_1data="frame1_CI.csv",frame_xdata="framex_CI.csv",wd="dat
         ax.set_xticks(ticks=ind,labels=['','k7','k14','k21','k28','k35','k42','k49','k56','k63','k70'],fontsize=15)
         ax.set_ylim(0,1.1)
 
-    fig.suptitle("All Frame 1 vs All Other Frames",fontsize=20)
+    fig.suptitle("All Frame 1 Containment Indexes vs \n Second Highest Containment Index",fontsize=20)
     fig.text(0.07,0.5,'Containment Index',ha='center',va='center',rotation='vertical',fontsize=15)
 
-    fig.savefig(wd+"boxplot_frame1_vs_framex.jpeg",bbox_inches='tight')
+    fig.savefig(wd+output,bbox_inches='tight')
 
 #depreciated worried this function does not produce desired plot
 def CIbox_frame01(data="dictionary.pickle",wd="data/"):
@@ -130,7 +132,7 @@ def CIbox_frame01(data="dictionary.pickle",wd="data/"):
 
 def CIboxplots_frames(data="containment.csv",kmers=[7,14,21,28,35,42,49,56,63,70],wd="results/"):
     #produce a figures of all containment indexes by ksizes
-    df = pd.read_csv(data,sep=",").pivot(index='Unnamed: 0',columns='ksize')[['max_containment']]
+    df = pd.read_csv(data,sep=",").pivot(index='Unnamed: 0',columns='ksize')[['max_containment']] 
     print(df.describe())
     bx_vals, vals, names, xs = [],[],[], []
     for i, col in enumerate(df.columns):
