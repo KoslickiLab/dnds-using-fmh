@@ -2,13 +2,11 @@
 """New approach to estimaating dN/dS ratio of metagenomic data"""
 
 import argparse, time, os, subprocess
-#from django.urls import path 
-#from dNdS import findORFs, predictORF, estimatedNdS, reportCI
 from dNdS import reportCI,reportdNdS
 
 def main(args):
-    """MVC Controller for metagenomic dN/dS estimation"""
 
+    ###Arguments
     nt_compare = args.nt
     protein_compare = args.protein
     ksize = args.k
@@ -26,28 +24,32 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description = 'dN/dS estimator for metagenomic data using the containment index between k-mers sets of genomic samples'
+        description = 'dN/dS estimator for metagenomic data using the containment index between k-mer sets of genomic samples'
     )
 
     parser.add_argument(
         '--k',
         type=int,
-        help = 'Output files from sourmash program'
+        help = 'Identify the ksize used to produce containment indexes between two sequences.\
+        ksize is required to be the same used in both the containment indexes calculated for nucleotide and protein sequences.'
     )
 
     parser.add_argument(
         '--nt',
-        help = 'input nt csv file'
+        help = 'Input of nucleotide compare.csv file.\
+        This file is a pairwise matrix produced from sourmash compare that includes containment indexes between nucleotide sequences.'
     )
 
     parser.add_argument(
         '--protein',
-        help = 'Input protein csv file'
+        help = 'Input of protein compare.csv file.\
+        This file is a pairwise matrix produced from sourmash compare that includes containment indexes between protein sequences.'
     )
 
     parser.add_argument(
     '--o',
-    help = 'Output csv file with dNdS estimates'
+    help = 'Output CSV file with dN/dS ratio estimates between sequences evaluated. The CSV file reports sequence A, sequence B,\
+    ksize, and containment index'
     )
 
     args = parser.parse_args()
