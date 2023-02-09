@@ -14,6 +14,6 @@ protein_containment=${prot_compare_wd}'compare'${k}'.csv'
 
 out=${wd}'dNdS_'${k}.csv
 
-nohup python3 /data/jzr5814/dnds-using-fmh/src_jzr/dnds_CI.py --nt ${nt_containment} --protein ${protein_containment} --k ${k} --o ${out} > ${wd}dnds_CI_log.txt 2>&1 &
+nohup python3 dnds_CI.py --nt ${nt_containment} --protein ${protein_containment} --k ${k} --o ${out} > ${wd}dnds_CI_log.txt 2>&1 &
 
 done
