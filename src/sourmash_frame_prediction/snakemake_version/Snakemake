@@ -1,14 +1,40 @@
-#sourmash sketch ref
-rule sketch_ref: #recipe
+#snakemake file to evaluate minhash frame prediction using sourmash compare
+
+KSIZES='k=7,k=14,k=21,k=28,k=35,k=42,k=49,k=56,k=63,k=70'
+WD=''
+DATA_DIRECTORY='/data/jzr5814/sourmash_frame_prediction/data/'
+CMD='sourmash sketch protein'
+
+#obtain six reading frames from nt sequences
+rule get_six_reading_frames:
     input:
-    output:
-    shell:
+        cmd='python3 scripts/frame_analysis.py',
+        fna_file=DATA_DIRECTORY+'500_sequences.fna',
+        wd=WD
+    output: WD+'query_frames.faa'
+    shell: 'nohup {cnd} --query_fasta {fna_file} --output {output} --wd {wd} > {wd}get_six_reading_frames_log.txt 2>&1 &'
+
+#sourmash sketch ref
+rule sketch_protein_ref: #recipe
+    input:
+        cmd=CMD,
+        ksizes=KSIZES,
+        scale='100',
+        ref=DATA_DIRECTORY+'uniprotkb.fasta',
+        wd=WD
+    output: WD+'uniprotkb.sig'
+    shell: 'nohup {cmd} -p {input.ksizes},scaled={input.scale} {input.ref} -o {output} > {wd}sketch_ref_log.txt 2>&1 &'
 
 #sourmash sketch query
-rule sketch_query:
-#    input:
-#    output:
-    shell: 'nohup bash bash/sketch_job.sh > sketch_log.txt 2>&1 &'
+rule sketch_protein_query:
+    input:
+        cmd=CMD,
+        ksizes=KSIZES,
+        scale='1',
+        query='query_frames.faa',
+        wd=WD
+    output: WD+'query_frames.sig.zip'
+    shell: 'nohup {cmd} -p {input.ksizes},scaled={input.scale} {wd}{input.query} --singleton -o {output} > {wd}sketch_protein_log.txt 2>&1 &'
 
 #sourmash compare
 rule containment_compare:
