@@ -4,7 +4,7 @@
 import argparse, time, os, subprocess
 #from django.urls import path 
 #from dNdS import findORFs, predictORF, estimatedNdS, reportCI
-from dNdS import reportCI,figures
+from frame_predict import findORfs,reportCI,figures
 
 def main(args):
     """MVC Controller for metagenomic dN/dS estimation
@@ -15,6 +15,9 @@ def main(args):
     """
 
     results = args.wd
+
+    ###Create frame .faa file
+
 
     ### The following functions are to evaluate and produce figures for frame prediction analysis
     
@@ -29,7 +32,7 @@ def main(args):
 
     #create figures of CI analysis
     #figures.CIbox_frames(frame_1data=results+"frame1_CI.csv",frame_xdata=results+"framex_CI.csv",wd=results) #all other frames not 1
-    figures.CIbox_frames(frame_1data=results+"frame1_CI.csv",frame_xdata=results+"second_highest_containment.csv",wd=results,output='boxplot_frame1_vs_second_highest.jpeg') #second highest
+    #figures.CIbox_frames(frame_1data=results+"frame1_CI.csv",frame_xdata=results+"second_highest_containment.csv",wd=results,output='boxplot_frame1_vs_second_highest.jpeg') #second highest
     #figures.CIhist(data=results+"containment.csv",wd=results)
     #figures.CIboxplots_frames(data=results+"containment.csv",wd=results)
 
@@ -44,11 +47,11 @@ if __name__ == "__main__":
     #    help = 'First fasta file used for dN/dS estimation'
     #)
 
-    #parser.add_argument(
-    #    '--query_fasta',
-    #    type = str,
-    #    help = 'Second fasta file used for dN/dS estimation'
-    #)
+    parser.add_argument(
+        '--query_fasta',
+        type = str,
+        help = 'Second fasta file used for dN/dS estimation'
+    )
 
     #parser.add_argument(
     #    '--predict',
@@ -84,11 +87,11 @@ if __name__ == "__main__":
     #    help = 'threshold-bp, a parameter used in Sourmash prefetch'
     #)
 
-    #parser.add_argument(
-    #    '--output',
-    #    default = 'dNdS_estimates.txt',
-    #    help = 'Output file name for dN/dS report'
-    #)
+    parser.add_argument(
+        '--output',
+        default = 'dNdS_estimates.txt',
+        help = 'Output file name for dN/dS report'
+    )
 
     parser.add_argument(
         '--wd',
