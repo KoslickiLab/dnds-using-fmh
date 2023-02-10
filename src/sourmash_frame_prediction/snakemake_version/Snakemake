@@ -1,0 +1,30 @@
+#sourmash sketch ref
+rule sketch_ref: #recipe
+    input:
+    output:
+    shell:
+
+#sourmash sketch query
+rule sketch_query:
+#    input:
+#    output:
+    shell: 'nohup bash bash/sketch_job.sh > sketch_log.txt 2>&1 &'
+
+#sourmash compare
+rule containment_compare:
+#    input:
+#    output:
+    shell: 'nohup bash bash/compare_job.sh > compare_log.txt 2>&1 &'
+
+#Obtain containment.csv
+rule grab_containment:
+#    input:
+#    output:
+    shell: ''
+
+#Figure Production
+rule histogram:
+    input:
+    output:
+    shell:
+
