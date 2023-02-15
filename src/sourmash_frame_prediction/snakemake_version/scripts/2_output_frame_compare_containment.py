@@ -12,9 +12,9 @@ def main(args):
     #Getting containment index that we are interested in. Containment index obtained from comparing all queries to the reference
     for ksize in ksizes:
         """Extract containment indexes from matrix for each ksize sourmash comapre result"""
-        df=prep_df_for_compare_containment_Ksize(wd+'compare'+str(ksize)+'.csv',ksize) #extract containment indexes from matrix for each ksize sourmash comapre result
+        df=report_containment.prep_df_for_compare_containment_Ksize(compare_K_csv_file=wd+'compare'+str(ksize)+'.csv',ksize=ksize) #extract containment indexes from matrix for each ksize sourmash comapre result
         df.to_csv(wd+'compare_containment'+str(ksize)+'.csv',sep=',') 
-        df_2nd_highest=report_df_of_second_highest_containment_indexes(wd+'compare_containment'+str(ksize)+'.csv')
+        df_2nd_highest=report_containment.report_df_of_second_highest_containment_indexes(ksize=ksize,data=wd+'compare_containment'+str(ksize)+'.csv')
         df_2nd_highest.to_csv(wd+'second_highest_containment'+str(ksize)+'.csv')
 
     cmd = f"awk '(NR == 1) || (FNR > 1)' {wd}compare_containment*.csv | grep -v 'uniprotkb.fasta' > {wd}containment.csv"
@@ -24,16 +24,12 @@ def main(args):
     subprocess.run(cmd1, stdout=subprocess.PIPE, shell=True)
 
     #### report CI for frames 1
-    frame_1_csv=extract_frame1(wd+"containment.csv",{wd}+"frame1_containment.csv")
-    frame_1_csv.to_csv(output,encoding='utf-8',index=False)
+    frame_1_csv=report_containment.report_df_of_frame1(wd+"containment.csv")
+    frame_1_csv.to_csv(wd+"frame1_containment.csv",encoding='utf-8',index=False)
 
     #### report CI for all other frames
-    frame_X_csv=extract_frameX(wd+"containment.csv",{wd}+"frameX_containment.csv")
-    frame_X_csv.to_csv('frameX_containment.csv',encoding='utf-8',index=False)
-
-    #create figures of CI analysis
-    figures.CIbox_frames(frame_1data=wd+"frame1_CI.csv",frame_xdata=wd+"framex_CI.csv",output=wd+'boxplot_frame1_and_all_other_frames.jpeg') #all other frames not 1
-    figures.CIbox_frames(frame_1data=wd+"frame1_CI.csv",frame_xdata=wd+"second_highest_containment.csv",output=wd+'boxplot_frame1_and_second_highest.jpeg') #second highes
+    frame_X_csv=report_containment.report_df_of_frameX(wd+"containment.csv")
+    frame_X_csv.to_csv(wd+'frameX_containment.csv',encoding='utf-8',index=False)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description = 'Anayze whether using minhash containment index via Sourmash propgram can accurately predict the correct reading frame') 
