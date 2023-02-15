@@ -1,7 +1,7 @@
 import pandas as pd
 import csv
 import os, glob, subprocess, argparse
-from frame_analysis import report_containment
+from frame_predict import report_containment
 
 def main(args):
     #wd = '/data/jzr5814/data/frame_analysis_using_bash_script/compare_by_multiple_jobs/test1/'
