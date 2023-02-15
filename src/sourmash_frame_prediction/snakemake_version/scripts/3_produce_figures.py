@@ -1,7 +1,7 @@
 import pandas as pd
 import csv
 import os, glob, subprocess, argparse
-from frame_analysis import figures
+from frame_predict import figures
 
 def main(args):
 
