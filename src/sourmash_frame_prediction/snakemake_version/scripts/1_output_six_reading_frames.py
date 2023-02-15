@@ -4,7 +4,7 @@
 import argparse, time, os, subprocess
 #from django.urls import path 
 #from dNdS import findORFs, predictORF, estimatedNdS, reportCI
-from frame_predict import findORfs,reportCI,figures
+from frame_predict import findORFs
 
 def main(args):
     """arguments"""
