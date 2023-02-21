@@ -1,0 +1,121 @@
+#snakemake file to evaluate minhash frame prediction using sourmash compare
+import glob
+import os
+
+WD='/data/jzr5814/sourmash_frame_prediction/snakemake_results/'
+DATA_DIRECTORY='/data/jzr5814/sourmash_frame_prediction/data/'
+ksizes_list = ["7", "14", "21","28","35","42","49","56","63","70"]
+REF_SIG=WD+'uniprotkb.sig'
+QUERY_SIG=WD+'query_frames.sig.zip'
+REF_FAA_FILE=DATA_DIRECTORY+'uniprotkb.fasta'
+#REF_FAA_FILE=DATA_DIRECTORY+'uniprotkb50.fasta'
+QUERY_FNA_FILE=DATA_DIRECTORY+'500_sequences.fna'
+#QUERY_FNA_FILE=DATA_DIRECTORY+'5_nt_sequences.fna'
+
+#rule to make sure all files are created when running snakemake
+rule all:
+    input: 
+        WD+'query_frames.faa',
+        WD+'sketch_sigs_parallel_job.txt',
+        WD+'uniprotkb.sig',
+        WD+'query_frames.sig.zip',
+        expand(WD+"compare{imat}.csv",imat = ksizes_list),
+        WD+"second_highest_containment.csv",
+        WD+"frame1_containment.csv",
+        WD+"frameX_containment.csv",
+        WD+'boxplot_frame1_and_all_other_frames.jpeg',
+        WD+'boxplot_frame1_and_second_highest.jpeg'
+
+#obtain six reading frames from nt sequences
+rule get_six_reading_frames:
+    input:
+        cmd='/data/jzr5814/repositories/dnds-using-fmh/src/sourmash_frame_prediction/snakemake_version/scripts/1_output_six_reading_frames.py',
+        fna_file=QUERY_FNA_FILE
+    output: WD+'query_frames.faa'
+    log: WD+"get_six_reading_frames_log"
+    shell: 'python3 {input.cmd} --nucleotide_fasta {input.fna_file} --output {output}'
+
+#sourmash sketch ref
+#rule sketch_protein_ref: #recipe
+#    input:
+#        ref=REF_FAA_FILE,
+    #output: WD+'uniprotkb.sig'
+    ##threads: 8
+    #group: 'sketching'
+    #log: WD+"sketch_protein_ref_log"
+    #shell: 'sourmash sketch protein -p k=7,k=14,k=21,k=28,k=35,k=42,k=49,k=56,k=63,k=70,scaled=100 {input.ref} -o {output}'
+
+#sourmash sketch query
+#rule sketch_protein_query:
+    #input:
+        #query=WD+'query_frames.faa',
+    #output: WD+'query_frames.sig.zip'
+    ##threads: 8
+    ##group: 'sketching'
+    #log: WD+"sketch_protein_query_log"
+    #shell: 'sourmash sketch protein -p k=7,k=14,k=21,k=28,k=35,k=42,k=49,k=56,k=63,k=70,scaled=1 {input.query} --singleton -o {output}'
+
+#sourmash sketch ref
+rule get_sketch_signatures_job_file: #recipe
+    input:
+        ref=REF_FAA_FILE,
+        query=WD+'query_frames.faa'
+    output: 
+        job=WD+'sketch_sigs_parallel_job.txt'
+    log: WD+''
+    run:
+        shell('echo "sourmash sketch protein -p k=7,k=14,k=21,k=28,k=35,k=42,k=49,k=56,k=63,k=70,scaled=100 {input.ref} -o '+REF_SIG+'" > '+WD+'sketch_sigs_parallel_job.txt')
+        shell('echo "sourmash sketch protein -p k=7,k=14,k=21,k=28,k=35,k=42,k=49,k=56,k=63,k=70,scaled=1 {input.query} --singleton -o '+QUERY_SIG+'" >> '+WD+'sketch_sigs_parallel_job.txt')
+
+rule get_file_for_sketch_parallel_job:
+    input:WD+'sketch_sigs_parallel_job.txt'
+    output:
+        ref_sig=WD+'uniprotkb.sig',
+        query_sig=WD+'query_frames.sig.zip' 
+    log: WD+'get_file_for_sketch_parallel_job_log'
+    shell: 'parallel -j 2 < {input}'
+
+#sourmash compare
+rule containment_compare:
+    input:
+        ref_sig=WD+'uniprotkb.sig',
+        query_sig=WD+'query_frames.sig.zip'
+    output: WD+"compare{imat}.csv"
+    log: WD+"containment_compare_log_{imat}"
+    shell: 'sourmash compare {input.ref_sig} {input.query_sig} --containment --protein --o '+WD+"compare{wildcards.imat}.mat" + ' --csv '+WD+"compare{wildcards.imat}.csv --ksize {wildcards.imat}"
+
+#Obtain containment.csv
+rule grab_containment:
+    input:
+        cmd='/data/jzr5814/repositories/dnds-using-fmh/src/sourmash_frame_prediction/snakemake_version/scripts/2_output_frame_compare_containment.py',
+        csv_files=expand(WD+"compare{imat}.csv",imat = ksizes_list)
+    output:
+        second_highest_containment=WD+"second_highest_containment.csv",
+        frame_1_containment=WD+"frame1_containment.csv",
+        frame_x_containment=WD+"frameX_containment.csv"
+    log: WD+"grab_containment_log"
+    shell: 'python3 {input.cmd} --ksizes 7,14,21,28,35,42,49,56,63,70 --wd '+WD
+
+#Figure Productions
+rule histogram_for_all_frames:
+    input:
+        cmd='/data/jzr5814/repositories/dnds-using-fmh/src/sourmash_frame_prediction/snakemake_version/scripts/3_produce_figures.py',
+        frame_1_containment=WD+"frame1_containment.csv",
+        frame_x_containment=WD+"frameX_containment.csv",
+    output: WD+'boxplot_frame1_and_all_other_frames.jpeg'
+    group: 'figure group'
+    log: WD+"histogram_for_all_frames_log"
+    shell: 'python3 {input.cmd} --frame_1data {input.frame_1_containment} --frame_Xdata {input.frame_x_containment} --output {output}'
+
+rule histogram_for_2nd_highest_containment:
+    input:
+        cmd='/data/jzr5814/repositories/dnds-using-fmh/src/sourmash_frame_prediction/snakemake_version/scripts/3_produce_figures.py',
+        frame_1_containment=WD+"frame1_containment.csv",
+        second_highest_containment=WD+"second_highest_containment.csv"
+    output: WD+'boxplot_frame1_and_second_highest.jpeg'
+    group: 'figure group'
+    log: WD+"histogram_for_2nd_highest_containment_log"
+    shell: 'python3 {input.cmd} --frame_1data {input.frame_1_containment} --frame_Xdata {input.second_highest_containment} --output {output}'
+
+rule clean:
+    shell: "rm -f "+WD+"*"

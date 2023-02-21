@@ -1,0 +1,3 @@
+To clean: time snakemake --cores 1 clean
+To run: time snakemake --cores 16
+nohup time snakemake --cores 16 > /data/jzr5814/sourmash_frame_prediction/snakemake_results/snakemake_log.txt 2>&1 &

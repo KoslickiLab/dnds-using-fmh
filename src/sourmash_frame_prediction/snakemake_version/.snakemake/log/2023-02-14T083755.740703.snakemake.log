@@ -1,0 +1,6 @@
+Building DAG of jobs...
+MissingInputException in rule get_six_reading_frames in file /data/jzr5814/repositories/dnds-using-fmh/src/sourmash_frame_prediction/snakemake_version/Snakefile, line 9:
+Missing input files for rule get_six_reading_frames:
+    output: /data/jzr5814/sourmash_frame_prediction/snakemake_test/query_frames.faa
+    affected files:
+        python3 /data/jzr5814/repositories/dnds-using-fmh/src/sourmash_frame_prediction/snakemake_version/scripts/1_output_six_reading_frames.py
