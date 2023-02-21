@@ -2,7 +2,7 @@
 """New approach to estimaating dN/dS ratio of metagenomic data"""
 
 import argparse, time, os, subprocess
-from dNdS import reportCI,reportdNdS
+from dNdS import reportCI,CfracdNdS
 
 def main(args):
 
