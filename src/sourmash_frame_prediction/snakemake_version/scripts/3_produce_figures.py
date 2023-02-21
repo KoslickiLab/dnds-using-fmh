@@ -5,11 +5,12 @@ from frame_predict import figures
 
 def main(args):
 
+    #arguments
     frame1_input=args.frame_1data
     frame2_input=args.frame_Xdata
     output = args.output #working directory where output will go
 
-    #create figures of CI analysis
+    #create boxplot figures of CI analysis
     figures.CIbox_frames(frame_1data=frame1_input,frame_xdata=frame2_input,output=output) #all other frames not 1
 
 if __name__ == "__main__":
