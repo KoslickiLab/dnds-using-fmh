@@ -1,0 +1,32 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job stats:
+job                       count    min threads    max threads
+----------------------  -------  -------------  -------------
+get_six_reading_frames        1              1              1
+total                         1              1              1
+
+Select jobs to execute...
+
+[Tue Feb 14 08:41:29 2023]
+rule get_six_reading_frames:
+    input: /data/jzr5814/repositories/dnds-using-fmh/src/sourmash_frame_prediction/snakemake_version/scripts/1_output_six_reading_frames.py, /data/jzr5814/sourmash_frame_prediction/data/500_sequences.fna
+    output: /data/jzr5814/sourmash_frame_prediction/snakemake_test/query_frames.faa
+    jobid: 0
+    reason: Missing output files: /data/jzr5814/sourmash_frame_prediction/snakemake_test/query_frames.faa
+    resources: tmpdir=/tmp
+
+[Tue Feb 14 08:41:29 2023]
+Error in rule get_six_reading_frames:
+    jobid: 0
+    input: /data/jzr5814/repositories/dnds-using-fmh/src/sourmash_frame_prediction/snakemake_version/scripts/1_output_six_reading_frames.py, /data/jzr5814/sourmash_frame_prediction/data/500_sequences.fna
+    output: /data/jzr5814/sourmash_frame_prediction/snakemake_test/query_frames.faa
+    shell:
+        python3 /data/jzr5814/repositories/dnds-using-fmh/src/sourmash_frame_prediction/snakemake_version/scripts/1_output_six_reading_frames.py --nucleotide_fasta /data/jzr5814/sourmash_frame_prediction/data/500_sequences.fna --output /data/jzr5814/sourmash_frame_prediction/snakemake_test/query_frames.faa
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: .snakemake/log/2023-02-14T084128.821915.snakemake.log
