@@ -4,8 +4,7 @@ import os, glob, subprocess, argparse
 from frame_predict import report_containment
 
 def main(args):
-    #wd = '/data/jzr5814/data/frame_analysis_using_bash_script/compare_by_multiple_jobs/test1/'
-    #ksizes = [7,14,21,28,35,42,49,56,63,70]
+    #arguments
     wd = args.wd #working directory where output will go
     ksizes = [int(item) for item in args.ksizes.split(',')] # returns list of ksizes
 
@@ -17,9 +16,13 @@ def main(args):
         df_2nd_highest=report_containment.report_df_of_second_highest_containment_indexes(ksize=ksize,data=wd+'compare_containment'+str(ksize)+'.csv')
         df_2nd_highest.to_csv(wd+'second_highest_containment'+str(ksize)+'.csv')
 
+    #output all csv containment index files together by forst removing all headers except from the first file 
+     #Produce output file to contain header (once)
+    #FNR represents the number of the processed record in a single file. And NR represents it globally, so first line is accepted and the rest are ignored as before
     cmd = f"awk '(NR == 1) || (FNR > 1)' {wd}compare_containment*.csv | grep -v 'uniprotkb.fasta' > {wd}containment.csv"
     subprocess.run(cmd, stdout=subprocess.PIPE, shell=True)
 
+    #output all csv containment index files together by forst removing all headers except from the first file for the second highest containment indexes report
     cmd1 = f"awk '(NR == 1) || (FNR > 1)' {wd}second_highest_containment*.csv > {wd}second_highest_containment.csv"
     subprocess.run(cmd1, stdout=subprocess.PIPE, shell=True)
 
