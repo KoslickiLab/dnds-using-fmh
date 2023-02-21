@@ -54,8 +54,8 @@ def mutated_sequence_based_on_mutation_rate_p(sequence,p_mutation_rate):
     The function loops through each position of the sequence,
     decides whether the nucleotide at that position is mutated, 
     and adds on to the newly mutated sequence, which will then be return in the end."""
-    mutated_sequence = ''
-    for nt_position in sequence:
+    mutated_sequence = 'ATG'
+    for nt_position in sequence[3:]: #ignore start codon for mutation
         if mutate_position_based_on_mutation_rate_p(p_mutation_rate):
             mutate_with = random.choice(mutate_with_nucleotides(nt_position))
             mutated_sequence+=mutate_with
@@ -78,6 +78,55 @@ def translate_coding_sequence(cds_seq):
             translation+=codontab[codon]
     return(translation)
 
+def total_nucleotide_mutations(nt_sequence_1,nt_sequence_2):
+    """Returns total number of mutations *both synonymous and nonsynonymous mutations
+    total_muts records the total differences between two sequences.
+    We are assuming that they should be the same length.
+    nt_sequence_1: a nucleotide sequence that is a string
+    nt_sequence_2: a nucleotide sequence that is a string"""
+    total_muts=0
+    for i in nt_sequence_1:
+        for j in nt_sequence_2:
+            if i != j:
+                total_muts+=1
+    return(total_muts)
 
+def total_aa_differences(nt_sequence_1,nt_sequence_2):
+    """Returns total amino acid changes between two protein sequences
+    We are assuming that they should be the same length.
+    nt_sequence_1: a nucleotide sequence that is a string
+    nt_sequence_2: a nucleotide sequence that is a string"""
+    total_muts=0
+    cds_1 = get_coding_sequence_from_nucleotide_sequence(nt_sequence_1)
+    cds_2 = get_coding_sequence_from_nucleotide_sequence(nt_sequence_2)
+    aa_seq_1 = translate_coding_sequence(cds_1)
+    aa_seq_2 = translate_coding_sequence(cds_2)
+    for i in aa_seq_1:
+        for j in aa_seq_2:
+            if i != j:
+                total_muts+=
+    return(total_muts)
 
+def total_synonymous_mutations(nt_sequence_1,nt_sequence_2):
+    """Return total synonymous mutations
+    nt_sequence_1: a nucleotide sequence that is a string
+    nt_sequence_2: a nucleotide sequence that is a strin
+    """
+    total_nt_mutations = total_nucleotide_mutations(nt_sequence_1,nt_sequence_2)
+    total_nonsyn_mutations = total_aa_differences(nt_sequence_1,nt_sequence_2)
+    total_syn_mutations = total_nt_mutations - total_nonsyn_mutations
+    return(total_syn_mutations)
 
+def koslicki_dnds(nt_sequence_1,nt_sequence_2):
+    """Return dN/dS estimation where dN is the 
+    total number of nonsynonymous mutations divided by protein sequence length
+    and dS is the total number of synonymous mutations divided by the protein sequence length,
+    then calculates the ratio of dN/dS
+    nt_sequence_1: a nucleotide sequence that is a string
+    nt_sequence_2: a nucleotide sequence that is a strin
+    """
+    protein_length = (len(nt_sequence_1)/3) - 1 #ignore stop codon
+    dN = total_aa_differences(nt_sequence_1,nt_sequence_2)/protein_length
+    dS = total_synonymous_mutations(nt_sequence_1,nt_sequence_2)/protein_length
+    dnds = dN/dS
+    return(dnds)
