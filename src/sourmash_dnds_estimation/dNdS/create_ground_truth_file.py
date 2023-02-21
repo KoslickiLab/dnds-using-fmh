@@ -64,8 +64,8 @@ def mutated_sequence_based_on_mutation_rate_p(sequence,p_mutation_rate):
     return(mutated_sequence)
 
 def get_coding_sequence_from_nucleotide_sequence(nt_sequence):
-    """This functioin returns the coding sequence as a list when given a nucleotidesequence.
-    nt_sequence: nucleoeitde sequence, preferably a protein coding gene sequence"""
+    """This functioin returns the coding sequence as a list when given a nucleotide sequence.
+    nt_sequence: nucleotide sequence, preferably a protein coding gene sequence"""
     return(list(sliced(nt_seq[frame-1:].upper(),3)))
 
 def translate_coding_sequence(cds_seq):
@@ -77,5 +77,7 @@ def translate_coding_sequence(cds_seq):
         if codon in codontab:
             translation+=codontab[codon]
     return(translation)
+
+
 
 
