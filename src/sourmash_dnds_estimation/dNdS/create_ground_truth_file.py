@@ -41,7 +41,7 @@ def mutate_position_based_on_mutation_rate_p(p_mutation_rate):
     elif p >= 1-p_mutation_rate:
         return(False)
 
-def mutate_with_nucleotides(nucleotide):
+def mutate_with_nucleotides(mutate_nucleotide):
     """If the probability is that a mutation occurs, 
     then this function makes sure that the random choice of a nucloetide mutation is not the same nucleotide of the position being changed.
     This function removes the nucleotide that will be changed from the nucleotide mutation choices
@@ -49,7 +49,8 @@ def mutate_with_nucleotides(nucleotide):
     The function takes in a nucleotide. 
     nucleotide: the nucleotide to be mutated"""
     nucleotides = ['A','G','C','T']
-    return(nucleotides.remove(nucleotide.upper()))
+    nucleotides.remove(mutate_nucleotide)
+    return(nucleotides)
 
 def mutated_sequence_based_on_mutation_rate_p(sequence,p_mutation_rate):
     """This function taks in a sequence to be mutated based on the mutation rate p, which is another argument of the function. 
@@ -59,7 +60,7 @@ def mutated_sequence_based_on_mutation_rate_p(sequence,p_mutation_rate):
     mutated_sequence = ''
     for nt_position in sequence[3:-3]: #ignore start and stop codon for mutation
         if mutate_position_based_on_mutation_rate_p(p_mutation_rate):
-            mutate_with = random.choice(mutate_with_nucleotides(nt_position))
+            mutate_with = random.choice(mutate_with_nucleotides(nt_position.upper()))
             mutated_sequence+=mutate_with
         else:
             mutated_sequence+=nt_position
