@@ -8,31 +8,39 @@ three columns that include the refernce sequence name, mutation rate p, and dNdS
 def main(args):
 
     fna_file = args.reference_input
-    NT_MUTATED_OUTPUT = args.ground_truth_output
+    GROUND_TRUTH = args.ground_truth_output
     mutation_p_list = args.mutation_rate_p.split(',')
     dNdS_report = []
+    print(mutation_p_list)
 
     #loop through nt file to mutate sequences
     with open(fna_file) as file:
         for line in file:
-            for p in mutation_p_list:
                 if line[0] == ">":
                     ref_names = line[1:]
                 else:
-                    print(p)
-                    print(line)
-                    query_nt_seq = create_ground_truth_file.mutated_sequence_based_on_mutation_rate_p(line,float(p)) #ref sequence is mutated with mutation rate p
-                    total_nt_mutations = create_ground_truth_file.total_nucleotide_mutations(line,query_nt_seq) #get total numver of nucleotide mutations
-                    total_nonsyn_mutations = create_ground_truth_file.total_aa_differences(line,query_nt_seq) #get total number of nonsynonymous mutations
-                    total_syn_mutations = create_ground_truth_file.total_synonymous_mutations(total_nt_mutations,total_nonsyn_mutations) #get total number of synonymous mutations
-                    print(type(line))
-                    dNdS = create_ground_truth_file.koslicki_dnds(total_nonsyn_mutations,total_syn_mutations,len(line)) #estimate dNdS using Koslicki's suggestiion
-                    dNdS_report.append([ref_names, p, dNdS])
-            print(dNdS_report)
-    fna_file.close()
+                    for p in mutation_p_list:
+                        #ref sequence is mutated with mutation rate p
+                        query_nt_seq = create_ground_truth_file.mutated_sequence_based_on_mutation_rate_p(line,float(p))
+
+                        #get total numver of nucleotide mutations
+                        total_nt_mutations = create_ground_truth_file.total_nucleotide_mutations(line,query_nt_seq) 
+
+                        #get total number of nonsynonymous mutations
+                        total_nonsyn_mutations = create_ground_truth_file.total_aa_differences(line,query_nt_seq)
+
+                        #get total number of synonymous mutations
+                        total_syn_mutations = create_ground_truth_file.total_synonymous_mutations(total_nt_mutations,total_nonsyn_mutations)
+
+                        #estimate dNdS using Koslicki's suggestiion
+                        dNdS = create_ground_truth_file.koslicki_dnds(total_nonsyn_mutations,total_syn_mutations,len(line))
+
+                        #save report in a list object to later convert into a dataframe
+                        dNdS_report.append([ref_names, p, dNdS])
+    file.close()
 
     #save report to csv output file
-    pd.DataFrame(dNdS_report, columns=['ref_sequence_name', 'mutation_rate_p','dNdS_ground_truth']).to_csv(output_mutated_fna_file)
+    pd.DataFrame(dNdS_report, columns=['ref_sequence_name', 'mutation_rate_p','dNdS_ground_truth']).to_csv(GROUND_TRUTH)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
