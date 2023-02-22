@@ -1,4 +1,6 @@
 import random
+from more_itertools import sliced
+
 
 def codon_table():
     """When invoked, function returns the codon table.
@@ -47,26 +49,26 @@ def mutate_with_nucleotides(nucleotide):
     The function takes in a nucleotide. 
     nucleotide: the nucleotide to be mutated"""
     nucleotides = ['A','G','C','T']
-    return(nucleotides.remove(nucleotide))
+    return(nucleotides.remove(nucleotide.upper()))
 
 def mutated_sequence_based_on_mutation_rate_p(sequence,p_mutation_rate):
     """This function taks in a sequence to be mutated based on the mutation rate p, which is another argument of the function. 
     The function loops through each position of the sequence,
     decides whether the nucleotide at that position is mutated, 
     and adds on to the newly mutated sequence, which will then be return in the end."""
-    mutated_sequence = 'ATG'
-    for nt_position in sequence[3:]: #ignore start codon for mutation
+    mutated_sequence = ''
+    for nt_position in sequence[3:-3]: #ignore start and stop codon for mutation
         if mutate_position_based_on_mutation_rate_p(p_mutation_rate):
             mutate_with = random.choice(mutate_with_nucleotides(nt_position))
             mutated_sequence+=mutate_with
         else:
             mutated_sequence+=nt_position
-    return(mutated_sequence)
+    return(mutated_sequence.upper())
 
 def get_coding_sequence_from_nucleotide_sequence(nt_sequence):
     """This functioin returns the coding sequence as a list when given a nucleotide sequence.
     nt_sequence: nucleotide sequence, preferably a protein coding gene sequence"""
-    return(list(sliced(nt_seq[frame-1:].upper(),3)))
+    return(list(sliced(nt_sequence,3)))
 
 def translate_coding_sequence(cds_seq):
     """Function translates open reading frames using the coding sequence.
@@ -104,29 +106,27 @@ def total_aa_differences(nt_sequence_1,nt_sequence_2):
     for i in aa_seq_1:
         for j in aa_seq_2:
             if i != j:
-                total_muts+=
+                total_muts+=1
     return(total_muts)
 
-def total_synonymous_mutations(nt_sequence_1,nt_sequence_2):
+def total_synonymous_mutations(total_nt_mutations,total_nonsyn_mutations):
     """Return total synonymous mutations
-    nt_sequence_1: a nucleotide sequence that is a string
-    nt_sequence_2: a nucleotide sequence that is a strin
+    total_nt_mutations: total nucleotide mutations between two sequences, obtain using total_nucleotide_mutations(nt_sequence_1,nt_sequence_2)
+    total_nonsyn_mutations: total nucleotide mutations between two sequences, obtain using total_aa_differences(nt_sequence_1,nt_sequence_2)
     """
-    total_nt_mutations = total_nucleotide_mutations(nt_sequence_1,nt_sequence_2)
-    total_nonsyn_mutations = total_aa_differences(nt_sequence_1,nt_sequence_2)
     total_syn_mutations = total_nt_mutations - total_nonsyn_mutations
     return(total_syn_mutations)
 
-def koslicki_dnds(nt_sequence_1,nt_sequence_2):
+def koslicki_dnds(total_nonsyn_mutations,total_syn_mutations,protein_length):
     """Return dN/dS estimation where dN is the 
     total number of nonsynonymous mutations divided by protein sequence length
     and dS is the total number of synonymous mutations divided by the protein sequence length,
     then calculates the ratio of dN/dS
-    nt_sequence_1: a nucleotide sequence that is a string
-    nt_sequence_2: a nucleotide sequence that is a strin
+    total_nonsyn_mutations: total nucleotide mutations between two sequences, obtain using total_aa_differences(nt_sequence_1,nt_sequence_2)
+    total_syn_mutations: total nucleotide mutations between two sequences, obtain using total_synonymous_mutations(total_nt_mutations,total_nonsyn_mutations)
+    protein_length: lenght of the protein sequence (assume both sequences are the same length)
     """
-    protein_length = (len(nt_sequence_1)/3) - 1 #ignore stop codon
-    dN = total_aa_differences(nt_sequence_1,nt_sequence_2)/protein_length
-    dS = total_synonymous_mutations(nt_sequence_1,nt_sequence_2)/protein_length
+    dN = total_nonsyn_mutations/protein_length
+    dS = total_syn_mutations/protein_length
     dnds = dN/dS
     return(dnds)
