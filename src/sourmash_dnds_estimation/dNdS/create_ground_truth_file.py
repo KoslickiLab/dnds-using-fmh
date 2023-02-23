@@ -36,7 +36,7 @@ def mutate_position_based_on_mutation_rate_p(p_mutation_rate):
     p_mutation_rate = 1 - Cfrac(a,B)**(1/k)
     Cfrac is the containment index between two sequences"""
     p = random.random()
-    if p <= p_mutation_rate: 
+    if p <= p_mutation_rate:
         return(True)
     elif p >= 1-p_mutation_rate:
         return(False)
@@ -58,12 +58,13 @@ def mutated_sequence_based_on_mutation_rate_p(sequence,p_mutation_rate):
     decides whether the nucleotide at that position is mutated, 
     and adds on to the newly mutated sequence, which will then be return in the end."""
     mutated_sequence = ''
-    for nt_position in sequence[3:-3]: #ignore start and stop codon for mutation
+    for nt_position in sequence[3:-3].upper(): #ignore start and stop codon for mutation
         if mutate_position_based_on_mutation_rate_p(p_mutation_rate):
             mutate_with = random.choice(mutate_with_nucleotides(nt_position.upper()))
             mutated_sequence+=mutate_with
         else:
             mutated_sequence+=nt_position
+    #print('muated seq',mutated_sequence)
     return(mutated_sequence.upper())
 
 def get_coding_sequence_from_nucleotide_sequence(nt_sequence):
@@ -87,28 +88,30 @@ def total_nucleotide_mutations(nt_sequence_1,nt_sequence_2):
     We are assuming that they should be the same length.
     nt_sequence_1: a nucleotide sequence that is a string
     nt_sequence_2: a nucleotide sequence that is a string"""
-    total_muts=0
-    for i in nt_sequence_1:
-        for j in nt_sequence_2:
-            if i != j:
-                total_muts+=1
-    return(total_muts)
+    total_nt_muts_count=0
+    for i in range(len(nt_sequence_1)):
+        seq_1_position_temp = nt_sequence_1[i]
+        seq_2_position_temp = nt_sequence_2[i]
+        if seq_1_position_temp != seq_2_position_temp:
+            total_nt_muts_count+=1
+    return(total_nt_muts_count)
 
 def total_aa_differences(nt_sequence_1,nt_sequence_2):
     """Returns total amino acid changes between two protein sequences
     We are assuming that they should be the same length.
     nt_sequence_1: a nucleotide sequence that is a string
     nt_sequence_2: a nucleotide sequence that is a string"""
-    total_muts=0
+    total_aa_muts_count=0
     cds_1 = get_coding_sequence_from_nucleotide_sequence(nt_sequence_1)
     cds_2 = get_coding_sequence_from_nucleotide_sequence(nt_sequence_2)
     aa_seq_1 = translate_coding_sequence(cds_1)
     aa_seq_2 = translate_coding_sequence(cds_2)
-    for i in aa_seq_1:
-        for j in aa_seq_2:
-            if i != j:
-                total_muts+=1
-    return(total_muts)
+    for i in range(len(aa_seq_1)):
+        seq_1_position_temp = aa_seq_1[i]
+        seq_2_position_temp = aa_seq_2[i]
+        if seq_1_position_temp != seq_2_position_temp:
+                total_aa_muts_count+=1
+    return(total_aa_muts_count)
 
 def total_synonymous_mutations(total_nt_mutations,total_nonsyn_mutations):
     """Return total synonymous mutations
@@ -127,7 +130,10 @@ def koslicki_dnds(total_nonsyn_mutations,total_syn_mutations,protein_length):
     total_syn_mutations: total nucleotide mutations between two sequences, obtain using total_synonymous_mutations(total_nt_mutations,total_nonsyn_mutations)
     protein_length: lenght of the protein sequence (assume both sequences are the same length)
     """
-    dN = total_nonsyn_mutations/protein_length
-    dS = total_syn_mutations/protein_length
-    dnds = dN/dS
+    dN = float(total_nonsyn_mutations)/protein_length
+    dS = float(total_syn_mutations)/protein_length
+    if dS != float(0):
+        dnds = dN/dS
+    else:
+        dnds=None
     return(dnds)
