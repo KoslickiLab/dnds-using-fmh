@@ -15,3 +15,11 @@ def grab_containment_from_mat(mat_df,ksize):
                 'containment':containment,
                 'ksize':ksize}])],join='inner')
     return(df)
+
+def grab_containment_from_mat_ground_truth(mat_df,ksize):
+    """This function converts matrix into df removes pairwise information"""
+    """When running sourmash comapre, a matrix via a csv file called compare.csv is produced"""
+    df = pd.read_csv(mat_df,sep=',').T.reset_index()[['index',0]].rename(columns={'index':'B',0:'containment'})
+    df['A']='/data/jzr5814/sourmash_dnds_estimation/tests/data/ground_truth_data/ground_truth_ref_used_for_dNdS.fna'
+    df['ksize']=ksize
+    return(df)
