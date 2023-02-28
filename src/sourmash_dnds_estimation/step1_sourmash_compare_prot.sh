@@ -33,10 +33,10 @@ samp_scaled=1 #scale factor for query
 #sourmash sketch protein -p k=7,k=14,k=21,k=28,k=35,k=42,k=49,k=56,k=63,k=70,scaled=$samp_scaled $samples --singleton -o $samp_output
 
 #Input are DNA sequences
-sourmash sketch translate -p k=5,k=10,k=15,k=20,scaled=$ref_scaled $ref -o $ref_output
-sourmash sketch translate -p k=5,k=10,k=15,k=20,scaled=$samp_scaled $samples --singleton -o $samp_output
+sourmash sketch translate -p k=2,k=3,k=4,k=5,k=6,k=7,k=8,k=9,k=10,k=11,k=12,k=13,k=14,k=15,k=20,scaled=$ref_scaled $ref -o $ref_output
+sourmash sketch translate -p k=2,k=3,k=4,k=5,k=6,k=7,k=8,k=9,k=10,k=11,k=12,k=13,k=14,k=15,k=20,scaled=$samp_scaled $samples --singleton -o $samp_output
 
-for K in 2 3 4 5 10 15 20
+for K in 2 3 4 5 6 7 8 9 10 11 12 13 14 15 20
 do
 
     nohup sourmash compare $ref_output $samp_output --containment --protein --o ${wd}compare${K}.mat --csv ${wd}compare${K}.csv --ksize $K > ${wd}compare${K}.txt 2>&1 & #assign to diff log files
