@@ -1,0 +1,3 @@
+rm /data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/*csv /data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/*png
+rm /data/jzr5814/sourmash_dnds_estimation/tests/results/sourmash_compare_ground_truth/sourmash_compare_nt/* /data/jzr5814/sourmash_dnds_estimation/tests/results/sourmash_compare_ground_truth/sourmash_compare_protein/*
+rm /data/jzr5814/sourmash_dnds_estimation/tests/data/ground_truth_sigs/nt/* /data/jzr5814/sourmash_dnds_estimation/tests/data/ground_truth_sigs/prot/*

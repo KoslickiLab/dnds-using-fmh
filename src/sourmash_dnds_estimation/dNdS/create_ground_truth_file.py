@@ -31,6 +31,74 @@ def codon_table():
     }
     return(codontab)
 
+"""
+def codon_substitution():
+    codon_sub = {
+        'TCA': {'synonymous':1,'nonsynonymous':2},    # Serine
+        'TCC': {'synonymous':1,'nonsynonymous':2}, 
+        'TCG': {'synonymous':1,'nonsynonymous':2}, 
+        'TCT': {'synonymous':1,'nonsynonymous':2}, 
+        'AGC': {}, 
+        'AGT': {},
+        'TTC': {'synonymous':,'nonsynonymous':},    # Phenilalanine 
+        'TTT': {'synonymous':,'nonsynonymous':},
+        'TTA': {'synonymous':,'nonsynonymous':},                                   # Leucine
+        'TTG': {'synonymous':,'nonsynonymous':}, 
+        'CTA': {'synonymous':,'nonsynonymous':}, 
+        'CTC': {'synonymous':,'nonsynonymous':}, 
+        'CTG': {'synonymous':,'nonsynonymous':}, 
+        'CTT': {'synonymous':,'nonsynonymous':},    
+        'TAC': {'synonymous':,'nonsynonymous':}, # Tirosine
+        'TAT': {'synonymous':,'nonsynonymous':},                                                    
+        'TGC': {'synonymous':,'nonsynonymous':}, # Cisteine
+        'TGT': {'synonymous':,'nonsynonymous':},                                                    
+        'TGG': {'synonymous':,'nonsynonymous':},                                                                # Tryptophane
+        'CCA': {'synonymous':,'nonsynonymous':}, # Proline
+        'CCC': {'synonymous':,'nonsynonymous':}, 
+        'CCG': {'synonymous':,'nonsynonymous':}, 
+        'CCT': {'synonymous':,'nonsynonymous':},                            
+        'CAC': {'synonymous':,'nonsynonymous':}, # Histidine
+        'CAT': {'synonymous':,'nonsynonymous':},                                                    
+        'CAA': {'synonymous':,'nonsynonymous':}, # Glutamine
+        'CAG': {'synonymous':,'nonsynonymous':},                                                   
+        'CGA': {'synonymous':,'nonsynonymous':}, # Arginine
+        'CGC': {'synonymous':,'nonsynonymous':}, 
+        'CGG': {'synonymous':,'nonsynonymous':}, 
+        'CGT': {'synonymous':,'nonsynonymous':},                            
+        'ATA': {'synonymous':,'nonsynonymous':}, # Isoleucine
+        'ATC': {'synonymous':,'nonsynonymous':}, 
+        'ATT': {'synonymous':,'nonsynonymous':},                                       
+        'ATG': {'synonymous':,'nonsynonymous':},                                                                # Methionine
+        'ACA': {'synonymous':,'nonsynonymous':}, # Threonine
+        'ACC': {'synonymous':,'nonsynonymous':}, 
+        'ACG': {'synonymous':,'nonsynonymous':}, 
+        'ACT': {'synonymous':,'nonsynonymous':},                            
+        'AAC': {'synonymous':,'nonsynonymous':}, # Asparagine
+        'AAT': {'synonymous':,'nonsynonymous':},                                                    
+        'AAA': {'synonymous':,'nonsynonymous':}, # Lysine
+        'AAG': {'synonymous':,'nonsynonymous':},                                                    
+        'AGA': {'synonymous':,'nonsynonymous':}, # Arginine
+        'AGG': {'synonymous':,'nonsynonymous':},                                                    
+        'GTA': {'synonymous':,'nonsynonymous':}, # Valine
+        'GTC': {'synonymous':,'nonsynonymous':}, 
+        'GTG': {'synonymous':,'nonsynonymous':}, 
+        'GTT': {'synonymous':,'nonsynonymous':},                            
+        'GCA': {'synonymous':,'nonsynonymous':}, # Alanine
+        'GCC': {'synonymous':,'nonsynonymous':}, 
+        'GCG': {'synonymous':,'nonsynonymous':}, 
+        'GCT': {'synonymous':,'nonsynonymous':},                            
+        'GAC': {'synonymous':,'nonsynonymous':}, # Aspartic Acid
+        'GAT': {'synonymous':,'nonsynonymous':},                                                    
+        'GAA': {'synonymous':,'nonsynonymous':}, # Glutamic Acid
+        'GAG': {'synonymous':,'nonsynonymous':},                                                    
+        'GGA': {'synonymous':,'nonsynonymous':}, # Glycine
+        'GGC': {'synonymous':,'nonsynonymous':}, 
+        'GGG': {'synonymous':,'nonsynonymous':}, 
+        'GGT': {'synonymous':,'nonsynonymous':}                             
+    }
+    return(codon_sub)
+"""
+
 def mutate_position_based_on_mutation_rate_p(p_mutation_rate):
     """This function returns a boolean probability of a mutation based off a given mutation rate p
     p_mutation_rate = 1 - Cfrac(a,B)**(1/k)
@@ -96,8 +164,8 @@ def total_nucleotide_mutations(nt_sequence_1,nt_sequence_2):
             total_nt_muts_count+=1
     return(total_nt_muts_count)
 
-def total_aa_differences(nt_sequence_1,nt_sequence_2):
-    """Returns total amino acid changes between two protein sequences
+def total_aa_differences(nt_sequence_1,nt_sequence_2): 
+    """Returns total amino acid changes or nonsynonymous differences between two protein sequences
     We are assuming that they should be the same length.
     nt_sequence_1: a nucleotide sequence that is a string
     nt_sequence_2: a nucleotide sequence that is a string"""
