@@ -3,6 +3,8 @@
 
 import argparse, time, os, subprocess
 from dNdS import reportCI,CfracdNdS
+import pandas as pd
+pd.set_option('display.max_columns', None)
 
 def main(args):
 
@@ -15,9 +17,13 @@ def main(args):
     ### Obtain containment from matrix files produced by sourmash compare
     nt_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=nt_compare,ksize=ksize)
     protein_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=protein_compare,ksize=ksize)
+    print(ksize)
+    print(nt_df['containment'])
+    print(protein_df['containment'])
 
     ### Produce csv file with nt and protein containments with dNdS estimates
     report_df = CfracdNdS.report_dNdS(nt_df,protein_df)
+    print(report_df[['containment_nt','containment_protein']])
     report_df.to_csv(output)
 
     #create figures of CI analysis

@@ -35,7 +35,7 @@ def calc_PdS(protein_containment,nt_containment,k):
     protein_containment: The containment index between two protein sequences (this is a float)
     k: Identify the ksize used to produce containment index (this is an integer)
     """
-    return(protein_containment - calc_nomutation(nt_containment,k))
+    return(((protein_containment)**(1/k)) - calc_nomutation(nt_containment,k))
 
 def dNdS_ratio(protein_containment,nt_containment,k):
     """
@@ -59,14 +59,11 @@ def report_dNdS(nt_containment_df,prot_containment_df):
         Dataframe contains ref, query, containment index, and ksize.
     """
     #read in nt_containment dataframe file and change column names
-    nt_df = nt_containment_df.rename(columns={'containment':'containment_nt'})
-    
+    nt_df = nt_containment_df.rename(columns={'containment':'containment_nt'})    
     #read in nt_containment dataframe file and change column names
     protein_df = prot_containment_df.rename(columns={'containment':'containment_protein'})
-
     #join df into one
     df = pd.merge(nt_df, protein_df, on=['A','B','ksize'])
-
     #apply function
     df['dNdS_ratio'] = dNdS_ratio(df['containment_nt'],df['containment_protein'],df['ksize'])
 
