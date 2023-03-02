@@ -8,7 +8,8 @@ def calc_Pnt(nt_containment,k):
     nt_containment: The containment index between two nucleotide sequences (this is a float)
     k: Identify the ksize used to produce containment index (this is an integer)
     """
-    return(1 - nt_containment**(1/k))
+    nt_k = 3*k
+    return(1 - nt_containment**(1/nt_k))
 
 def calc_PdN(protein_containment,k):
     """
