@@ -66,7 +66,7 @@ def report_dNdS(nt_containment_df,prot_containment_df):
     #join df into one
     df = pd.merge(nt_df, protein_df, on=['A','B','ksize'])
     #apply function
-    df['dNdS_ratio'] = dNdS_ratio(nt_containment=df['containment_nt'],protein_containment=df['containment_protein'],df['ksize'])
+    df['dNdS_ratio'] = dNdS_ratio(nt_containment=df['containment_nt'],protein_containment=df['containment_protein'],k=df['ksize'])
 
     #report
     return(df)
