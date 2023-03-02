@@ -16,7 +16,7 @@ def calc_PdN(protein_containment,k):
     protein_containment: The containment index between two protein sequences (this is a float)
     k: Identify the ksize used to produce containment index (this is an integer)
     """
-    return(1-(protein_containment)**(1/k))
+    return(1-protein_containment**(1/k))
 
 def calc_nomutation(nt_containment,k):
     """
