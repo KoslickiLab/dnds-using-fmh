@@ -3,9 +3,9 @@ import argparse
 from dNdS import create_ground_truth_file
 import random
 
-GROUND_TRUTH = open('/data/jzr5814/sourmash_dnds_estimation/tests/data/ground_truth_data/dNdS_ground_truth.csv','w')
-GROUND_TRUTH_QUERIES = open('/data/jzr5814/sourmash_dnds_estimation/tests/data/ground_truth_data/10000_nt_ref_seq.fna','w')
-GROUND_TRUTH_REF_OUTPUT = open('/data/jzr5814/sourmash_dnds_estimation/tests/data/ground_truth_data/10000_nt_mutated_queries_seq.fna','w')
+GROUND_TRUTH = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/dNdS_ground_truth.csv','w')
+GROUND_TRUTH_REF_OUTPUT = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/10000_nt_ref_seq.fna','w')
+GROUND_TRUTH_QUERIES = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/10000_nt_mutated_queries_seq.fna','w')
 
 ITERATIONS = 100
 
