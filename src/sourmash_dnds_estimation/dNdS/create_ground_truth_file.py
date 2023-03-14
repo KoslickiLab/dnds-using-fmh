@@ -189,7 +189,7 @@ def total_synonymous_mutations(total_nt_mutations,total_nonsyn_mutations):
     total_syn_mutations = total_nt_mutations - total_nonsyn_mutations
     return(total_syn_mutations)
 
-def koslicki_dnds(total_nonsyn_mutations,total_syn_mutations,protein_length):
+def koslicki_dnds(total_nonsyn_mutations,total_syn_mutations):
     """Return dN/dS estimation where dN is the 
     total number of nonsynonymous mutations divided by protein sequence length
     and dS is the total number of synonymous mutations divided by the protein sequence length,
@@ -198,8 +198,8 @@ def koslicki_dnds(total_nonsyn_mutations,total_syn_mutations,protein_length):
     total_syn_mutations: total nucleotide mutations between two sequences, obtain using total_synonymous_mutations(total_nt_mutations,total_nonsyn_mutations)
     protein_length: lenght of the protein sequence (assume both sequences are the same length)
     """
-    dN = float(total_nonsyn_mutations)/protein_length
-    dS = float(total_syn_mutations)/protein_length
+    dN = float(total_nonsyn_mutations)
+    dS = float(total_syn_mutations)
     if dS != float(0):
         dnds = dN/dS
     else:
