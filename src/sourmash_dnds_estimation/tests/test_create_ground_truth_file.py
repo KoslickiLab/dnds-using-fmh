@@ -1,7 +1,7 @@
 import pytest
 import unittest
 
-from dNdS.create_ground_truth_file import mutated_sequence_based_on_mutation_rate_p, get_coding_sequence_from_nucleotide_sequence
+from dNdS.create_ground_truth_file import mutated_sequence_based_on_mutation_rate_p, get_coding_sequence_from_nucleotide_sequence, total_nucleotide_mutations, total_aa_differences, total_synonymous_mutations, koslicki_dnds
 
 def test_mutated_sequence_based_on_mutation_rate_p():
     """Test mutated_sequence_based_on_mutation_rate_p"""
@@ -35,8 +35,24 @@ def test_mutated_sequence_based_on_mutation_rate_p():
 
 def test_get_coding_sequence_from_nucleotide_sequence():
 
-    seq = 'ATGCCCCCCCCCTTT'
+    assert get_coding_sequence_from_nucleotide_sequence('ATGCCCCCCCCCTTT') == ['ATG','CCC','CCC','CCC','TTT']
+    assert get_coding_sequence_from_nucleotide_sequence('ATGACTCCGGGGCCCTTT') == ['ATG','ACT','CCG','GGG','CCC','TTT']
+    assert get_coding_sequence_from_nucleotide_sequence('ATGACGCCGGGCCTCTTT') == ['ATG','ACG','CCG','GGC','CTC','TTT']
 
-    assert get_coding_sequence_from_nucleotide_sequence(seq) == ['ATG','CCC','CCC','CCC','TTT']
+def test_total_nucleotide_mutations():
+
+    assert total_nucleotide_mutations('ATGACTCCGGGGCCC','ATGACGCCGGGCCTC') == 3
+
+def test_total_aa_different():
+
+    assert total_aa_differences('ATGACTCCGGGGCCC','ATGACGCCGGGCCTC') == 1 
+
+def test_total_synonymous_mutations():
+
+    assert total_synonymous_mutations(3,1) == 2
+
+def test_koslicki_dnds():
+
+    assert koslicki_dnds(1,2) == 0.5
 
     
