@@ -41,7 +41,7 @@ for p in mutation_p_list:
         dS = total_syn_mutations/(len(ref_seq)/3)
 
         #estimate dNdS using Koslicki's suggestiion
-        dNdS = create_ground_truth_file.koslicki_dnds(total_nonsyn_mutations,total_syn_mutations,(len(ref_seq)/3))
+        dNdS = create_ground_truth_file.koslicki_dnds(total_nonsyn_mutations,total_syn_mutations)
 
         #selection
         if dNdS == None:
@@ -57,5 +57,5 @@ for p in mutation_p_list:
         dNdS_report.append(['ref_random_10000_nt', p, i, dN, dS, dNdS, selection])
 
 #save report to csv output file
-pd.DataFrame(dNdS_report, columns=['ref_sequence_name', 'mutation_rate_p','dN','dS','dNdS_ground_truth','selection','iteration']).to_csv(GROUND_TRUTH)
+pd.DataFrame(dNdS_report, columns=['ref_sequence_name', 'mutation_rate_p','iteration','dN','dS','dNdS_ground_truth','selection']).to_csv(GROUND_TRUTH)
 
