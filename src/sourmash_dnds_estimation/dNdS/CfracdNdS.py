@@ -26,7 +26,7 @@ def calc_nomutation(nt_containment,k):
     nt_containment: The containment index between two nucleotide sequences (this is a float)
     k: Identify the ksize used to produce containment index (this is an integer)
     """
-    return((1-calc_Pnt(nt_containment,k))**3)
+    return(1-(calc_Pnt(nt_containment,k))**3)
 
 def calc_PdS(protein_containment,nt_containment,k):
     """
