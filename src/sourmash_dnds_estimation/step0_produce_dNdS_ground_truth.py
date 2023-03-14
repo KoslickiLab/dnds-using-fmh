@@ -51,10 +51,10 @@ def main(args):
                     dS = total_syn_mutations/(len(ref_seq)/3)
 
                     #estimate dNdS using Koslicki's suggestiion
-                    dNdS = create_ground_truth_file.koslicki_dnds(total_nonsyn_mutations,total_syn_mutations,(len(ref_seq)/3))
+                    dNdS = create_ground_truth_file.koslicki_dnds(total_nonsyn_mutations,total_syn_mutations)
 
                     #selection
-                    if dNdS == None:
+                    if dNdS is None:
                         selection='undetermined'
                     elif dNdS == 1:
                         selection='neutral'
