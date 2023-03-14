@@ -17,6 +17,9 @@ def main(args):
     ### Obtain containment from matrix files produced by sourmash compare
     nt_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=nt_compare,ksize=ksize)
     protein_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=protein_compare,ksize=ksize)
+    nt_df.to_csv('nt_containment.csv')
+    protein_df.to_csv('prot_containment.csv')
+
     print(ksize)
     print(nt_df['containment'])
     print(protein_df['containment'])
