@@ -1,6 +1,6 @@
 import random
 from more_itertools import sliced
-
+from Bio.Seq import Seq
 
 def codon_table():
     """When invoked, function returns the codon table.
@@ -170,10 +170,12 @@ def total_aa_differences(nt_sequence_1,nt_sequence_2):
     nt_sequence_1: a nucleotide sequence that is a string
     nt_sequence_2: a nucleotide sequence that is a string"""
     total_aa_muts_count=0
-    cds_1 = get_coding_sequence_from_nucleotide_sequence(nt_sequence_1)
-    cds_2 = get_coding_sequence_from_nucleotide_sequence(nt_sequence_2)
-    aa_seq_1 = translate_coding_sequence(cds_1)
-    aa_seq_2 = translate_coding_sequence(cds_2)
+    #cds_1 = get_coding_sequence_from_nucleotide_sequence(nt_sequence_1)
+    #cds_2 = get_coding_sequence_from_nucleotide_sequence(nt_sequence_2)
+    #aa_seq_1 = translate_coding_sequence(cds_1)
+    #aa_seq_2 = translate_coding_sequence(cds_2)
+    aa_seq_1 = Seq(nt_sequence_1).translate()
+    aa_seq_2 = Seq(nt_sequence_2).translate()
     for i in range(len(aa_seq_1)):
         seq_1_position_temp = aa_seq_1[i]
         seq_2_position_temp = aa_seq_2[i]
