@@ -36,8 +36,8 @@ def calc_PdS(protein_containment,nt_containment,k):
     protein_containment: The containment index between two protein sequences (this is a float)
     k: Identify the ksize used to produce containment index (this is an integer)
     """
-    #PdS = 1-calc_PdN(protein_containment,k) - (calc_nomutation(nt_containment,k))
-    PdS = 1 - calc_PdN(protein_containment,k) - (1 - calc_Pnt(nt_containment,k))**3
+    PdS = 1-calc_PdN(protein_containment,k) - (calc_nomutation(nt_containment,k))
+    #PdS = 1 - calc_PdN(protein_containment,k) - (1 - calc_Pnt(nt_containment,k))**3
     return(PdS)
 
 def dNdS_ratio(protein_containment,nt_containment,k):
