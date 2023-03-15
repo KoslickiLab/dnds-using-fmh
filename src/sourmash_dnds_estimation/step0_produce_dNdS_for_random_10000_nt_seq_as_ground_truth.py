@@ -7,24 +7,29 @@ from Bio.Seq import Seq
 GROUND_TRUTH = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/dNdS_ground_truth.csv','w')
 GROUND_TRUTH_REF_OUTPUT = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/10000_nt_ref_seq.fna','w')
 GROUND_TRUTH_QUERIES = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/10000_nt_mutated_queries_seq.fna','w')
-GROUND_TRUTH_REF_PROT_OUTPUT = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/10000_prot_ref_seq.fna','w')
-GROUND_TRUTH_PROT_QUERIES = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/10000_prot_mutated_queries_seq.fna','w')
+GROUND_TRUTH_REF_PROT_OUTPUT = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/10000_prot_ref_seq.faa','w')
+GROUND_TRUTH_PROT_QUERIES = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/10000_prot_mutated_queries_seq.faa','w')
 
+# Create 100 random mutated sequences
 ITERATIONS = 100
-
+#mutation rate p for mutation purposes
 mutation_p_list = [0.01]
 
+#Create a random 10,000 nt sequence for simulation
 str_len = 10000
-
 REF = ''.join(random.choices(['A', 'C', 'G', 'T'], k=str_len))
 ref_seq = REF[3:-3]
+
+#Save nt ref sequence to the following files
 GROUND_TRUTH_REF_OUTPUT.write(f'>ref_gene\n')
 GROUND_TRUTH_REF_OUTPUT.write(ref_seq+"\n")
 
+#save translated ref sequence to the following files
 ref_seq_translated = Seq(ref_seq).translate()
 GROUND_TRUTH_REF_PROT_OUTPUT.write(f'>ref_gene\n')
 GROUND_TRUTH_REF_PROT_OUTPUT.write(str(ref_seq_translated)+"\n")
 
+#an empty list to add dN/dS values
 dNdS_report = []
 
 for p in mutation_p_list:
@@ -36,6 +41,7 @@ for p in mutation_p_list:
         GROUND_TRUTH_QUERIES.write(f'>gene_{p}_{i}\n')
         GROUND_TRUTH_QUERIES.write(f'{query_nt_seq}\n')
 
+        #Translated mutated sequences 
         translated_queries = Seq(query_nt_seq[3:-3]).translate()
         GROUND_TRUTH_PROT_QUERIES.write(f'>gene_{p}_{i}\n')
         GROUND_TRUTH_PROT_QUERIES.write(f'{translated_queries}\n')
@@ -54,7 +60,7 @@ for p in mutation_p_list:
         #estimate dNdS using Koslicki's suggestiion
         dNdS = create_ground_truth_file.koslicki_dnds(total_nonsyn_mutations,total_syn_mutations)
 
-        #selection
+        #identify the type of selection from dNdS result
         if dNdS == None:
             selection='undetermined'
         elif dNdS == 1:

@@ -4,10 +4,6 @@ set -eoux pipefail
 ### Sketch and comapre nucleotide sequences for dN/dS estimation
 
 #working directories for data and result output
-#data=/data/jzr5814/sourmash_dnds_estimation/tests/data/ #.faa and .fna files are found
-#sigs=/data/jzr5814/sourmash_dnds_estimation/tests/data/signatures/nt/ #sketch sig output directory
-#wd=/data/jzr5814/sourmash_dnds_estimation/tests/results/sourmash_compare/sourmash_compare_nt/ #output for sourmash comapre directory
-
 data=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/
 sigs=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/
 wd=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/sourmash_compare_nt/
