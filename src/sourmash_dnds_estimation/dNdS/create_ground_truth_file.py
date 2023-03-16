@@ -126,7 +126,7 @@ def mutated_sequence_based_on_mutation_rate_p(sequence,p_mutation_rate):
     decides whether the nucleotide at that position is mutated, 
     and adds on to the newly mutated sequence, which will then be return in the end."""
     mutated_sequence = ''
-    for nt_position in sequence[3:-3].upper(): #ignore start and stop codon for mutation
+    for nt_position in sequence.upper():
         if mutate_position_based_on_mutation_rate_p(p_mutation_rate):
             mutate_with = random.choice(mutate_with_nucleotides(nt_position.upper()))
             mutated_sequence+=mutate_with
