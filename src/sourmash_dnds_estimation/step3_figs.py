@@ -23,7 +23,7 @@ def scatter(ground_truth_dnds_results_df,sourmash_compare_dnds_results_df,p,ksiz
     #plt.ylim(0,5)
     #plt.xlim(0,5)
     #plt.title(f'10,000 nt sequence p=0.1 ksize={ksize} scaled=1')
-    plt.title(f'dN/dS real protein-coding sequence (1,470 nt) p={p} ksize={ksize}')
+    plt.title(f'dN/dS real protein-coding sequence (1,470 nt) scaled=1 p={p} ksize={ksize}')
     #plt.ylabel('smash_containment_dNdS')
     plt.ylabel('sourmash dN/dD')
     plt.xlabel('ground truth dN/dS')
