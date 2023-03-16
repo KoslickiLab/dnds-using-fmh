@@ -13,7 +13,7 @@ def main(args):
     nt_compare = args.nt
     protein_compare = args.protein
     ksize = args.k
-    output = f'{WD}{args.o}'
+    output = args.o
 
     ### Obtain containment from matrix files produced by sourmash compare
     nt_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=nt_compare,ksize=ksize)
@@ -28,7 +28,7 @@ def main(args):
     ### Produce csv file with nt and protein containments with dNdS estimates
     report_df = CfracdNdS.report_dNdS(nt_df,protein_df)
     print(report_df[['containment_nt','containment_protein']])
-    report_df.to_csv(output)
+    report_df.to_csv(f'{WD}{output}')
 
     #create figures of CI analysis
 
