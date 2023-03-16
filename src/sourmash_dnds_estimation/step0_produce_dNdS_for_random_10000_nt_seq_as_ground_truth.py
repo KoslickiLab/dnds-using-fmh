@@ -4,11 +4,12 @@ from dNdS import create_ground_truth_file
 import random
 from Bio.Seq import Seq
 
-GROUND_TRUTH = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/dNdS_ground_truth.csv','w')
-GROUND_TRUTH_REF_OUTPUT = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/10000_nt_ref_seq.fna','w')
-GROUND_TRUTH_QUERIES = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/10000_nt_mutated_queries_seq.fna','w')
-GROUND_TRUTH_REF_PROT_OUTPUT = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/10000_prot_ref_seq.faa','w')
-GROUND_TRUTH_PROT_QUERIES = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/10000_prot_mutated_queries_seq.faa','w')
+WD='/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/random_10000_nt_sequence_0.1/'
+GROUND_TRUTH = open(f'{WD}dNdS_ground_truth.csv','w')
+GROUND_TRUTH_REF_OUTPUT = open(f'{WD}10000_nt_ref_seq.fna','w')
+GROUND_TRUTH_QUERIES = open(f'{WD}10000_nt_mutated_queries_seq.fna','w')
+GROUND_TRUTH_REF_PROT_OUTPUT = open(f'{WD}10000_prot_ref_seq.faa','w')
+GROUND_TRUTH_PROT_QUERIES = open(f'{WD}10000_prot_mutated_queries_seq.faa','w')
 
 # Create 100 random mutated sequences
 ITERATIONS = 100
@@ -18,7 +19,7 @@ mutation_p_list = [0.01]
 #Create a random 10,000 nt sequence for simulation
 str_len = 10000
 REF = ''.join(random.choices(['A', 'C', 'G', 'T'], k=str_len))
-ref_seq = REF[3:-3]
+ref_seq = REF[3:-3] #ignore start and stop codon for mutation
 
 #Save nt ref sequence to the following files
 GROUND_TRUTH_REF_OUTPUT.write(f'>ref_gene\n')
@@ -37,12 +38,12 @@ for p in mutation_p_list:
     for i in range(ITERATIONS):
 
         #ref sequence is mutated with mutation rate p
-        query_nt_seq = create_ground_truth_file.mutated_sequence_based_on_mutation_rate_p(REF,float(p))
+        query_nt_seq = create_ground_truth_file.mutated_sequence_based_on_mutation_rate_p(ref_seq,float(p))
         GROUND_TRUTH_QUERIES.write(f'>gene_{p}_{i}\n')
         GROUND_TRUTH_QUERIES.write(f'{query_nt_seq}\n')
 
         #Translated mutated sequences 
-        translated_queries = Seq(query_nt_seq[3:-3]).translate()
+        translated_queries = Seq(query_nt_seq).translate()
         GROUND_TRUTH_PROT_QUERIES.write(f'>gene_{p}_{i}\n')
         GROUND_TRUTH_PROT_QUERIES.write(f'{translated_queries}\n')
         
