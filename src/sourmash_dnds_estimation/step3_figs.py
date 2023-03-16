@@ -23,7 +23,7 @@ def scatter(ground_truth_dnds_results_df,sourmash_compare_dnds_results_df,p,ksiz
     #plt.ylim(0,5)
     #plt.xlim(0,5)
     #plt.title(f'10,000 nt sequence p=0.1 ksize={ksize} scaled=1')
-    plt.title(f'dN/dS real protein-coding sequence p={p} ksize={ksize}')
+    plt.title(f'dN/dS real protein-coding sequence (1,470 nt) p={p} ksize={ksize}')
     #plt.ylabel('smash_containment_dNdS')
     plt.ylabel('sourmash dN/dD')
     plt.xlabel('ground truth dN/dS')
@@ -32,7 +32,7 @@ def scatter(ground_truth_dnds_results_df,sourmash_compare_dnds_results_df,p,ksiz
 
 for k in [5,6,7,8,9,10]:
 #for k in [7]:
-    WD='/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/random_10000_nt_sequence_compared_to_mahmudur_code_0.1_ksizes_2_to_20/'
+    WD='/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.1_ksizes_5_10/'
     ground_truth=f'{WD}dNdS_ground_truth.csv'
     sourmash_compare_dnds=f'{WD}dNdS_{k}.csv'
     #sourmash_compare_dnds_modified_file=f'{WD}dNdS_7_modified_removed_line_0.csv'
