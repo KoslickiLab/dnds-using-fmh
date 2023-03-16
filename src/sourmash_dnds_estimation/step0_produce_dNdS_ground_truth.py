@@ -13,7 +13,7 @@ def main(args):
     GROUND_TRUTH = args.ground_truth_output
     GROUND_TRUTH_QUERIES = open(f'{WD}{args.ground_truth_queries_output}','w')
     GROUND_TRUTH_REF_OUTPUT = open(f'{WD}{args.ground_truth_ref_output}','w')
-    mutation_p = args.mutation_rate_p
+    p = args.mutation_rate_p
     ITERATIONS = args.iterations
 
     GROUND_TRUTH_REF_PROT_OUTPUT = open(f'{WD}translated_ref_seq.faa','w')
