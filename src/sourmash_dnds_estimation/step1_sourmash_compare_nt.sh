@@ -27,13 +27,13 @@ samp_scaled=1 #scale factor for query
 
 #k is k*3 for nt when comparing between protein and nt
 #sourmash sketch dna -p k=21,scaled=$ref_scaled $ref -o $ref_output
-sourmash sketch dna -p k=30,k=33,k=36,k=39,k=42,k=45,scaled=$ref_scaled $ref -o $ref_output
+sourmash sketch dna -p k=15,k=18,k=21,k=24,k=27,k=30,scaled=$ref_scaled $ref -o $ref_output
 
 #sourmash sketch dna -p k=21,scaled=$samp_scaled $samples --singleton -o $samp_output
-sourmash sketch dna -p k=30,k=33,k=36,k=39,k=42,k=45,scaled=$samp_scaled $samples --singleton -o $samp_output
+sourmash sketch dna -p k=15,k=18,k=21,k=24,k=27,k=30,scaled=$samp_scaled $samples --singleton -o $samp_output
 
 
-for K in 30 33 36 39 42 45
+for K in 15 18 21 24 27 30
 do
     nohup sourmash compare $ref_output $samp_output --containment --dna --o ${wd}compare${K}.mat --csv ${wd}compare${K}.csv  --ksize $K > ${wd}compare${K}.txt 2>&1 & #assign to diff log files
 
