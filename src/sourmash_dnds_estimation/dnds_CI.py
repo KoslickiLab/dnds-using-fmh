@@ -9,16 +9,17 @@ pd.set_option('display.max_columns', None)
 def main(args):
 
     ###Arguments
+    WD = args.wd
     nt_compare = args.nt
     protein_compare = args.protein
     ksize = args.k
-    output = args.o
+    output = f'{WD}{args.o}'
 
     ### Obtain containment from matrix files produced by sourmash compare
     nt_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=nt_compare,ksize=ksize)
     protein_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=protein_compare,ksize=ksize)
-    nt_df.to_csv('nt_containment.csv')
-    protein_df.to_csv('prot_containment.csv')
+    nt_df.to_csv(f'{WD}nt_containment{ksize}.csv')
+    protein_df.to_csv(f'{WD}prot_containment{ksize}.csv')
 
     print(ksize)
     print(nt_df['containment'])
@@ -59,6 +60,11 @@ if __name__ == "__main__":
     '--o',
     help = 'Output CSV file with dN/dS ratio estimates between sequences evaluated. The CSV file reports sequence A, sequence B,\
     ksize, and containment index'
+    )
+
+    parser.add_argument(
+    '--wd',
+    help = 'Output directory for CSV file with dN/dS ratio estimates between sequences evaluated.'
     )
 
     args = parser.parse_args()
