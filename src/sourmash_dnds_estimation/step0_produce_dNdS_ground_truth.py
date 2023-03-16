@@ -8,15 +8,16 @@ three columns that include the refernce sequence name, mutation rate p, and dNdS
 
 def main(args):
 
+    WD = args.wd
     fna_file = args.reference_input
     GROUND_TRUTH = args.ground_truth_output
-    GROUND_TRUTH_QUERIES = open(args.ground_truth_queries_output,'w')
-    GROUND_TRUTH_REF_OUTPUT = open(args.ground_truth_ref_output,'w')
+    GROUND_TRUTH_QUERIES = open(f'{WD}{args.ground_truth_queries_output}','w')
+    GROUND_TRUTH_REF_OUTPUT = open(f'{WD}{args.ground_truth_ref_output}','w')
     mutation_p = args.mutation_rate_p
     ITERATIONS = args.iterations
 
-    GROUND_TRUTH_REF_PROT_OUTPUT = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/translated_ref_seq.faa','w')
-    GROUND_TRUTH_PROT_QUERIES = open('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/translated_mutated_queries_seq.faa','w')
+    GROUND_TRUTH_REF_PROT_OUTPUT = open(f'{WD}translated_ref_seq.faa','w')
+    GROUND_TRUTH_PROT_QUERIES = open(f'{WD}translated_mutated_queries_seq.faa','w')
 
     dNdS_report = []
 
@@ -36,13 +37,13 @@ def main(args):
             for i in range(ITERATIONS):
 
                 #ref sequence is mutated with mutation rate p
-                query_nt_seq = create_ground_truth_file.mutated_sequence_based_on_mutation_rate_p(line.strip(),float(p))
+                query_nt_seq = create_ground_truth_file.mutated_sequence_based_on_mutation_rate_p(ref_seq,float(p))
 
                 GROUND_TRUTH_QUERIES.write(f'>gene_{p}_{i}\n')
-                GROUND_TRUTH_QUERIES.write(f'{query_nt_seq}\n') 
+                GROUND_TRUTH_QUERIES.write(f'{query_nt_seq}\n')
 
                 #Translated mutated sequences 
-                translated_queries = Seq(query_nt_seq[3:-3]).translate()
+                translated_queries = Seq(query_nt_seq).translate()
                 GROUND_TRUTH_PROT_QUERIES.write(f'>gene_{p}_{i}\n')
                 GROUND_TRUTH_PROT_QUERIES.write(f'{translated_queries}\n')
                             
@@ -118,7 +119,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--mutation_rate_p',
         default=0.1,
-        type=int,
+        type=float,
         help = 'provide a mutation rate p values to mutate reference sequences to obtain ground truth query mutated sequence'
     )
 
