@@ -11,15 +11,19 @@ for ksize in [2,3,4,5,6,7,8,9,10,11,12,13,14,15,20]:
     containment_comparisons_df = pd.read_csv(containment_comparisons)
 
     plt.clf()
-    plt.scatter(containment_comparisons_df['mahmudur_p_nt'],containment_comparisons_df['jzr_p_nt'])
-    tmp = [min(containment_comparisons_df['mahmudur_p_nt']), max(containment_comparisons_df['mahmudur_p_nt'])]
+    #plt.scatter(containment_comparisons_df['mahmudur_p_nt'],containment_comparisons_df['jzr_p_nt'])
+    #tmp = [min(containment_comparisons_df['mahmudur_p_nt']), max(containment_comparisons_df['mahmudur_p_nt'])]
+    plt.scatter(containment_comparisons_df['mahmudur_p_aa'],containment_comparisons_df['jzr_p_aa'])
+    tmp = [min(containment_comparisons_df['mahmudur_p_aa']), max(containment_comparisons_df['mahmudur_p_aa'])]
     plt.plot(tmp, tmp, linestyle='--')
     #plt.ylim(0,20)
     #plt.ylim(0,5)
     #plt.xlim(0,5)
-    plt.title(f'nt containment 10,000 nt sequence p=0.1 ksize={ksize} scaled=1')
+    #plt.title(f'nt containment 10,000 nt sequence p=0.1 ksize={ksize} scaled=1')
+    plt.title(f'aa containment 10,000 nt sequence p=0.1 ksize={ksize} scaled=1')
     #plt.title(f'real protein-coding sequence p=0.1 ksize={ksize}')
     #plt.ylabel('smash_containment_dNdS')
     plt.ylabel('jzr using sourmash')
     plt.xlabel('mahmudur using python')
-    plt.savefig(f'{WD}jzr_cfrac_vs_mahmudur_nt_containment{ksize}.png',bbox_inches='tight')
+    #plt.savefig(f'{WD}jzr_cfrac_vs_mahmudur_nt_containment{ksize}.png',bbox_inches='tight')
+    plt.savefig(f'{WD}jzr_cfrac_vs_mahmudur_aa_containment{ksize}.png',bbox_inches='tight')

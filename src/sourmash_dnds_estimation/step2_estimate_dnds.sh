@@ -2,7 +2,7 @@
 set -eoux pipefail
 
 #working directories for data and result output
-wd=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.15_ksizes_5_10/ #output dNdS results to this directory
+wd=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.1_ksizes_5_10_K03427_1452nt/ #output dNdS results to this directory
 nt_compare_wd=${wd}sourmash_compare_nt/ #DNA compare
 prot_compare_wd=${wd}/sourmash_compare_protein/ #protein/translate compare
 

@@ -84,7 +84,7 @@ def main(args):
 
 
     #save report to csv output file
-    pd.DataFrame(dNdS_report, columns=['mutated_sequence', 'mutation_rate_p','dN','dS','dNdS_ground_truth','selection','iteration']).to_csv(GROUND_TRUTH)
+    pd.DataFrame(dNdS_report, columns=['mutated_sequence', 'mutation_rate_p','dN','dS','dNdS_ground_truth','selection','iteration']).to_csv(f'{WD}{GROUND_TRUTH}')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
