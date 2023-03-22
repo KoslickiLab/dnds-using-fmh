@@ -4,12 +4,13 @@ from dNdS import create_ground_truth_file
 import random
 from Bio.Seq import Seq
 
-WD='/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/random_10000_nt_sequence_0.1/'
+WD='/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/random_5000_nt_sequence_compared_to_mahmudur_code_0.1_ksizes_5_10/'
+str_len = 5001
 GROUND_TRUTH = open(f'{WD}dNdS_ground_truth.csv','w')
-GROUND_TRUTH_REF_OUTPUT = open(f'{WD}10000_nt_ref_seq.fna','w')
-GROUND_TRUTH_QUERIES = open(f'{WD}10000_nt_mutated_queries_seq.fna','w')
-GROUND_TRUTH_REF_PROT_OUTPUT = open(f'{WD}10000_prot_ref_seq.faa','w')
-GROUND_TRUTH_PROT_QUERIES = open(f'{WD}10000_prot_mutated_queries_seq.faa','w')
+GROUND_TRUTH_REF_OUTPUT = open(f'{WD}{str_len}_nt_ref_seq.fna','w')
+GROUND_TRUTH_QUERIES = open(f'{WD}{str_len}_nt_mutated_queries_seq.fna','w')
+GROUND_TRUTH_REF_PROT_OUTPUT = open(f'{WD}{str_len}_prot_ref_seq.faa','w')
+GROUND_TRUTH_PROT_QUERIES = open(f'{WD}{str_len}_prot_mutated_queries_seq.faa','w')
 
 # Create 100 random mutated sequences
 ITERATIONS = 100
@@ -17,9 +18,10 @@ ITERATIONS = 100
 mutation_p_list = [0.01]
 
 #Create a random 10,000 nt sequence for simulation
-str_len = 10000
+#str_len = 10000
 REF = ''.join(random.choices(['A', 'C', 'G', 'T'], k=str_len))
-ref_seq = REF[3:-3] #ignore start and stop codon for mutation
+#REF+="TAG"
+ref_seq = REF[3:-3] #ignore start and stop codon for mutationc
 
 #Save nt ref sequence to the following files
 GROUND_TRUTH_REF_OUTPUT.write(f'>ref_gene\n')
@@ -72,7 +74,7 @@ for p in mutation_p_list:
             selection='negative'
 
         #save report in a list object to later convert into a dataframe
-        dNdS_report.append(['ref_random_10000_nt', p, i, dN, dS, dNdS, selection])
+        dNdS_report.append(['ref_random_'+str(str_len)+'_nt', p, i, dN, dS, dNdS, selection])
 
 #save report to csv output file
 pd.DataFrame(dNdS_report, columns=['ref_sequence_name', 'mutation_rate_p','iteration','dN','dS','dNdS_ground_truth','selection']).to_csv(GROUND_TRUTH)
