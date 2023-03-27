@@ -106,7 +106,7 @@ def mutate_position_based_on_mutation_rate_p(p_mutation_rate):
     p = random.random()
     if p <= p_mutation_rate:
         return(True)
-    elif p >= 1-p_mutation_rate:
+    else:
         return(False)
 
 def mutate_with_nucleotides(mutate_nucleotide):
