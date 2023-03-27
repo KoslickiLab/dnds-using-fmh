@@ -48,14 +48,14 @@ def main(args):
                 GROUND_TRUTH_PROT_QUERIES.write(f'{translated_queries}\n')
                             
                 #get total numver of nucleotide mutations
-                total_nt_mutations = create_ground_truth_file.total_nucleotide_mutations(ref_seq,query_nt_seq) 
+                total_cdn_mutations = create_ground_truth_file.total_codon_mutations(ref_seq,query_nt_seq) 
 
                 #get total number of nonsynonymous mutations
                 total_nonsyn_mutations = create_ground_truth_file.total_aa_differences(ref_seq,query_nt_seq)
                 dN = total_nonsyn_mutations/(len(ref_seq)/3)
 
                 #get total number of synonymous mutations
-                total_syn_mutations = create_ground_truth_file.total_synonymous_mutations(total_nt_mutations,total_nonsyn_mutations)
+                total_syn_mutations = create_ground_truth_file.total_synonymous_mutations(total_cdn_mutations,total_nonsyn_mutations)
                 dS = total_syn_mutations/(len(ref_seq)/3)
 
                 #estimate dNdS using Koslicki's suggestiion
