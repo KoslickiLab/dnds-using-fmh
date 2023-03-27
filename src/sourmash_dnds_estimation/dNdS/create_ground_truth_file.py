@@ -164,6 +164,15 @@ def total_nucleotide_mutations(nt_sequence_1,nt_sequence_2):
             total_nt_muts_count+=1
     return(total_nt_muts_count)
 
+def total_codon_mutations(codon_sequence_1,codon_sequence_2):
+    total_codon_muts_count=0
+    for i in range(len(codon_sequence_1)):
+        codon_sequence_1_position_temp = codon_sequence_1[i]
+        codon_sequence_2_position_temp = codon_sequence_2[i]
+        if codon_sequence_1_position_temp != codon_sequence_2_position_temp:
+            total_codon_muts_count+=1
+    return(total_codon_muts_count)
+
 def total_aa_differences(nt_sequence_1,nt_sequence_2): 
     """Returns total amino acid changes or nonsynonymous differences between two protein sequences
     We are assuming that they should be the same length.
