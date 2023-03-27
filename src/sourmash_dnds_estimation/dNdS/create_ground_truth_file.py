@@ -150,19 +150,20 @@ def translate_coding_sequence(cds_seq):
             translation+=codontab[codon]
     return(translation)
 
-def total_nucleotide_mutations(nt_sequence_1,nt_sequence_2):
+# we are going to not use nt mutations but instead use codon mutations
+#def total_nucleotide_mutations(nt_sequence_1,nt_sequence_2):
     """Returns total number of mutations *both synonymous and nonsynonymous mutations
     total_muts records the total differences between two sequences.
     We are assuming that they should be the same length.
     nt_sequence_1: a nucleotide sequence that is a string
     nt_sequence_2: a nucleotide sequence that is a string"""
-    total_nt_muts_count=0
-    for i in range(len(nt_sequence_1)):
-        seq_1_position_temp = nt_sequence_1[i]
-        seq_2_position_temp = nt_sequence_2[i]
-        if seq_1_position_temp != seq_2_position_temp:
-            total_nt_muts_count+=1
-    return(total_nt_muts_count)
+    #total_nt_muts_count=0
+    #for i in range(len(nt_sequence_1)):
+    #    seq_1_position_temp = nt_sequence_1[i]
+    #    seq_2_position_temp = nt_sequence_2[i]
+    #    if seq_1_position_temp != seq_2_position_temp:
+    #        total_nt_muts_count+=1
+    #return(total_nt_muts_count)
 
 def total_codon_mutations(codon_sequence_1,codon_sequence_2):
     """Returns total number of mutations between codons of two codon sequences
@@ -195,12 +196,12 @@ def total_aa_differences(nt_sequence_1,nt_sequence_2):
                 total_aa_muts_count+=1
     return(total_aa_muts_count)
 
-def total_synonymous_mutations(total_nt_mutations,total_nonsyn_mutations):
+def total_synonymous_mutations(total_codon_mutations,total_nonsyn_mutations):
     """Return total synonymous mutations
-    total_nt_mutations: total nucleotide mutations between two sequences, obtain using total_nucleotide_mutations(nt_sequence_1,nt_sequence_2)
+    total_nt_mutations: total nucleotide mutations between two sequences, obtain using total_codon_mutations(codon_sequence_1,codon_sequence_2)
     total_nonsyn_mutations: total nucleotide mutations between two sequences, obtain using total_aa_differences(nt_sequence_1,nt_sequence_2)
     """
-    total_syn_mutations = total_nt_mutations - total_nonsyn_mutations
+    total_syn_mutations = total_codon_mutations - total_nonsyn_mutations
     return(total_syn_mutations)
 
 def koslicki_dnds(total_nonsyn_mutations,total_syn_mutations):
