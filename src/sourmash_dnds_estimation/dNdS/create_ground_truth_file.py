@@ -165,6 +165,9 @@ def total_nucleotide_mutations(nt_sequence_1,nt_sequence_2):
     return(total_nt_muts_count)
 
 def total_codon_mutations(codon_sequence_1,codon_sequence_2):
+    """Returns total number of mutations between codons of two codon sequences
+    total_codon_muts_count keep running total codon differences assuming bother sequences of same length
+    codon_sequence_1 and codon_sequence_2 are a list of codons"""
     total_codon_muts_count=0
     for i in range(len(codon_sequence_1)):
         codon_sequence_1_position_temp = codon_sequence_1[i]
