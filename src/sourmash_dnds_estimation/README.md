@@ -4,7 +4,9 @@ describe
 
 # to create ground truth file run
 
-python step0_produce_dNdS_ground_truth.py --reference_input /data/jzr5814/sourmash_dnds_estimation/tests/data/ground_truth_data/ground_truth_ref.fna --ground_truth_output dNdS_ground_truth.csv --mutation_rate_p 0.15 --ground_truth_ref_output ground_truth_ref_used_for_dNdS.fna --ground_truth_queries_output ground_truth_mutated_queries_used_for_dNdS.fna --iterations 100 --wd /data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.15_ksizes_5_10/
+python step0_produce_dNdS_ground_truth.py --reference_input /data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.001_ksizes_5_10_500/ground_truth_ref.fna --ground_truth_output dNdS_ground_truth.csv --mutation_rate_p 0.001 --ground_truth_ref_output ground_truth_ref_used_for_dNdS.fna --ground_truth_queries_output ground_truth_mutated_queries_used_for_dNdS.fna --iterations 100 --wd /data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.001_ksizes_5_10_500/
+
+python step0_produce_dNdS_ground_truth_between_real_sequences.py --reference_input /data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.1_ksizes_5_10_K03427_1452nt/K03427_1452nt_ref_seq.fna --query_input /data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.1_ksizes_5_10_K03427_1452nt/K03427_1452nt_query_seqs.fna --ground_truth_output dNdS_ground_truth.csv --wd /data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.1_ksizes_5_10_K03427_1452nt/
 
 ## To run
 
