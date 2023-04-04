@@ -2,11 +2,11 @@
 set -eoux pipefail
 
 #working directories for data and result output
-wd=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.1_ksizes_5_10_K03427_1452nt/ #output dNdS results to this directory
+wd=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.1_ksizes_5_30_500_cdn_differences/ #output dNdS results to this directory
 nt_compare_wd=${wd}sourmash_compare_nt/ #DNA compare
 prot_compare_wd=${wd}/sourmash_compare_protein/ #protein/translate compare
 
-for k in 5 6 7 8 9 10
+for k in 5 6 7 8 9 10 15 20 25 30
 do
 declare -i nt_k=k*3
 
