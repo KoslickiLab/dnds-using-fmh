@@ -157,13 +157,13 @@ def translate_coding_sequence(cds_seq):
     We are assuming that they should be the same length.
     nt_sequence_1: a nucleotide sequence that is a string
     nt_sequence_2: a nucleotide sequence that is a string"""
-    #total_nt_muts_count=0
-    #for i in range(len(nt_sequence_1)):
-    #    seq_1_position_temp = nt_sequence_1[i]
-    #    seq_2_position_temp = nt_sequence_2[i]
-    #    if seq_1_position_temp != seq_2_position_temp:
-    #        total_nt_muts_count+=1
-    #return(total_nt_muts_count)
+#    total_nt_muts_count=0
+#    for i in range(len(nt_sequence_1)):
+#        seq_1_position_temp = nt_sequence_1[i]
+#        seq_2_position_temp = nt_sequence_2[i]
+#        if seq_1_position_temp != seq_2_position_temp:
+#            total_nt_muts_count+=1
+#    return(total_nt_muts_count)
 
 def total_codon_mutations(codon_sequence_1,codon_sequence_2):
     """Returns total number of mutations between codons of two codon sequences
