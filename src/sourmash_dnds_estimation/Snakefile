@@ -1,0 +1,81 @@
+#snakemake file to evaluate minhash frame prediction using sourmash compare
+import glob
+import os
+
+prot_ksizes_list = ['5','6','7','8','9','10','11','12','13','14','15','20','25','30']
+nt_ksizes_list = ['15','18','21','24','27','30','33','36','39','42','45','60','75','90']
+p_rate = 0.1
+iterations = 100
+WD='/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/snakemake_test/' #working directory
+
+#rule to make sure all files are created when running snakemake
+rule all:
+    input: 
+        WD+'ground_truth_ref.fna',
+        WD+'ground_truth_ref_used_for_dNdS.fna',
+        WD+'ground_truth_mutated_queries_used_for_dNdS.fna',
+        WD+'ground_truth_ref_dna.sig',
+        WD+"ground_truth_mutated_queries_dna.sig.zip",
+        WD+"translated_ref_seq.faa",
+        WD+"translated_mutated_queries_seq.faa",
+        WD+'ground_truth_ref_translate.sig',
+        WD+'ground_truth_mutated_queries_translate.sig.zip',
+        expand(WD+'sourmash_compare_nt/compare{nt_k}.csv',nt_k = nt_ksizes_list),
+        expand(WD+'sourmash_compare_protein/compare{prot_k}.csv',prot_k = prot_ksizes_list),
+        expand(WD+'dnds_{prot_k}.csv',prot_k = prot_ksizes_list)
+
+#obtain six reading frames from nt sequences
+
+rule get_ground_truth_files:
+    input:
+        cmd='step0_produce_dNdS_ground_truth.py',
+        fna_file=WD+'ground_truth_ref.fna',
+        P=p_rate,
+        wd=WD
+    output: 
+        ground_truth_csv = WD+'dNdS_ground_truth.csv',
+        ground_truth_ref = WD+'ground_truth_ref_used_for_dNdS.fna',
+        ground_truth_mutated_queries_used_for_dNdS = WD+'ground_truth_mutated_queries_used_for_dNdS.fna',
+        translated_ref=WD+'translated_ref_seq.faa',
+        translated_query=WD+'translated_mutated_queries_seq.faa'
+    log: WD+"get_ground_truth_files_log"
+    shell: 'python3 {input.cmd} --reference_input {input.fna_file} --ground_truth_output {output.ground_truth_csv} --mutation_rate_p {P} --ground_truth_ref_output {output.ground_truth_ref} --ground_truth_queries_output {output.ground_truth_mutated_queries_used_for_dNdS} --iterations {iterations} --wd {wd}'
+
+#sourmash compare nt
+rule get_nt_compare: #recipe
+    input:
+        ref=WD+'ground_truth_ref_used_for_dNdS.fna',
+        query=WD+'ground_truth_mutated_queries_used_for_dNdS.fna',
+        wd=WD
+    output: 
+        ref_sig=WD+'ground_truth_ref_dna.sig',
+        query_sig=WD+'ground_truth_mutated_queries_dna.sig.zip'
+    log: WD+'get_nt_compare_log'
+    shell: 'bash step1_sourmash_compare_nt.sh {wd}'
+
+#sourmash compare prot
+rule get_prot_compare: #recipe
+    input:
+        ref=WD+'translated_ref_seq.faa',
+        query=WD+'translated_mutated_queries_seq.faa',
+        wd=WD
+    output: 
+        ref_sig=WD+'ground_truth_ref_translate.sig',
+        query_sig=WD+'ground_truth_mutated_queries_translate.sig.zip',
+        csv_nt=expand(WD+'sourmash_compare_nt/compare{nt_k}.csv',nt_k = nt_ksizes_list),
+        csv_prot=expand(WD+'sourmash_compare_protein/compare{prot_k}.csv',prot_k = prot_ksizes_list)
+    log: WD+'get_nt_compare_log'
+    shell: 'bash step1_sourmash_compare_prot.sh {wd}'
+
+#sourmash compare
+rule estimate_dnds:
+    input:
+        expand(WD+'sourmash_compare_nt/compare{nt_k}.csv',nt_k = nt_ksizes_list),
+        expand(WD+'sourmash_compare_protein/compare{prot_k}.csv',prot_k = prot_ksizes_list),
+        wd=WD
+    output: expand(WD+'dnds_{prot_k}.csv',prot_k = prot_ksizes_list)
+    log: WD+"estimate_dnds_log"
+    shell: 'bash step2_estimate_dnds.sh {wd}'
+
+rule clean:
+    shell: "rm -f "+WD+"*"
