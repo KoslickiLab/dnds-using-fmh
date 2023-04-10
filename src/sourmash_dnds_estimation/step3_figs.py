@@ -66,7 +66,7 @@ def scatter(ground_truth_dnds_results_df,sourmash_compare_dnds_results_df,ksize,
 for k in [5,6,7,8,9,10,11,12,13,14,15,20,25,30]:
 #for k in [5,6,7,8,9,10,15]:
 #for k in [25,30]:
-    WD='/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.1_ksizes_5_30_1000/'
+    WD='/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/real_data_0.1_ksizes_5_30_10002/'
     ground_truth=f'{WD}dNdS_ground_truth.csv'
 
     sourmash_compare_dnds=f'{WD}dnds_{k}.csv'
