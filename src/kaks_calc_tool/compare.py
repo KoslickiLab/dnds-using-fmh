@@ -85,10 +85,9 @@ def scatter(ground_truth_data,fracminhash_data,ksize,wd,gene_length,p_mut,kaks_c
 
     #plt.ylabel('smash_containment_dNdS')
     #plt.ylabel('smash_containment_dNdS\n outliers removed')
-    plt.ylabel('jzr ground truth dN/dD')
+    plt.ylabel('jzr ground truth dN/dS\n(counts total nt differences)')
+    #plt.ylabel('jzr ground truth dN/dS\n(counts total codon differences)')
 
-    #plt.xlabel('jzr ground truth dN/dS\n(counts total nt differences)')
-    #plt.xlabel('jzr ground truth dN/dS\n(counts total codon differences)') 
     plt.xlabel('NG86 Ka/Ks calculator')
 
     plt.savefig(f'{wd}NG86_vs_jzr_ground_truth_{p_mut}_{ksize}_{gene_length}.png',bbox_inches='tight')
