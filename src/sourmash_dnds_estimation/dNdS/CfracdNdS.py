@@ -9,6 +9,7 @@ def calc_Pnt(nt_containment,k):
     k: Identify the ksize used to produce containment index (this is an integer)
     """
     nt_k = 3*k
+    print(1 - nt_containment**(1/nt_k))
     return(1 - nt_containment**(1/nt_k))
 
 def calc_PdN(protein_containment,k):
@@ -17,6 +18,7 @@ def calc_PdN(protein_containment,k):
     protein_containment: The containment index between two protein sequences (this is a float)
     k: Identify the ksize used to produce containment index (this is an integer)
     """
+    print(1-protein_containment**(1/k))
     return(1-protein_containment**(1/k))
 
 def calc_nomutation(nt_containment,k):
@@ -26,6 +28,7 @@ def calc_nomutation(nt_containment,k):
     nt_containment: The containment index between two nucleotide sequences (this is a float)
     k: Identify the ksize used to produce containment index (this is an integer)
     """
+    print((1-calc_Pnt(nt_containment,k))**3)
     return((1-calc_Pnt(nt_containment,k))**3)
 
 def calc_PdS(protein_containment,nt_containment,k):
@@ -38,6 +41,7 @@ def calc_PdS(protein_containment,nt_containment,k):
     """
     #PdS = 1-calc_PdN(protein_containment,k) - (calc_nomutation(nt_containment,k))
     PdS = 1 - calc_PdN(protein_containment,k) - (1 - calc_Pnt(nt_containment,k))**3
+    print(PdS)
     return(PdS)
 
 def dNdS_ratio(protein_containment,nt_containment,k):
@@ -48,7 +52,22 @@ def dNdS_ratio(protein_containment,nt_containment,k):
     protein_containment: The containment index between two protein sequences (this is a float)
     k: Identify the ksize used to produce containment index (this is an integer)
     """
+    print((calc_PdN(protein_containment,k))/(calc_PdS(protein_containment,nt_containment,k)))
     return((calc_PdN(protein_containment,k))/(calc_PdS(protein_containment,nt_containment,k)))
+
+def dNdS_ratio_constant(protein_containment,nt_containment,k):
+    """
+    Returns dN/dS ratio between two protein sequences.
+    Uses calc_PdN() and calc_PdS() functions for estimation
+    nt_containment: The containment index between two nucleotide sequences (this is a float)
+    protein_containment: The containment index between two protein sequences (this is a float)
+    k: Identify the ksize used to produce containment index (this is an integer)
+    """
+    constant = 0.77/2.23
+    dNdS = calc_PdN(protein_containment,k)/calc_PdS(protein_containment,nt_containment,k)
+    dNdS_constant = dNdS*constant
+    print(dNdS_constant)
+    return(dNdS_constant)
 
 def report_dNdS(nt_containment_df,prot_containment_df):
     """
@@ -68,7 +87,16 @@ def report_dNdS(nt_containment_df,prot_containment_df):
     #join df into one
     df = pd.merge(nt_df, protein_df, on=['A','B','ksize'])
     #apply function
-    df['dNdS_ratio'] = dNdS_ratio(nt_containment=df['containment_nt'],protein_containment=df['containment_protein'],k=df['ksize'])
 
+    print(calc_PdN(protein_containment=df['containment_protein'],k=df['ksize']))
+    print(calc_PdS(protein_containment=df['containment_protein'],nt_containment=df['containment_nt'],k=df['ksize']))
+
+    df['dN_constant'] = (calc_PdN(protein_containment=df['containment_protein'],k=df['ksize']))/2.23
+    df['dS_constant'] = (calc_PdS(protein_containment=df['containment_protein'],nt_containment=df['containment_nt'],k=df['ksize']))/0.77
+    df['dN'] = (calc_PdN(protein_containment=df['containment_protein'],k=df['ksize']))
+    df['dS'] = (calc_PdS(protein_containment=df['containment_protein'],nt_containment=df['containment_nt'],k=df['ksize']))
+    df['dNdS_ratio'] = dNdS_ratio(nt_containment=df['containment_nt'],protein_containment=df['containment_protein'],k=df['ksize'])
+    df['dNdS_ratio_constant'] = dNdS_ratio_constant(nt_containment=df['containment_nt'],protein_containment=df['containment_protein'],k=df['ksize'])
+    print(df)
     #report
     return(df)
