@@ -1,4 +1,0 @@
-python step0_produce_dNdS_for_random_10000_nt_seq_as_ground_truth.py
-bash step1_sourmash_compare_nt.sh
-bash step1_sourmash_compare_prot.sh
-bash step2_estimate_dnds.sh
