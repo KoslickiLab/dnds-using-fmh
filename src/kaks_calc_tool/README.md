@@ -1,4 +1,10 @@
+# fasta sequences shouldn't have new lines in order for the program to give you correct results
+awk '!/^>/ { printf "%s", $0; n = "\n" } 
+/^>/ { print n $0; n = "" }
+END { printf "%s", n }
+' sequence_temp.fna > sequence.fna
 
+rm sequence_temp
 
 # create axt file from a fasta file where the first sequence is the reference
 awk '$0 ~ ">" {c=substr($0,2,length($0))} NR == 2 {ref=$0} NR % 2 == 0 {print c"\n"ref"\n"$0"\n"}' sequences.fna > kaks_sequences.axt
