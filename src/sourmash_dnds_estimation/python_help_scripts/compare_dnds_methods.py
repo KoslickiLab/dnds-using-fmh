@@ -15,18 +15,14 @@ ksizes = [5,7,10,15,20]
 fmh_dnds = pd.read_csv('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/HIT000324409/dnds_constant_all.csv',sep=',').rename(columns={'ksize': 'Method', 'B': 'Sequence'}).pivot(index='Sequence',columns='Method')[['dNdS_ratio_constant']]
 fmh_dnds = fmh_dnds['dNdS_ratio_constant'][ksizes].reset_index()
 
-
-############# this is where I am stuck
-evola_dnds = pd.read_csv('/data/jzr5814/sourmash_dnds_estimation/tests/data/evola_data/NFAS/HIT000324409/dnds_HIT000324409.csv',sep='\t').rename(columns={'Seq.2': 'Sequence','dN/dS': 'modified_dNdS'}).pivot(index='Sequence',columns='Method')[['Sequence','modified_dNdS']].reset_index()
-evola_dnds
-#evola_dnds = fmh_dnds['modified_dNdS'][['Method']].reset_index()
+#add evola dn/ds modified NG data
+evola_dnds = pd.read_csv('/data/jzr5814/sourmash_dnds_estimation/tests/data/evola_data/NFAS/HIT000324409/dnds_HIT000324409.csv',sep='\t')[['Seq.2','dN/dS']].reset_index().rename(columns={'Seq.2': 'Sequence','dN/dS': 'modified_dNdS'})
 evola_dnds_method = ['modified_dNdS']
 
-print(evola_dnds)
-df1 = pd.merge(kaks_calc, fmh_dnds, evola_dnds, 'left', on = ["Sequence"])[methods+ksizes+evola_dnds_method]
-df1
-#box plot #1
+#merge dataframes
+df1 = pd.merge(kaks_calc, fmh_dnds, 'left', on = ["Sequence"]).merge(evola_dnds, 'left', on = ["Sequence"])[methods+ksizes+evola_dnds_method]
 
+#boxplot
 bx_plotvals1, vals1, names1, xs1 = [],[],[],[]
 for i, col in enumerate(df1.columns):
     #print(col)
@@ -36,7 +32,7 @@ for i, col in enumerate(df1.columns):
     names1.append(str(col)+"-mer")
     xs1.append(np.random.normal(i + 1, 0.04, df1[col].values.shape[0]))  # adds jitter to the data points - can be adjusted
 
-fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(10, 10))
+fig, (ax1) = plt.subplots(nrows=1, ncols=1, figsize=(20, 10))
 
 ##### Set style options here #####
 sns.set_style("whitegrid")  # "white","dark","darkgrid","ticks"
@@ -55,12 +51,14 @@ for xA, valA, c in zip(xs1, vals1, palette):
     ax1.scatter(xA, valA, alpha=0.4, color=c)
 
 sns.set_style("whitegrid")
-ind = np.arange(13) 
+ind = np.arange(14) 
 for ax in fig.get_axes():
     ax.grid(visible=None)
-    ax.set_xticks(ticks=ind,labels=['','GNG','GY-HKY','LPB','LWL','NG','YN','5','7','10','15','20','mod_NG'],fontsize=15)
-    ax.set_ylim(0,12)
+    ax.set_xticks(ticks=ind,labels=['','GNG','GY-HKY','LPB','LWL','NG','YN','k5','k7','k10','k15','k20','mod_NG',''],fontsize=15)
+    ax.set_ylim(-1,12)
 
+ax.set_xlabel('dN/dS methods')
+ax.set_ylabel('dN/dS estimations')
 fig.suptitle("dN/dS Methods",fontsize=20)
 #fig.text(0.07,0.5,'Containment Index',ha='center',va='center',rotation='vertical',fontsize=15)
 
