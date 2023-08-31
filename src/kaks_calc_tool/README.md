@@ -6,6 +6,9 @@ END { printf "%s", n }
 
 rm sequence_temp
 
+#in order to create homolog file for ParaAT use this command. It will create a tab delimited file. The homologs.txt is a list of sequence names and every - is a sequence 
+paste - - - - - - - - - < homologs.txt > homologs_edit.txt
+
 # create axt file from a fasta file where the first sequence is the reference
 awk '$0 ~ ">" {c=substr($0,2,length($0))} NR == 2 {ref=$0} NR % 2 == 0 {print c"\n"ref"\n"$0"\n"}' sequences.fna > kaks_sequences.axt
 
