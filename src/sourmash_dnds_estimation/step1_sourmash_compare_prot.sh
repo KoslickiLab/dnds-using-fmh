@@ -4,15 +4,15 @@ set -eoux pipefail
 ### Sketch and comapre protein sequences for dN/dS estimation
 
 #working directories for data and result output
-data=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/HIT000324409/
+data=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/HIT000324409_pairwise/
 sigs=${data}
 wd=${data}sourmash_compare_protein/
 
 mkdir ${wd}
 
 #files for a 9 sequences
-ref=${data}ref_HIT000324409.fasta
-samples=${data}queries_HIT000324409.fasta
+ref=${data}pairwise_HIT000324409.fasta
+samples=${data}pairwise_HIT000324409.fasta
 
 #signature output filenames
 ref_output=${sigs}ref_translate.sig 
@@ -23,7 +23,7 @@ ref_scaled=1 #scale factor for reference
 samp_scaled=1 #scale factor for query
 
 #Input of ref protein sequencess 
-sourmash sketch protein -p k=5,k=6,k=7,k=8,k=9,k=10,k=11,k=12,k=13,k=14,k=15,k=20,k=25,k=30,scaled=$ref_scaled $ref -o $ref_output
+sourmash sketch protein -p k=5,k=6,k=7,k=8,k=9,k=10,k=11,k=12,k=13,k=14,k=15,k=20,k=25,k=30,scaled=$ref_scaled $ref --singleton -o $ref_output
 #Input of mutated protein sequencess
 sourmash sketch protein -p k=5,k=6,k=7,k=8,k=9,k=10,k=11,k=12,k=13,k=14,k=15,k=20,k=25,k=30,scaled=$samp_scaled $samples --singleton -o $samp_output
 
