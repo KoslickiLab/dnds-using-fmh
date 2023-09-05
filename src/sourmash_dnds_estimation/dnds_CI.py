@@ -14,10 +14,12 @@ def main(args):
     protein_compare = args.protein
     ksize = args.k
     output = args.o
+    nt_labels = args.nt_labels
+    prot_labels = args.prot_labels
 
     ### Obtain containment from matrix files produced by sourmash compare
-    nt_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=nt_compare,ksize=ksize)
-    protein_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=protein_compare,ksize=ksize)
+    nt_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=nt_compare,labels_txt=nt_labels,ksize=ksize)
+    protein_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=protein_compare,labels_txt=prot_labels,ksize=ksize)
     nt_df.to_csv(f'{WD}nt_containment{ksize}.csv')
     protein_df.to_csv(f'{WD}prot_containment{ksize}.csv')
 
@@ -65,6 +67,11 @@ if __name__ == "__main__":
     parser.add_argument(
     '--wd',
     help = 'Output directory for CSV file with dN/dS ratio estimates between sequences evaluated.'
+    )
+
+    parser.add_argument(
+        '--labels',
+        help='use label.mat.txt file to correctly label estimates'
     )
 
     args = parser.parse_args()
