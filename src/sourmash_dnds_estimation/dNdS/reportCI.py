@@ -24,8 +24,9 @@ def grab_containment_from_mat_ground_truth(mat_df,ksize):
     #df['ksize']=ksize
 
     #read in df
-    df = pd.read_csv(mat_df,sep=',')
-
+    total_sigs=9
+    df = pd.read_csv(mat_df,sep=',').iloc[0:total_sigs,0:total_sigs]
+    print(df)
     #record gene header into list
     gene_name_header_list = df.T.index.to_list()
 
