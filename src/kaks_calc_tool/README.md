@@ -1,3 +1,6 @@
+# if fasta names are compliated in which they have spaces and other chars use the following command to add quotations (i.e. you may need to use this for seq.parse fasta dictionary)
+cat sequences_with_no_line_breaks.fna | sed 's/>\(.*\)/>"\1"/g' | grep '>'
+
 # fasta sequences shouldn't have new lines in order for the program to give you correct results
 awk '!/^>/ { printf "%s", $0; n = "\n" } 
 /^>/ { print n $0; n = "" }
