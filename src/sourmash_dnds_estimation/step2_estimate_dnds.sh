@@ -2,7 +2,7 @@
 set -eoux pipefail
 
 #working directories for data and result output
-wd=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/HIT000324409_pairwise/ #output dNdS results to this directory
+wd=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/HIT000324409_pairwise_take_2_with_CDS_transcripts/ #output dNdS results to this directory
 nt_compare_wd=${wd}sourmash_compare_nt/ #DNA compare
 prot_compare_wd=${wd}sourmash_compare_protein/ #protein/translate compare
 
@@ -18,3 +18,4 @@ out=dnds_constant_${k}.csv
 nohup python3 dnds_CI.py --nt ${nt_containment} --protein ${protein_containment} --k ${k} --o ${out} --wd ${wd} > ${wd}dnds_CI_log.txt 2>&1 &
 
 done
+
