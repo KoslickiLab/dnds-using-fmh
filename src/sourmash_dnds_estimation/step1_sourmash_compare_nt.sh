@@ -4,7 +4,7 @@ set -eoux pipefail
 ### Sketch and comapre nucleotide sequences for dN/dS estimation
 
 #working directories for data and result output
-data=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/HIT000324409_pairwise/
+data=/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/HIT000324409_pairwise_take_2_with_CDS_transcripts/
 #data=$1
 sigs=${data}
 wd=${data}sourmash_compare_nt/

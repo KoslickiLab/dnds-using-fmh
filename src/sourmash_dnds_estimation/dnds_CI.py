@@ -21,13 +21,8 @@ def main(args):
     nt_df.to_csv(f'{WD}nt_containment{ksize}.csv')
     protein_df.to_csv(f'{WD}prot_containment{ksize}.csv')
 
-    print(ksize)
-    print(nt_df['containment'])
-    print(protein_df['containment'])
-
     ### Produce csv file with nt and protein containments with dNdS estimates
     report_df = CfracdNdS.report_dNdS(nt_df,protein_df)
-    print(report_df[['containment_nt','containment_protein']])
     report_df.to_csv(f'{WD}{output}')
 
     #create figures of CI analysis
