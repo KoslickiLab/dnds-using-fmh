@@ -22,13 +22,14 @@ def scatter(ground_truth_data,fracminhash_data,ksize,wd,kaks_calc_method):
     column_kaks_calc_data = kaks_calc_method
 
     results = pd.concat([fracminhash_data,kaks_calc_data], axis=1).reindex(kaks_calc_data.index)
-    results
+    
     #filter 
     results_2 = results.replace([np.inf, -np.inf], np.nan).dropna() #remove indivisible dNdS ratio
 
     #choosing columns of interest
     results_2 = results_2[[column_fracminhash_data,column_kaks_calc_data]]
-    
+    results_2 = results_2[(results_2[column_fracminhash_data] >= 0)]
+    print(results_2)
     n=len(results_2[column_kaks_calc_data])
     
     """RMSE"""
@@ -47,16 +48,16 @@ def scatter(ground_truth_data,fracminhash_data,ksize,wd,kaks_calc_method):
     R2  = corr**2
  
     plt.clf()
-    plt.scatter(results[column_kaks_calc_data],results[column_fracminhash_data])
-    
+    plt.scatter(results_2[column_kaks_calc_data],results_2[column_fracminhash_data])
+    print(results_2[column_fracminhash_data])
     x_pos=0.3
-    plt.text(x_pos,-0.2,f'RMSE={round(RMSE,4)}')
-    plt.text(x_pos,-0.25,f'MAE={round(MAE,4)}')
-    plt.text(x_pos,-0.3,f'pearson r={round(pcorr[0],4)},p={round(pcorr[1])}')
-    plt.text(x_pos,-0.35,f'R^2={round(R2,4)}')
-    plt.text(x_pos,-0.4,f'n={n}')
+    plt.text(x_pos,0.25,f'RMSE={round(RMSE,4)}')
+    plt.text(x_pos,0.23,f'MAE={round(MAE,4)}')
+    plt.text(x_pos,0.21,f'pearson r={round(pcorr[0],4)},p={round(pcorr[1])}')
+    plt.text(x_pos,0.19,f'R^2={round(R2,4)}')
+    plt.text(x_pos,0.17,f'n={n}')
 
-    tmp = [results[column_kaks_calc_data].min(), results[column_kaks_calc_data].max()]
+    tmp = [results_2[column_kaks_calc_data].min(), results_2[column_kaks_calc_data].max()]
     plt.plot(tmp, tmp, linestyle='--')
     #plt.ylim(0,5)
     
@@ -64,7 +65,7 @@ def scatter(ground_truth_data,fracminhash_data,ksize,wd,kaks_calc_method):
     plt.ylabel('fmh dN/dS')
     plt.xlabel(f'{kaks_calc_method} dN/dS (EVOLA data)')
 
-    plt.savefig(f'{wd}fmh_constant_and_{kaks_calc_method}_{ksize}_r2_MAE_RMSE_outliers_rm.png',bbox_inches='tight')
+    plt.savefig(f'{wd}fmh_constant_and_{kaks_calc_method}_{ksize}_negative_outliers_rm_2.png',bbox_inches='tight')
 
 """ Create plot from following data """
 #add fmh dn/ds data

@@ -8,11 +8,15 @@ from matplotlib.pyplot import figure
 
 #read in pivot tables
 methods = ['GNG','GY-HKY','LPB','LWL','NG','YN']
-kaks_calc = pd.read_csv('/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/kaks_sequences_additional_methods.axt.kaks',sep='\t').pivot(index='Sequence',columns='Method')[['Ka/Ks']]
+#kaks_calc = pd.read_csv('/data/jzr5814/kaks_calc_tool_analysis/HIT000324409_pairwise_take_2_with_CDS_transcripts/kaks.axt.kaks',sep='\t').pivot_table(index='Sequence',columns='Method')[['Ka/Ks']]
+kaks_calc = pd.read_csv('/data/jzr5814/kaks_calc_tool_analysis/HIT000324409_pairwise_take_2_with_CDS_transcripts/kaks.axt.kaks',sep='\t')
+kaks_calc['Sequence'] = kaks_calc['Sequence'].replace('>ENSECAT00000016948_Equus.', 'ENSECAT00000016948_Equus. ensembl').replace('>ENSMUST00000111882_Mus.', 'ENSMUST00000111882_Mus. ensembl').replace('>ENSORLT00000022736_Oryzias.', 'ENSORLT00000022736_Oryzias. ensembl').replace('>ENSPPYT00000015088_Pongo.','ENSPPYT00000015088_Pongo. ensembl').replace('>XM_001923765_Danio.','XM_001923765_Danio. refseq').replace('>hsa_7273','hsa:7273 K12567 titin [EC:2.7.11.1] | (RefSeq) TTN, CMD1G, CMH9, CMPD4, CMYP5, EOMFC, HMERF, LGMD2J, LGMDR10, MYLK5, SALMY, TMD; titin (N)')
+kaks_calc = kaks_calc.pivot_table(index='Sequence',columns='Method')[['Ka/Ks']]
 kaks_calc = kaks_calc['Ka/Ks'][methods].reset_index()
 
+#file is contanation of all dnds_contant files but make sure headers are only in the first line of the file
 ksizes = [5,7,10,15,20]
-fmh_dnds = pd.read_csv('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/HIT000324409/dnds_constant_all.csv',sep=',').rename(columns={'ksize': 'Method', 'B': 'Sequence'}).pivot(index='Sequence',columns='Method')[['dNdS_ratio_constant']]
+fmh_dnds = pd.read_csv('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/HIT000324409_pairwise_take_2_with_CDS_transcripts/dnds_constant_all.csv',sep=',').rename(columns={'ksize': 'Method', 'B': 'Sequence'}).pivot_table(index='Sequence',columns='Method')[['dNdS_ratio_constant']]
 fmh_dnds = fmh_dnds['dNdS_ratio_constant'][ksizes].reset_index()
 
 #add evola dn/ds modified NG data
@@ -55,12 +59,12 @@ ind = np.arange(14)
 for ax in fig.get_axes():
     ax.grid(visible=None)
     ax.set_xticks(ticks=ind,labels=['','GNG','GY-HKY','LPB','LWL','NG','YN','k5','k7','k10','k15','k20','mod_NG',''],fontsize=15)
-    ax.set_ylim(-1,12)
+    ax.set_ylim(0,1)
 
 ax.set_xlabel('dN/dS methods')
 ax.set_ylabel('dN/dS estimations')
-fig.suptitle("dN/dS Methods",fontsize=20)
+fig.suptitle("dN/dS Methods with alignments for KaKs estimations",fontsize=20)
 #fig.text(0.07,0.5,'Containment Index',ha='center',va='center',rotation='vertical',fontsize=15)
 
-fig.savefig('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/HIT000324409/dNdS_methods.png',bbox_inches='tight')
+fig.savefig('/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/HIT000324409_pairwise_take_2_with_CDS_transcripts/dNdS_methods2.png',bbox_inches='tight')
 
