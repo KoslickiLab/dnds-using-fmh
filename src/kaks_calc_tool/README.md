@@ -2,23 +2,22 @@
 cat sequences_with_no_line_breaks.fna | sed 's/>\(.*\)/>"\1"/g' | grep '>'
 
 # fasta sequences shouldn't have new lines in order for the program to give you correct results
-awk '!/^>/ { printf "%s", $0; n = "\n" } 
-/^>/ { print n $0; n = "" }
-END { printf "%s", n }
-' sequence_temp.fna > sequence.fna
+awk '!/^>/ { printf "%s", $0; n = "\n" } /^>/ { print n $0; n = "" } END { printf "%s", n }' sequence_temp.fna > sequence.fna
 
 rm sequence_temp
 
-#in order to create homolog file for ParaAT use this command. It will create a tab delimited file. The homologs.txt is a list of sequence names and every - is a sequence 
-paste - - - - - - - - - < homologs.txt > homologs_edit.txt
+# create axt file from concatenated alignment fasta files
+# sed '0~4G' inserts a new line at every 4 line
+# sed '3~5d' removes every 5th line starting at the third line
+# sed 's/-$/--/g' adds an extra gap in case of any sequences that cannot be divided by 3
+cat clustalw_DNA_all.aln | sed '0~4G'| sed '3~5d' > kaks_sequences.axt
 
-# create axt file from a fasta file where the first sequence is the reference
-awk '$0 ~ ">" {c=substr($0,2,length($0))} NR == 2 {ref=$0} NR % 2 == 0 {print c"\n"ref"\n"$0"\n"}' sequences.fna > kaks_sequences.axt
+# removes new line and parses a fasta file into an axt file
+awk '!/^>/ { printf "%s", $0; n = "\n" } /^>/ { print n $0; n = "" } END { printf "%s", n }' | sed '3~4d' | sed '0~3 a\\'
 
 # run kaks_calculator on axt file
 KaKs_Calculator -i kaks_sequences.axt -o kaks_sequences.axt.kaks -m GNG -m GY -m LPB -m LWL -m NG -m YN
 
-# KaKs_Caulculator requires that sequences be divisible by three. If you encounter this problem, the following command should fix it.
-cat sequences.fna | cut -c 2- | sed 's/^gene/>gene/' | sed 's/^ref/>ref/' > sequences_modified.fna 
+
 
 

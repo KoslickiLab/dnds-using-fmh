@@ -1,0 +1,19 @@
+
+
+#pairwise alignment for DNA
+#nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/horse.fna -type=DNA -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/horse.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/horse_align.log 2>&1
+#nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/monodelphis.fna -type=DNA -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/monodelphis.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/monodelphis_align.log 2>&1
+#nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/mouse.fna -type=DNA -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/mouse.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/mouse_align.log 2>&1
+#nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/oryzias.fna -type=DNA -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/oryzias.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/oryzias_align.log 2>&1
+#nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/takifugo.fna -type=DNA -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/takifugo.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/takifugo_align.log 2>&1
+#nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/takifugo2.fna -type=DNA -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/takifugo2.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/takifugo2_align.log 2>&1
+
+#pairwise alignment for protein
+#nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/pongo.faa -type=PROTEIN -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/pongo.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/pongo_align.log 2>&1
+#nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/danio.faa -type=PROTEIN -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/danio.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/danio_align.log 2>&1
+#nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/horse.faa -type=PROTEIN -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/horse.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/horse_align.log 2>&1
+#nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/monodelphis.faa -type=PROTEIN -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/monodelphis.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/monodelphis_align.log 2>&1
+#nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/mouse.faa -type=PROTEIN -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/mouse.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/mouse_align.log 2>&1
+#nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/oryzias.faa -type=PROTEIN -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/oryzias.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/oryzias_align.log 2>&1
+nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/clustalw_protein_pairwise/takifugu.faa -type=PROTEIN -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/takifugu.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/takifugu_align.log 2>&1
+nohup clustalw -INFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/clustalw_protein_pairwise/takifugu2.faa -type=PROTEIN -OUTFILE=/data/jzr5814/kaks_calc_tool_analysis/HIT000324409/takifugu2.aln -OUTPUT=FASTA > /data/jzr5814/kaks_calc_tool_analysis/HIT000324409/takifugu2_align.log 2>&1
