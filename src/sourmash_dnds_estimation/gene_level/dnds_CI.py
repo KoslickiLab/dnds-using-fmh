@@ -15,9 +15,11 @@ def main(args):
     ksize = args.k
     output = args.o
 
-    ### Identify nt and protein containment files with ksize
-    nt_df = pd.read_csv(nt_compare,delimiter=',',header=0)
-    protein_df = pd.read_csv(protein_compare,delimiter=',',header=0)
+    ### Obtain containment from matrix files produced by sourmash compare
+    nt_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=nt_compare,ksize=ksize)
+    protein_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=protein_compare,ksize=ksize)
+    nt_df.to_csv(f'{WD}nt_containment{ksize}.csv')
+    protein_df.to_csv(f'{WD}prot_containment{ksize}.csv')
 
     ### Produce csv file with nt and protein containments with dNdS estimates
     report_df = CfracdNdS.report_dNdS(nt_df,protein_df)
