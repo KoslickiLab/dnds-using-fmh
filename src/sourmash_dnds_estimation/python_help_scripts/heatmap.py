@@ -5,11 +5,11 @@ from pylab import savefig
 import numpy as np
 
 
-wd='/data/jzr5814/sourmash_dnds_estimation/tests/results/genomic_dnds/ecoli_10_strains_pairwise_genome_sketches/test_small'
+wd='/data/jzr5814/sourmash_dnds_estimation/tests/results/genomic_dnds/ecoli_10_strains_pairwise_genome_sketches'
 
 #file is contanation of all dnds_contant files but make sure headers are only in the first line of the file
 ksizes = [5,7,10,15,20]
-fmh_dnds = pd.read_csv(f'{wd}/dnds_constant_all.csv',sep=',').rename(columns={'ksize': 'Method', 'sequence_comparison': 'Sequence'}).pivot(index='Sequence',columns='Method')[['dNdS_ratio_constant']]
+fmh_dnds = pd.read_csv(f'{wd}/all_dnds_constant.csv',sep=',').rename(columns={'ksize': 'Method', 'sequence_comparison': 'Sequence'}).pivot(index='Sequence',columns='Method')[['dNdS_ratio_constant']]
 df1 = fmh_dnds['dNdS_ratio_constant'][ksizes]
 
 #filter outliers
