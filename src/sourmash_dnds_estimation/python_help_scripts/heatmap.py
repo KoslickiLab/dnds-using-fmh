@@ -7,9 +7,11 @@ import numpy as np
 
 wd='/data/jzr5814/sourmash_dnds_estimation/tests/results/genomic_dnds/ecoli_10_strains_pairwise_genome_sketches'
 
+title='10 E coli. Strains using Max Cfrac(A,B)'
+
 #file is contanation of all dnds_contant files but make sure headers are only in the first line of the file
 ksizes = [5,7,10,15,20]
-fmh_dnds = pd.read_csv(f'{wd}/all_dnds_constant.csv',sep=',').rename(columns={'ksize': 'Method', 'sequence_comparison': 'Sequence'}).pivot(index='Sequence',columns='Method')[['dNdS_ratio_constant']]
+fmh_dnds = pd.read_csv(f'{wd}/all_dnds_max_containments.csv',sep=',').rename(columns={'ksize': 'Method', 'sequence_comparison': 'Sequence'}).pivot(index='Sequence',columns='Method')[['dNdS_ratio_constant']]
 df1 = fmh_dnds['dNdS_ratio_constant'][ksizes]
 
 #filter outliers
@@ -17,7 +19,7 @@ df1 = df1.replace([np.inf, -np.inf], np.nan).dropna() #remove indivisible dNdS r
 df1 = df1[(df1 != 0).all(1)]
 
 #df1.to_csv(f'/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/{folder}/heatmap_pairwise_no_mean_no_evoladb.csv')
-df1.to_csv(f'{wd}/heatmap_pairwise.csv')
+df1.to_csv(f'{wd}/heatmap_pairwise_all_dnds_max_containments.csv')
 #df1=df1[methods+ksizes+evola_dnds_method]
 print(len(df1))
 #df1 = df1.set_index('Sequence')
@@ -27,6 +29,6 @@ print(len(df1))
 #cmap=sns.diverging_palette(20, 220, as_cmap=True)
 #plt = sns.heatmap(df1, vmin=0, vmax=2,xticklabels=True, cmap='vlag')
 plt = sns.heatmap(df1, vmin=0, vmax=2,xticklabels=True, cmap='seismic')
-plt.set_title('CDS Genome Pairwise')
+plt.set_title(title)
 #plt.figure.savefig(f'/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/{folder}/heatmap_pairwise_mean_coolwarm.png',bbox_inches='tight')
-plt.figure.savefig(f'{wd}/heatmap_pairwise.png',bbox_inches='tight')
+plt.figure.savefig(f'{wd}/heatmap_pairwise_all_dnds_max_containments.png',bbox_inches='tight')
