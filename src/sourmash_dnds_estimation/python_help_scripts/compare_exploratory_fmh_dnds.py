@@ -11,11 +11,24 @@ wd='/data/jzr5814/sourmash_dnds_estimation/tests/results/genomic_dnds/ecoli_10_s
 
 #file is contanation of all dnds_contant files but make sure headers are only in the first line of the file
 ksizes = [5,7,10,15,20]
-fmh_dnds = pd.read_csv(f'{wd}/all_dnds_constant.csv',sep=',').rename(columns={'ksize': 'Method', 'sequence_comparison': 'Sequence'}).pivot(index='Sequence',columns='Method')[['dNdS_ratio_constant']]
-df1 = fmh_dnds['dNdS_ratio_constant'][ksizes]
+fmh_dnds = pd.read_csv(f'{wd}/all_dnds_constant.csv',sep=',')
+print(fmh_dnds)
+
+filter1 = fmh_dnds.replace([np.inf, -np.inf], np.nan).dropna() #remove indivisible dNdS ratio
+print(filter1)
+filter2 = filter1[(filter1 != 0).all(1)]
+print(filter2)
+filter3 = filter2[(filter2["dNdS_ratio_constant"] >= 0) & (filter2["dNdS_ratio_constant"] <= 2)]
+
+print(filter3)
+
+df1 = filter3.rename(columns={'ksize': 'Method', 'sequence_comparison': 'Sequence'}).pivot(index='Sequence',columns='Method')[['dNdS_ratio_constant']]
+df1 = df1['dNdS_ratio_constant'][ksizes]
 
 #merge dataframes
 df1.to_csv(f'{wd}/dNdS_fmh_methods_pairwise.csv')
+
+
 print(df1)
 
 #df1=df1[ksizes]
@@ -50,7 +63,7 @@ ind = np.arange(7)
 for ax in fig.get_axes():
     ax.grid(visible=None)
     ax.set_xticks(ticks=ind,labels=['','k5','k7','k10','k15','k20',''],fontsize=15)
-#    ax.set_ylim(0,1)
+    ax.set_ylim(0,2)
 
 ax.set_xlabel('FMH Ksizes')
 ax.set_ylabel('dN/dS estimations')
