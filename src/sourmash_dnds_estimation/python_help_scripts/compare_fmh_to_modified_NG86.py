@@ -78,7 +78,7 @@ evola_dnds_method = ['modified_NG']
 #merge dataframes
 df1 = pd.merge(evola_dnds, fmh_dnds, 'left', on = ["Sequence"])[['Sequence']+ksizes+evola_dnds_method]
 #working directory
-WD=f'/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_ground_truth/HIT000324409/'
+WD=f'/data/jzr5814/sourmash_dnds_estimation/tests/results/genomic_dnds/ecoli_10_strains_pairwise_nt_genome'
 
 for k in ksizes:
     FRACMINHASH_DATA=f'{WD}dnds_constant_{k}.csv'

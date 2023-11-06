@@ -1,0 +1,29 @@
+{
+	"folders": [
+		{
+			"path": "../../../../../sourmash_dnds_estimation"
+		},
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../../scripts"
+		},
+		{
+			"path": "../../../../../software"
+		},
+		{
+			"path": "../../../../paml/examples"
+		},
+		{
+			"path": "../../../../kakscalculator2"
+		},
+		{
+			"path": "../../../../../kaks_calc_tool_analysis/real_data_0.001_10002"
+		},
+		{
+			"path": "../../../../../kaks_calc_tool_analysis/real_data_0.1_10002"
+		}
+	],
+	"settings": {}
+}
