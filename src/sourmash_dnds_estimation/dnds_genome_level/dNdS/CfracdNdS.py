@@ -1,6 +1,7 @@
 """Module containing code for calculating dNdS from min hash containment indexes"""
 
 import pandas as pd
+import logging
 
 def calc_Pnt(nt_containment,k):
     """ 
@@ -59,7 +60,10 @@ def dNdS_ratio_constant(protein_containment,nt_containment,k):
     k: Identify the ksize used to produce containment index (this is an integer)
     """
     constant = 0.77/2.23
-    dNdS = calc_PdN(protein_containment,k)/calc_PdS(protein_containment,nt_containment,k)
+    try:
+        dNdS = calc_PdN(protein_containment,k)/calc_PdS(protein_containment,nt_containment,k)
+    except ZeroDivisionError as e:
+        logging.error("ZeroDivisionError: ignore undefined dN/dS estimation")
     dNdS_constant = dNdS*constant
     return(dNdS_constant)
 

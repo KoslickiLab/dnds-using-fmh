@@ -1,9 +1,10 @@
 import pickle
 import pandas as pd
 
+""" deprecated function
 def grab_containment_from_mat(mat_df,ksize):
-    """This function converts matrix into df removes pairwise information"""
-    """When running sourmash comapre, a matrix via a csv file called compare.csv is produced"""
+    #This function converts matrix into df removes pairwise information
+    #When running sourmash comapre, a matrix via a csv file called compare.csv is produced
     mat = pd.read_csv(mat_df,sep=',')
     df = pd.DataFrame(columns=['A','B','containment','ksize'],dtype=int)
     for i in range(len(mat)):
@@ -15,6 +16,7 @@ def grab_containment_from_mat(mat_df,ksize):
                 'containment':containment,
                 'ksize':ksize}])],join='inner')
     return(df)
+""" 
 
 def grab_containment_from_mat_ground_truth(mat_df,ksize):
     """This function converts matrix into df removes pairwise information"""
@@ -38,7 +40,7 @@ def grab_containment_from_mat_ground_truth(mat_df,ksize):
     
     #dont forget to add ksize column!
     subset['ksize']=ksize
-
+    
     return(subset)
 
 def label_selection_pressure(row):
