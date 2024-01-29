@@ -79,22 +79,29 @@ def report_dNdS(nt_containment_df,prot_containment_df):
         Dataframe contains ref, query, containment index, and ksize.
     """
     #read in nt_containment dataframe file and change column names
-    nt_df = nt_containment_df.rename(columns={'containment':'containment_nt'})   
+    #nt_df = nt_containment_df.rename(columns={'containment':'containment_nt'})
+    nt_df = nt_containment_df.rename(columns={'containment':'DNA_Cfrac'})   
     #read in nt_containment dataframe file and change column names
-    protein_df = prot_containment_df.rename(columns={'containment':'containment_protein'})
+    #protein_df = prot_containment_df.rename(columns={'containment':'containment_protein'})
+    protein_df = prot_containment_df.rename(columns={'containment':'AA_Cfrac'})
     #join df into one
     df = pd.merge(nt_df, protein_df, on=['A','B','ksize'])
     #apply function
 
-    df['A']=df['A'].str.replace(r'_ASM.*_genomic.cds.name_change.fna', '', regex=True)
-    df['B']=df['B'].str.replace(r'_ASM.*_genomic.cds.name_change.fna', '', regex=True)
+    #df['A']=df['A'].str.replace(r'_ASM.*_genomic.cds.name_change.fna', '', regex=True)
+    #df['B']=df['B'].str.replace(r'_ASM.*_genomic.cds.name_change.fna', '', regex=True)
     df['sequence_comparison'] = df['A']+'_vs_'+df['B']
-    df['dN_constant'] = (calc_PdN(protein_containment=df['containment_protein'],k=df['ksize']))/2.23
-    df['dS_constant'] = (calc_PdS(protein_containment=df['containment_protein'],nt_containment=df['containment_nt'],k=df['ksize']))/0.77
-    df['dN'] = (calc_PdN(protein_containment=df['containment_protein'],k=df['ksize']))
-    df['dS'] = (calc_PdS(protein_containment=df['containment_protein'],nt_containment=df['containment_nt'],k=df['ksize']))
-    df['dNdS_ratio'] = dNdS_ratio(nt_containment=df['containment_nt'],protein_containment=df['containment_protein'],k=df['ksize'])
-    df['dNdS_ratio_constant'] = dNdS_ratio_constant(nt_containment=df['containment_nt'],protein_containment=df['containment_protein'],k=df['ksize'])
+    #df['dN_constant'] = (calc_PdN(protein_containment=df['containment_protein'],k=df['ksize']))/2.23
+    #df['dS_constant'] = (calc_PdS(protein_containment=df['containment_protein'],nt_containment=df['containment_nt'],k=df['ksize']))/0.77
+    #df['dN'] = (calc_PdN(protein_containment=df['containment_protein'],k=df['ksize']))
+    #df['dS'] = (calc_PdS(protein_containment=df['containment_protein'],nt_containment=df['containment_nt'],k=df['ksize']))
+    #df['dNdS_ratio'] = dNdS_ratio(nt_containment=df['containment_nt'],protein_containment=df['containment_protein'],k=df['ksize'])
+    #df['dNdS_ratio_constant'] = dNdS_ratio_constant(nt_containment=df['containment_nt'],protein_containment=df['containment_protein'],k=df['ksize'])
+
+    df['PdN'] = (calc_PdN(protein_containment=df['AA_Cfrac'],k=df['ksize']))
+    df['PdS'] = (calc_PdS(protein_containment=df['AA_Cfrac'],nt_containment=df['DNA_Cfrac'],k=df['ksize']))
+    df['PdN/PdS'] = dNdS_ratio(nt_containment=df['DNA_Cfrac'],protein_containment=df['AA_Cfrac'],k=df['ksize'])
+    df['dN/dS'] = dNdS_ratio_constant(nt_containment=df['DNA_Cfrac'],protein_containment=df['AA_Cfrac'],k=df['ksize'])
 
     #report
     return(df)
