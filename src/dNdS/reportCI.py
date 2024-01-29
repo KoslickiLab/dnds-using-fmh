@@ -44,11 +44,11 @@ def grab_containment_from_mat_ground_truth(mat_df,ksize):
     return(subset)
 
 def label_selection_pressure(row):
-   if row['dNdS_ratio_constant'] == 1:
+   if row['dN/dS'] == 1:
       return 'neutral'
-   if row['dNdS_ratio_constant'] > 1:
+   if row['dN/dS'] > 1:
       return 'positive'
-   if row['dNdS_ratio_constant'] < 1:
+   if row['dN/dS'] < 1:
       return 'negative'
 
 def change_column_names(csv_file):
@@ -60,9 +60,9 @@ def change_column_names(csv_file):
                 df.loc[(df['A'] == j) & (df['B'] == i), ['A', 'B']] = [i, j]
     return(df)
 
-
+""" deprecated function
 def grab_max_nt_containment_from_containment_csv_file(csv_file):
-    """Return the max C(A,B)"""
+    #Return the max C(A,B)
     data = pd.read_csv(csv_file,sep=',')
     genome_set = set(data['A'].tolist() + data['B'].tolist())
     data = data.set_index(['A','B'])
@@ -75,9 +75,11 @@ def grab_max_nt_containment_from_containment_csv_file(csv_file):
                     data =data.drop(index=(i,j))
     data['selection_pressure'] = data.apply(label_selection_pressure, axis=1)
     return(data)
+"""
 
+""" deprecated function
 def grab_max_protein_containment_from_containment_csv_file(csv_file):
-    """Return the max C(A,B)"""
+    #Return the max C(A,B)
     data = pd.read_csv(csv_file,sep=',')
     genome_set = set(data['A'].tolist() + data['B'].tolist())
     data = data.set_index(['A','B'])
@@ -90,3 +92,4 @@ def grab_max_protein_containment_from_containment_csv_file(csv_file):
                     data =data.drop(index=(i,j))
     data['selection_pressure'] = data.apply(label_selection_pressure, axis=1)
     return(data)
+"""
