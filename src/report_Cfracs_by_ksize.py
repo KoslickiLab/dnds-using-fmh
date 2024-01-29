@@ -17,7 +17,7 @@ def main(args):
     ### Obtain containment from matrix files produced by sourmash compare
     nt_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=nt_compare,ksize=ksize)
     nt_df = nt_df[nt_df['A'] == 'ref_gene'].rename(columns={"containment": "DNA_Cfrac"})
-    nt_df['approx_ANI'] = nt_df['DNA_Cfrac']**(1/(3*nt_df['ksize']))
+    nt_df['approx_ANI'] = nt_df['DNA_Cfrac']**(1/nt_df['ksize'])
     print(nt_df)
 
     protein_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=protein_compare,ksize=ksize)
