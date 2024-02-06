@@ -1,6 +1,8 @@
 import pickle
 import pandas as pd
 
+"""functions here have been moved to helperfunc.py"""
+
 """ deprecated function
 def grab_containment_from_mat(mat_df,ksize):
     #This function converts matrix into df removes pairwise information
@@ -42,7 +44,7 @@ def grab_containment_from_mat_ground_truth(mat_df,ksize):
     subset['ksize']=ksize
     
     return(subset)
-
+""" deprecated function
 def label_selection_pressure(row):
    if row['dN/dS'] == 1:
       return 'neutral'
@@ -60,7 +62,6 @@ def change_column_names(csv_file):
                 df.loc[(df['A'] == j) & (df['B'] == i), ['A', 'B']] = [i, j]
     return(df)
 
-""" deprecated function
 def grab_max_nt_containment_from_containment_csv_file(csv_file):
     #Return the max C(A,B)
     data = pd.read_csv(csv_file,sep=',')
