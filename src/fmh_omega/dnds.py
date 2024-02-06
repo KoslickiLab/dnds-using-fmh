@@ -3,29 +3,6 @@
 import pandas as pd
 import logging
 
-"""
-deprecated
-def calc_Pnt(nt_containment,k):
-    Returns nucleotide mutation rate between two protein-coding sequences (or any other type of nucleotide sequences)
-    nt_containment: The containment index between two nucleotide sequences (this is a float)
-    k: Identify the ksize used to produce containment index (this is an integer)
-    nt_k = 3*k
-    return(1 - nt_containment**(1/nt_k))
-
-def calc_PdN(protein_containment,k):
-    Returns nonsynonymous mutation rate between two protein sequences
-    protein_containment: The containment index between two protein sequences (this is a float)
-    k: Identify the ksize used to produce containment index (this is an integer)
-    return(1-protein_containment**(1/k))
-
-def calc_nomutation(nt_containment,k):
-    Returns no mutation rate between two protein-coding sequences (or any other type of nucleotide sequences).
-    Uses calc_Pnt() function for estimation.
-    nt_containment: The containment index between two nucleotide sequences (this is a float)
-    k: Identify the ksize used to produce containment index (this is an integer)
-    return((1-calc_Pnt(nt_containment,k))**3)
-"""
-
 def calc_PdN(protein_containment,k):
     """
     Returns nonsynonymous mutation rate between two protein sequences
