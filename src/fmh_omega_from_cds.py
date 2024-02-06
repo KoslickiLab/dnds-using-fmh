@@ -1,31 +1,45 @@
 #!/usr/bin/env python3
 """New approach to estimaating dN/dS ratio of metagenomic data"""
 
-import argparse, time, os, subprocess
-from fmh_omega import helperfuncs,dnds
-import pandas as pd
-pd.set_option('display.max_columns', None)
+import argparse
+from fmh_omega import helperfuncs,dnds,sourmash_api
+import subprocess
 
 def main(args):
 
     ###Arguments
-    WD = args.wd
-    nt_compare = args.nt
-    protein_compare = args.protein
-    ksize = args.k
-    output = args.o
+    dna_fasta = args.cds_input
+    klst = args.klist
+    s = args.scaled_input
+    on = args.outname
+    wd = args.working_dir
 
-    ### Obtain containment from matrix files produced by sourmash compare
-    nt_df = helperfuncs.containments(mat_df=nt_compare,ksize=ksize)
-    protein_df = helperfuncs.containments(mat_df=protein_compare,ksize=ksize)
-    nt_df.to_csv(f'{WD}/nt_containment{ksize}.csv')
-    protein_df.to_csv(f'{WD}/prot_containment{ksize}.csv')
+    #Create signature directory
+    subprocess.run(f'mkdir {wd}/signatures', shell=True, check=True)
+    #Sketch signatures
+    sourmash_api.sketch_dna(fasta=dna_fasta, klist=klst, scaled=s, out_sigfile=f'{wd}/signatures/{on}.dna.sig.gzip')
+    #Translate before sketching protein
+    helperfuncs.translate_CDS(cds_fasta=dna_fasta, out_name=on)
+    sourmash_api.sketch_protein(fasta=f'{on}.translated.fasta', klist=klst, scaled=s, out_sigfile=f'{wd}/signatures/{on}.prot.sig.gzip')
+    #Concatenate files for single signature
+    sourmash_api.cat_signatures(working_dir=wd, out_name=on, molecule='dna')
+    sourmash_api.cat_signatures(working_dir=wd, out_name=on, molecule='protein')
 
-    ### Produce csv file with nt and protein containments with dNdS estimates
-    report_df = dnds.report_dNdS(nt_df,protein_df)
-    report_df.to_csv(f'{WD}/{output}')
-
-    #create figures of CI analysis
+    #Create compare directory
+    subprocess.run(f'mkdir {wd}/compare_dna', shell=True, check=True)
+    subprocess.run(f'mkdir {wd}/compare_protein', shell=True, check=True)
+    #Containments using sourmash compare
+    for k in klst:
+        sourmash_api.compare_signatures(ref=f'{wd}/signatures/{on}.cat.dna.sig.gzip', query=f'{wd}/signatures/{on}.dna.sig.gzip', ksize=k, molecule='dna', working_dir=wd)
+        sourmash_api.compare_signatures(ref=f'{wd}/signatures/{on}.cat.prot.sig.gzip', query=f'{wd}/signatures/{on}.cat.prot.sig.gzip', ksize=k, molecule='protein', working_dir=wd)
+        #Report containments
+        nt_df = helperfuncs.containments(mat_df=f'{wd}/compare_dna/compare.dna.${k}.csv',ksize=k)
+        nt_df.to_csv(f'{wd}/nt_containment{k}.csv')
+        protein_df = helperfuncs.containments(mat_df=f'{wd}/compare_dna/compare.protein.${k}.csv',ksize=k)
+        protein_df.to_csv(f'{wd}/prot_containment{k}.csv')
+        ### Produce csv file with nt and protein containments with FMH OMEGA estimates
+        report_df = dnds.report_dNdS(nt_df,protein_df)
+        report_df.to_csv(f'{wd}/fmh_omega_{k}.csv')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -33,33 +47,33 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        '--k',
-        type=int,
-        help = 'Identify the ksize used to produce containment indexes between two sequences.\
-        ksize is required to be the same used in both the containment indexes calculated for nucleotide and protein sequences.'
-    )
-
-    parser.add_argument(
-        '--nt',
-        help = 'Input of nucleotide compare.csv file.\
+        '--cds_input',
+        help = 'Input of CDS fasta file.\
         This file is a pairwise matrix produced from sourmash compare that includes containment indexes between nucleotide sequences.'
     )
 
     parser.add_argument(
-        '--protein',
-        help = 'Input of protein compare.csv file.\
-        This file is a pairwise matrix produced from sourmash compare that includes containment indexes between protein sequences.'
+        '--klist',
+        type=list,
+        help = 'Identify a list of ksizes used to produce sketches.\
+        ksize is required to be the same used in both the containment indexes calculated for nucleotide and protein sequences.'
     )
 
     parser.add_argument(
-    '--o',
-    help = 'Output CSV file with dN/dS ratio estimates between sequences evaluated. The CSV file reports sequence A, sequence B,\
-    ksize, and containment index'
+        '--scaled_input',
+        type=int,
+        help = 'Identify a scaled factor for signature sketches.\
+        E.g., A scaled factor = 1 will include all k-mers in final signature.'
     )
 
     parser.add_argument(
-    '--wd',
-    help = 'Output directory for CSV file with dN/dS ratio estimates between sequences evaluated.'
+        '--outname',
+        help = 'Name your study for FMH OMEGA Estimations. Prefix for output files.'
+    )
+
+    parser.add_argument(
+        '--wd',
+        help = 'Output directory for FMH Omega estimation.'
     )
 
     args = parser.parse_args()

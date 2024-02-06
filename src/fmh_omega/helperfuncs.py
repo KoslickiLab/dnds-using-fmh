@@ -19,11 +19,11 @@ def containments(mat_df,ksize):
     subset['ksize']=ksize
     return(subset)
 
-def translate_CDS(cds_fasta, output_filename):
+def translate_CDS(cds_fasta, out_name):
     """User has input fasta file with CDS sequences of a genome"""
     """This function translates each CDS found in the FASTA file"""
     sequences = SeqIO.parse(open(cds_fasta),'fasta')
-    with open(output_filename) as out_file:
+    with open(f'{out_name}.translated.fasta') as out_file:
         for cds in sequences:
             name, cds_seq = cds.id, str(cds.seq)
             aa_seq = Seq(cds_seq).translate()
