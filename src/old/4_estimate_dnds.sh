@@ -2,9 +2,9 @@
 set -eoux pipefail
 
 #working directories for data and result output
-wd='/data/jzr5814/sourmash_dnds_estimation/tests/test/create_sequence_using_NG_assumption/0.01/fmh_dnds_sketch_protein/positive_selection'
+wd='/data/jzr5814/sourmash_dnds_estimation/tests/test/create_sequence_using_NG_assumption/0.01/fmh_dnds_sketch_protein/positive_selection_redo_sketch_protein'
 
-for k in 5 7 10 15 20; 
+for k in 5; 
 do
 declare -i nt_k=k*3
 

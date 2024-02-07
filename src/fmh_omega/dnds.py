@@ -2,6 +2,8 @@
 
 import pandas as pd
 import logging
+from loguru import logger
+
 
 def calc_PdN(protein_containment,k):
     """
@@ -9,6 +11,7 @@ def calc_PdN(protein_containment,k):
     protein_containment: The containment index between two protein sequences (this is a float)
     k: Identify the ksize used to produce containment index (this is an integer)
     """
+    print(1-protein_containment**(1/k))
     return(1-protein_containment**(1/k))
 
 def calc_PdS(protein_containment,nt_containment,k):
