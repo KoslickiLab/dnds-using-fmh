@@ -2,7 +2,7 @@
 """New approach to estimaating dN/dS ratio of metagenomic data"""
 
 import argparse, time, os, subprocess
-from dNdS import reportCI,CfracdNdS
+from dNdS import helperfuncs,dnds
 import pandas as pd
 pd.set_option('display.max_columns', None)
 
@@ -16,15 +16,14 @@ def main(args):
     output = args.o
 
     ### Obtain containment from matrix files produced by sourmash compare
-    nt_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=nt_compare,ksize=ksize)
-    print(nt_df)
-    protein_df = reportCI.grab_containment_from_mat_ground_truth(mat_df=protein_compare,ksize=ksize)
-    nt_df.to_csv(f'{WD}nt_containment{ksize}.csv')
-    protein_df.to_csv(f'{WD}prot_containment{ksize}.csv')
+    nt_df = helperfuncs.containments(mat_df=nt_compare,ksize=ksize)
+    protein_df = helperfuncs.containments(mat_df=protein_compare,ksize=ksize)
+    nt_df.to_csv(f'{WD}/nt_containment{ksize}.csv')
+    protein_df.to_csv(f'{WD}/prot_containment{ksize}.csv')
 
     ### Produce csv file with nt and protein containments with dNdS estimates
-    report_df = CfracdNdS.report_dNdS(nt_df,protein_df)
-    report_df.to_csv(f'{WD}{output}')
+    report_df = dnds.report_dNdS(nt_df,protein_df)
+    report_df.to_csv(f'{WD}/{output}')
 
     #create figures of CI analysis
 
