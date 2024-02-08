@@ -11,7 +11,6 @@ def calc_PdN(protein_containment,k):
     protein_containment: The containment index between two protein sequences (this is a float)
     k: Identify the ksize used to produce containment index (this is an integer)
     """
-    print(1-protein_containment**(1/k))
     return(1-protein_containment**(1/k))
 
 def calc_PdS(protein_containment,nt_containment,k):
@@ -68,7 +67,7 @@ def report_dNdS(nt_containment_df,prot_containment_df):
         Dataframe contains ref, query, containment index, and ksize.
     """
     #read in nt_containment and protein_containment dataframe file and change column names
-    nt_df = nt_containment_df.rename(columns={'containment':'DNA_Cfrac'})   
+    nt_df = nt_containment_df.rename(columns={'containment':'DNA_Cfrac'})
     protein_df = prot_containment_df.rename(columns={'containment':'AA_Cfrac'})
     #join df into one
     df = pd.merge(nt_df, protein_df, on=['A','B','ksize'])
