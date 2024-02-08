@@ -8,7 +8,7 @@ import subprocess
 def main(args):
 
     ###Arguments
-    dna_fasta = args.cds_input
+    dna_fasta = args.cds_input_list
     klst = args.klist
     s = args.scaled_input
     on = args.outname
@@ -21,17 +21,18 @@ def main(args):
     #kmers list for sourmash
     sm_dna_klst=helperfuncs.return_dna_klist_parameters(kmer_list=klst)
     sm_protein_klst=helperfuncs.return_protein_klist_parameters(kmer_list=klst)
-
-    #Translate before sketching protein
-    helperfuncs.translate_CDS(cds_fasta=dna_fasta, out_name=on, working_dir=wd)
     
     #Sketch signatures
-    if single == 'no':
-        sourmash_api.sketch_genome_dna(fasta=dna_fasta, klist=sm_dna_klst, scaled=s, out_sigfile=f'{wd}/signatures/{on}.dna.sig.gzip')
-        sourmash_api.sketch_genome_protein(fasta=f'{wd}/{on}.translated.fasta', klist=sm_protein_klst, scaled=s, out_sigfile=f'{wd}/signatures/{on}.protein.sig.gzip')
-    elif single == 'yes':    
-        sourmash_api.sketch_singleton_genome_dna(fasta=dna_fasta, klist=sm_dna_klst, scaled=s, out_sigfile=f'{wd}/signatures/{on}.dna.sig.gzip')
-        sourmash_api.sketch_singleton_genome_protein(fasta=f'{wd}/{on}.translated.fasta', klist=sm_protein_klst, scaled=s, out_sigfile=f'{wd}/signatures/{on}.protein.sig.gzip')
+    for fasta_file in [line.strip() for line in open(f'{dna_fasta}', 'r')]:
+        #Translate before sketching protein
+        helperfuncs.translate_CDS(cds_fasta=f'{wd}/{fasta_file.split(',')[0]}', out_name=f'{fasta_file.split(',')[1]}', working_dir=wd)
+        if single == 'no':
+            sourmash_api.sketch_genome_dna(fasta=f'{wd}/{fasta_file.split(',')[0]}', klist=sm_dna_klst, scaled=s, out_sigfile=f'{wd}/signatures/{fasta_file.split(',')[1]}.dna.sig.gzip')
+            sourmash_api.sketch_genome_protein(fasta=f'{wd}/{fasta_file.split(',')[1]}.translated.fasta', klist=sm_protein_klst, scaled=s, out_sigfile=f'{wd}/signatures/{fasta_file.split(',')[1]}.protein.sig.gzip')
+        elif single == 'yes':
+            sourmash_api.sketch_singleton_genome_dna(fasta=f'{wd}/{fasta_file.split(',')[0]}', klist=sm_dna_klst, scaled=s, out_sigfile=f'{wd}/signatures/{on}.dna.sig.gzip')
+            sourmash_api.sketch_singleton_genome_protein(fasta=f'{wd}/{fasta_file.split(',')[1]}.translated.fasta', klist=sm_protein_klst, scaled=s, out_sigfile=f'{wd}/signatures/{on}.protein.sig.gzip')
+    
     #Concatenate files for single signature
     signature_list=helperfuncs.return_signature_list(working_dir=f'{wd}', molecule='dna')
     if len(signature_list) > 1:
@@ -41,37 +42,34 @@ def main(args):
         #Create compare directory
         subprocess.run(f'mkdir {wd}/compare_dna', shell=True, check=True)
         subprocess.run(f'mkdir {wd}/compare_protein', shell=True, check=True)
+
         #Containments using sourmash compare
         kmer_list=klst.split(',')
-        print(kmer_list)
         for k in kmer_list:
             dna_k = int(k)*3
             sourmash_api.compare_signatures(ref=f'{wd}/signatures/{on}.cat.dna.sig.gzip', query=f'{wd}/signatures/{on}.cat.dna.sig.gzip', ksize=dna_k, molecule='dna', working_dir=f'{wd}')
-            sourmash_api.compare_signatures(ref=f'{wd}/signatures/{on}.cat.prot.sig.gzip', query=f'{wd}/signatures/{on}.cat.prot.sig.gzip', ksize=k, molecule='protein', working_dir=f'{wd}')
+            sourmash_api.compare_signatures(ref=f'{wd}/signatures/{on}.cat.protein.sig.gzip', query=f'{wd}/signatures/{on}.cat.protein.sig.gzip', ksize=k, molecule='protein', working_dir=f'{wd}')
             #Report containments
-            nt_df = helperfuncs.containments(mat_df=f'{wd}/compare_dna/compare.dna.{dna_k}.csv',ksize=k)
-            nt_df.to_csv(f'{wd}/nt_containment{dna_k}.csv')
-            protein_df = helperfuncs.containments(mat_df=f'{wd}/compare_dna/compare.protein.{k}.csv',ksize=k)
-            protein_df.to_csv(f'{wd}/prot_containment{k}.csv')
+            nt_df = helperfuncs.containments(mat_df=f'{wd}/compare_dna/compare.dna.{dna_k}.csv',ksize=int(k),cat=len([line.strip() for line in open(f'{dna_fasta}', 'r')]))
+            protein_df = helperfuncs.containments(mat_df=f'{wd}/compare_protein/compare.protein.{k}.csv',ksize=int(k),cat=len([line.strip() for line in open(f'{dna_fasta}', 'r')]))
             ### Produce csv file with nt and protein containments with FMH OMEGA estimates
             report_df = dnds.report_dNdS(nt_df,protein_df)
             report_df.to_csv(f'{wd}/fmh_omega_{k}.csv')
+    
+    # when user has a single file with multiple species, no need concatenate, it is a single signature
     elif len(signature_list) == 1:
         #Create compare directory
         subprocess.run(f'mkdir {wd}/compare_dna', shell=True, check=True)
         subprocess.run(f'mkdir {wd}/compare_protein', shell=True, check=True)
         #Containments using sourmash compare
         kmer_list=klst.split(',')
-        print(kmer_list)
         for k in kmer_list:
             dna_k = int(k)*3
             sourmash_api.compare_signatures(ref=f'{wd}/signatures/{on}.dna.sig.gzip', query=f'{wd}/signatures/{on}.dna.sig.gzip', ksize=dna_k, molecule='dna', working_dir=f'{wd}')
             sourmash_api.compare_signatures(ref=f'{wd}/signatures/{on}.protein.sig.gzip', query=f'{wd}/signatures/{on}.protein.sig.gzip', ksize=k, molecule='protein', working_dir=f'{wd}')
             #Report containments
-            nt_df = helperfuncs.containments(mat_df=f'{wd}/compare_dna/compare.dna.{dna_k}.csv',ksize=int(k))
-            nt_df.to_csv(f'{wd}/nt_containment{dna_k}.csv')
-            protein_df = helperfuncs.containments(mat_df=f'{wd}/compare_protein/compare.protein.{k}.csv',ksize=int(k))
-            protein_df.to_csv(f'{wd}/prot_containment{k}.csv')
+            nt_df = helperfuncs.containments(mat_df=f'{wd}/compare_dna/compare.dna.{dna_k}.csv',ksize=int(k),cat=0)
+            protein_df = helperfuncs.containments(mat_df=f'{wd}/compare_protein/compare.protein.{k}.csv',ksize=int(k),cat=0)
             ### Produce csv file with nt and protein containments with FMH OMEGA estimates
             report_df = dnds.report_dNdS(nt_df,protein_df)
             report_df.to_csv(f'{wd}/fmh_omega_{k}.csv')
@@ -82,9 +80,9 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        '--cds_input',
-        help = 'Input of CDS fasta file.\
-        This file is a pairwise matrix produced from sourmash compare that includes containment indexes between nucleotide sequences.'
+        '--cds_input_list',
+        help = 'Input txt file that contains fasta files for sketching.\
+        In first column, have fasta file name and second column have nickname for each fasta files.'
     )
 
     parser.add_argument(
