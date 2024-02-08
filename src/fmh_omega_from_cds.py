@@ -26,7 +26,7 @@ def main(args):
     for fasta_file in [line.strip() for line in open(f'{dna_fasta}', 'r')]:
         #Translate before sketching protein
         helperfuncs.translate_CDS(cds_fasta=f'{wd}/{fasta_file.split(',')[0]}', out_name=f'{fasta_file.split(',')[1]}', working_dir=wd)
-        if single == 'no':
+        if single == 'no': #input are multiple fastn files
             sourmash_api.sketch_genome_dna(fasta=f'{wd}/{fasta_file.split(',')[0]}', klist=sm_dna_klst, scaled=s, out_sigfile=f'{wd}/signatures/{fasta_file.split(',')[1]}.dna.sig.gzip')
             sourmash_api.sketch_genome_protein(fasta=f'{wd}/{fasta_file.split(',')[1]}.translated.fasta', klist=sm_protein_klst, scaled=s, out_sigfile=f'{wd}/signatures/{fasta_file.split(',')[1]}.protein.sig.gzip')
         elif single == 'yes':
