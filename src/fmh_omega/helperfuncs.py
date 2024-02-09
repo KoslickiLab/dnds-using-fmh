@@ -12,28 +12,6 @@ def containments(mat_df,ksize):
     """When running sourmash compare, a matrix via a csv file is produced"""
     #read in df
     df = pd.read_csv(mat_df,sep=',')
-    """
-    if cat:
-        subset_number = cat #containment matrix produced by sourmash is not perfect square
-        gene_name_header_list = df.T.index.to_list()
-        subset = df.iloc[0:subset_number, 0:subset_number]
-        #make the gene header list into a column to set as index
-        subset['A'] = gene_name_header_list[:subset_number]
-        subset['A'] = subset['A'].apply(extract_filename_without_extension)
-        #create df
-        subset = subset.set_index('A').stack().reset_index().rename(columns={'level_1':'B',0:'containment'})
-        subset['B']=subset['B'].apply(extract_filename_without_extension)
-    
-    #change names if needed
-    else:
-        #record gene header into list
-        gene_name_header_list = df.T.index.to_list()
-        subset_number = int(len(gene_name_header_list)/2) #containment matrix produced by sourmash is not perfect square
-        subset = df.iloc[0:subset_number, 0:subset_number]
-        #make the gene header list into a column to set as index
-        subset['A'] = gene_name_header_list[:subset_number]
-        subset = subset.set_index('A').stack().reset_index().rename(columns={'level_1':'B',0:'containment'})
-    """
     #record gene header into list
     gene_name_header_list = df.T.index.to_list()
     subset_number = int(len(gene_name_header_list)/2) #containment matrix produced by sourmash is not perfect square
