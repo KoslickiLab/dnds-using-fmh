@@ -24,13 +24,12 @@ def main(args):
     #store file information in lists
     fastn_files=[] #dna fasta file
     fasta_files=[] #protein fasta files
-    fast_names = [] #names of entries
+    #fast_names = [] #names of entries
     for files in [line.strip() for line in open(f'{dna_fasta}', 'r')]:
         fastn_files.append(files.split(',')[0])
-        fast_names.append(files.split(',')[1])
-    for name in fast_names:
-        fasta_files.append(f'{wd}/{name}.translated.fasta')
-
+        #fast_names.append(files.split(',')[1])
+        fasta_files.append(f'{wd}/{files.split(',')[0].split(".")[0]}.translated.fasta')
+        
     #Translate before sketching protein
     for pos in range(len(fastn_files)):
         helperfuncs.translate_CDS(cds_fasta=f'{wd}/{fastn_files[pos]}', out_name=f'{fasta_files[pos]}')
@@ -50,6 +49,7 @@ def main(args):
     #Create compare directory
     subprocess.run(f'mkdir {wd}/compare_dna', shell=True, check=True)
     subprocess.run(f'mkdir {wd}/compare_protein', shell=True, check=True)
+    
     #Containments using sourmash compare
     kmer_list=klst.split(',')
     for k in kmer_list:
@@ -57,8 +57,8 @@ def main(args):
         sourmash.compare_signatures(ref=f'{wd}/signatures/{on}.dna.sig.gzip', query=f'{wd}/signatures/{on}.dna.sig.gzip', ksize=dna_k, molecule='dna', working_dir=f'{wd}')
         sourmash.compare_signatures(ref=f'{wd}/signatures/{on}.protein.sig.gzip', query=f'{wd}/signatures/{on}.protein.sig.gzip', ksize=k, molecule='protein', working_dir=f'{wd}')
         #Report containments
-        nt_df = helperfuncs.containments(mat_df=f'{wd}/compare_dna/compare.dna.{dna_k}.csv',ksize=int(k))
-        protein_df = helperfuncs.containments(mat_df=f'{wd}/compare_protein/compare.protein.{k}.csv',ksize=int(k))
+        nt_df = helperfuncs.containments(mat_df=f'{wd}/compare_dna/compare.dna.{dna_k}.csv',ksize=int(k),multiple=multiple)
+        protein_df = helperfuncs.containments(mat_df=f'{wd}/compare_protein/compare.protein.{k}.csv',ksize=int(k),multiple=multiple)
         ### Produce csv file with nt and protein containments with FMH OMEGA estimates
         report_df = dnds.report_dNdS(nt_df,protein_df)
         report_df.to_csv(f'{wd}/fmh_omega_{k}.csv')

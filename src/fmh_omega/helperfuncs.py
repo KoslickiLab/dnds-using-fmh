@@ -5,9 +5,10 @@ from Bio.Seq import Seq
 import os
 
 def extract_filename_without_extension(file_path):
+    #return file_path.split('/')[-1].split('.')[0]
     return file_path.split('/')[-1].split('.')[0]
 
-def containments(mat_df,ksize):
+def containments(mat_df,ksize,multiple):
     """This function converts matrix into df removes pairwise information"""
     """When running sourmash compare, a matrix via a csv file is produced"""
     #read in df
@@ -19,11 +20,27 @@ def containments(mat_df,ksize):
     #make the gene header list into a column to set as index
     subset['A'] = gene_name_header_list[:subset_number]
     subset = subset.set_index('A').stack().reset_index().rename(columns={'level_1':'B',0:'containment'})
-    subset['A']=subset['A'].apply(extract_filename_without_extension)
-    subset['B']=subset['B'].apply(extract_filename_without_extension)
+    if multiple=='yes':
+        subset['A']=subset['A'].apply(extract_filename_without_extension)
+        print('change A')
+        print(subset['A'])
+        subset['B']=subset['B'].apply(extract_filename_without_extension)
+        print('change B')
+        print(subset['B'])
+        
     #dont forget to add ksize column!
     subset['ksize']=ksize
     return(subset)
+
+def divisible_by_3(sequence):
+    #makes sure a sequence is divisible by 3 for translation
+    if len(sequence) % 3 != 0:
+        if len(sequence+'N') % 3 != 0:
+            return(sequence+'NN')
+        else:
+            return(sequence+'N')
+    else:
+        return(sequence)
 
 def translate_CDS(cds_fasta, out_name):
     """User has input fasta file with CDS sequences of a genome"""
@@ -31,7 +48,8 @@ def translate_CDS(cds_fasta, out_name):
     sequences = SeqIO.parse(open(cds_fasta),'fasta')
     with open(f'{out_name}','w') as out_file:
         for cds in sequences:
-            name, cds_seq = cds.id, str(cds.seq)
+            name, nt_seq = cds.id, str(cds.seq)
+            cds_seq = divisible_by_3(nt_seq)
             aa_seq = str(Seq(cds_seq).translate())
             out_file.write(''.join(['>',name,'\n']))
             out_file.write(''.join([aa_seq,'\n']))
