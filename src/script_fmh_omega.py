@@ -2,7 +2,7 @@
 """New approach to estimaating dN/dS ratio of metagenomic data"""
 
 import argparse
-from fmh_omega import helperfuncs,dnds,sourmash
+from fmh_omega import helperfuncs,dnds,sourmash_ext
 import subprocess
 
 def main(args):
