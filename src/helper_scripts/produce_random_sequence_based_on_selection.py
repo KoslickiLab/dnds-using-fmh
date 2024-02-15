@@ -1,6 +1,6 @@
 import pandas as pd
 import argparse
-from dNdS.create_random_nt_sequence_using_NG_assumption import get_coding_sequence_from_nucleotide_sequence, positive_selection_based_on_mutation_rate_p, negative_selection_based_on_mutation_rate_p
+from ./fmh_dnds.create_random_nt_sequence_using_NG_assumption import get_coding_sequence_from_nucleotide_sequence, positive_selection_based_on_mutation_rate_p, negative_selection_based_on_mutation_rate_p
 import random
 from Bio.Seq import Seq
 
@@ -29,7 +29,6 @@ REF = ''.join(random.choices(['A', 'C', 'G', 'T'], k=str_len))
 
 #Get coding sequence and filter stop codons
 REF_coding_sequence = ''.join(get_coding_sequence_from_nucleotide_sequence(REF))
-#print('ref: ' + str(len(REF_coding_sequence)))
 
 #Save nt ref sequence to the following files
 RANDOM_REF.write(f'>ref_gene\n')
@@ -43,16 +42,16 @@ NEGATIVE_SELECTION_QUERIES_NT.write(f'{REF_coding_sequence}\n')
 
 #save translated ref sequence to the following files
 ref_seq_translated = Seq(REF_coding_sequence).translate()
-#print('ref_translated: ' + str(len(ref_seq_translated)))
 RANDOM_REF_PROT.write(f'>ref_gene\n')
 RANDOM_REF_PROT.write(str(ref_seq_translated)+"\n")
 
+POSITIVE_SELECTION_QUERIES_PROTEIN.write(f'>ref_gene\n')
+POSITIVE_SELECTION_QUERIES_PROTEIN.write(str(ref_seq_translated)+"\n")
+
+NEGATIVE_SELECTION_QUERIES_PROTEIN.write(f'>ref_gene\n')
+NEGATIVE_SELECTION_QUERIES_PROTEIN.write(str(ref_seq_translated)+"\n")
+
 for i in range(ITERATIONS):
-
-    #print('ref: ' + str(len(REF_coding_sequence)))
-    #print('ref_translated: ' + str(len(ref_seq_translated)))
-
-
     #ref sequence is mutated with mutation rate p
     query_positive_nt_seq = positive_selection_based_on_mutation_rate_p(REF_coding_sequence,float(mutation_rate_p))
     POSITIVE_SELECTION_QUERIES_NT.write(f'>positive_{mutation_rate_p}_{i}\n')
@@ -60,7 +59,6 @@ for i in range(ITERATIONS):
 
     #Translated mutated sequences 
     translated_positive_queries = Seq(query_positive_nt_seq).translate()
-    #print(len(translated_positive_queries))
     POSITIVE_SELECTION_QUERIES_PROTEIN.write(f'>positive_{mutation_rate_p}_{i}\n')
     POSITIVE_SELECTION_QUERIES_PROTEIN.write(f'{translated_positive_queries}\n')
 
@@ -71,7 +69,6 @@ for i in range(ITERATIONS):
 
     #Translated mutated sequences 
     translated_negative_queries = Seq(query_negative_nt_seq).translate()
-    #print(len(translated_negative_queries))
     NEGATIVE_SELECTION_QUERIES_PROTEIN.write(f'>negative_{mutation_rate_p}_{i}\n')
     NEGATIVE_SELECTION_QUERIES_PROTEIN.write(f'{translated_negative_queries}\n')
 
