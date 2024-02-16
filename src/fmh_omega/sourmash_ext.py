@@ -52,15 +52,15 @@ def compare_signatures(ref, query, ksize, molecule, working_dir):
         logger.error(f"Error occurred while comparing {ref} and {query}: {e}")
 
 """SOURMASH BRANCHWATER SCRIPTS"""
-def run_manysketch(fasta_file_csv,klist,scaled,out_zipfile,cores,molecule):
+def run_manysketch(fasta_file_csv,klist,scaled,cores,molecule):
     """sketch multiple dna or protein signature file of ref and query.
     fasta_file_csv: csv file that contains three columns (name, genome_filename, protein_filename) as discussed in sourmash branchwater
     klist: list of k-mer sizes
     scaled: scaled factor
     molecule: identify the list of ksizes, ksizes depend on molecule
     cores:
-    out_zipfile: name of output for sig files"""
-    f'sourmash scripts manysketch {fasta_file_csv} -p {molecule},k={klist},scaled={scaled} -c {cores} -o {out_zipfile}'
+    """
+    f'sourmash scripts manysketch {fasta_file_csv} -p {molecule},k={klist},scaled={scaled} -c {cores} -o {molecule}.zip'
     try:
         logger.info(f"Sketching {molecule} fasta file: {fasta_file_csv}")
         subprocess.run(cmd, shell=True, check=True)
@@ -78,7 +78,7 @@ def run_multisearch(ref_zipfile,query_zipfile, ksize, scaled, molecule, core, wo
     molecule: identify the list of ksizes, ksizes depend on molecule
     cores:
     working_dir: working directory where to output results"""
-    cmd = f"sourmash scripts multisearch {ref_zipfile} {query_zipfile} -k {ksize} -s {scaled} -o {working_dir}/results_{molecule}.csv --cores {core}"
+    cmd = f"sourmash scripts multisearch {ref_zipfile} {query_zipfile} -k {ksize} -s {scaled} -o {working_dir}/results_{molecule}_{ksize}.csv --cores {core}"
     try:
         logger.info(f"Comparing and obtaining containment index between {ref_zipfile} and {query_zipfile}")
         subprocess.run(cmd, shell=True, check=True)
