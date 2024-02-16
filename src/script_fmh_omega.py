@@ -13,13 +13,16 @@ def main(args):
     s = args.scaled_input
     on = args.outname
     wd = args.working_dir
-    multiple =args.multiple
+    m =args.mode
+    c= args.core
 
     #Create signature directory
     subprocess.run(f'mkdir {wd}/signatures', shell=True, check=True)
     #kmers list for sourmash
     sm_dna_klst=helperfuncs.return_dna_klist_parameters(kmer_list=klst)
     sm_protein_klst=helperfuncs.return_protein_klist_parameters(kmer_list=klst)
+    #Containments using sourmash compare and multisearch
+    kmer_list=klst.split(',')
     
     #store file information in lists
     fastn_files=[] #dna fasta file
@@ -39,29 +42,41 @@ def main(args):
     fasta_lst = f' '.join(fasta_files)
     dna_sig_outname = f'{wd}/signatures/{on}.dna.sig.gzip'
     prot_sig_outname = f'{wd}/signatures/{on}.protein.sig.gzip'
-    if multiple == 'yes': #input are multiple fastn files
-        sourmash.sketch_genome_dna(fasta=fastn_lst, klist=sm_dna_klst, scaled=s, out_sigfile=dna_sig_outname, multiple={multiple})
-        sourmash.sketch_genome_protein(fasta=fasta_lst, klist=sm_protein_klst, scaled=s, out_sigfile=prot_sig_outname, multiple={multiple})
-    elif multiple == 'no':
-        sourmash.sketch_genome_dna(fasta=fastn_lst, klist=sm_dna_klst, scaled=s, out_sigfile=dna_sig_outname)
-        sourmash.sketch_genome_protein(fasta=fasta_lst, klist=sm_protein_klst, scaled=s, out_sigfile=prot_sig_outname)
+    if m == 'mutiple': #input are m fastn files
+        sourmash_ext.sketch_genome_dna(fasta=fastn_lst, klist=sm_dna_klst, scaled=s, out_sigfile=dna_sig_outname, multiple={m})
+        sourmash_ext.sketch_genome_protein(fasta=fasta_lst, klist=sm_protein_klst, scaled=s, out_sigfile=prot_sig_outname, multiple={m})
+    elif m == 'single':
+        sourmash_ext.sketch_genome_dna(fasta=fastn_lst, klist=sm_dna_klst, scaled=s, out_sigfile=dna_sig_outname)
+        sourmash_ext.sketch_genome_protein(fasta=fasta_lst, klist=sm_protein_klst, scaled=s, out_sigfile=prot_sig_outname)
+    elif m == 'branchwater':
+        sourmash_ext.run_manysketch(fasta_file_csv=fastn_lst, klist=sm_dna_klst, scaled=s, molecule='dna')
+        sourmash_ext.run_manysketch(fasta_file_csv=fasta_lst, klist=sm_protein_klst, scaled=s, molecule='protein')
     
-    #Create compare directory
-    subprocess.run(f'mkdir {wd}/compare_dna', shell=True, check=True)
-    subprocess.run(f'mkdir {wd}/compare_protein', shell=True, check=True)
-    
-    #Containments using sourmash compare
-    kmer_list=klst.split(',')
-    for k in kmer_list:
-        dna_k = int(k)*3
-        sourmash.compare_signatures(ref=f'{wd}/signatures/{on}.dna.sig.gzip', query=f'{wd}/signatures/{on}.dna.sig.gzip', ksize=dna_k, molecule='dna', working_dir=f'{wd}')
-        sourmash.compare_signatures(ref=f'{wd}/signatures/{on}.protein.sig.gzip', query=f'{wd}/signatures/{on}.protein.sig.gzip', ksize=k, molecule='protein', working_dir=f'{wd}')
-        #Report containments
-        nt_df = helperfuncs.containments(mat_df=f'{wd}/compare_dna/compare.dna.{dna_k}.csv',ksize=int(k),multiple=multiple)
-        protein_df = helperfuncs.containments(mat_df=f'{wd}/compare_protein/compare.protein.{k}.csv',ksize=int(k),multiple=multiple)
-        ### Produce csv file with nt and protein containments with FMH OMEGA estimates
-        report_df = dnds.report_dNdS(nt_df,protein_df)
-        report_df.to_csv(f'{wd}/fmh_omega_{k}.csv')
+    #get containments and estimate dnds
+    if m != 'branchwater':
+        #Create compare directory
+        subprocess.run(f'mkdir {wd}/compare_dna', shell=True, check=True)
+        subprocess.run(f'mkdir {wd}/compare_protein', shell=True, check=True)
+        for k in kmer_list:
+            dna_k = int(k)*3
+            ### run sourmash comapre for cfracs
+            sourmash_ext.compare_signatures(ref=f'{wd}/signatures/{on}.dna.sig.gzip', query=f'{wd}/signatures/{on}.dna.sig.gzip', ksize=dna_k, molecule='dna', working_dir=f'{wd}')
+            sourmash_ext.compare_signatures(ref=f'{wd}/signatures/{on}.protein.sig.gzip', query=f'{wd}/signatures/{on}.protein.sig.gzip', ksize=k, molecule='protein', working_dir=f'{wd}')
+            #Report containments
+            nt_df = helperfuncs.containments(mat_df=f'{wd}/compare_dna/compare.dna.{dna_k}.csv',ksize=int(k),multiple=m)
+            protein_df = helperfuncs.containments(mat_df=f'{wd}/compare_protein/compare.protein.{k}.csv',ksize=int(k),multiple=m)
+            ### Produce csv file with nt and protein containments with FMH OMEGA estimates
+            report_df = dnds.report_dNdS(nt_df,protein_df)
+            report_df.to_csv(f'{wd}/fmh_omega_{k}.csv')
+    elif m == 'branchwater':
+        for k in kmer_list:
+            dna_k = int(k)*3
+            ### Run multisearch to estimate cfracs
+            sourmash_ext.run_multisearch(ref_zipfile=dna.zip,query_zipfile=dna.zip,ksize=dna_k,scaled=s,molecule=dna,core=c,working_dir={wd})
+            sourmash_ext.run_multisearch(ref_zipfile=protein.zip,query_zipfile=protein.zip,ksize=k,scaled=s,molecule=protein,core=c,working_dir={wd})
+            ### Produce csv file with nt and protein containments with FMH OMEGA estimates
+            report_dnds = dnds.report_dNdS(f"{wd}/results_dna_{ksize}.csv",f"{wd}/results_protein_{ksize}.csv")
+            report_dnds.to_csv(f'{wd}/fmh_omega_{k}.csv')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -89,10 +104,10 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        '--multiple',
+        '--mode',
         type=str,
         help = 'Identify whether you will sketch with singleton option. Yes or No.\
-        E.g., yes, when a single fasta file with multiple sequences will be used for analysis.'
+        E.g., yes, when a single fasta file with mode sequences will be used for analysis.'
     )
 
     parser.add_argument(
