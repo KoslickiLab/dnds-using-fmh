@@ -14,7 +14,7 @@ def main(args):
     on = args.outname
     wd = args.working_dir
     m =args.mode
-    c= args.core
+    c= args.cores
 
     #Create signature directory
     subprocess.run(f'mkdir {wd}/signatures', shell=True, check=True)
@@ -106,8 +106,13 @@ if __name__ == "__main__":
     parser.add_argument(
         '--mode',
         type=str,
-        help = 'Identify whether you will sketch with singleton option. Yes or No.\
-        E.g., yes, when a single fasta file with mode sequences will be used for analysis.'
+        help = 'Identify mode to run fmh_omega as single, multiple, branchwater'
+    )
+
+    parser.add_argument(
+        '--cores',
+        type=int,
+        help = 'Identify core usage'
     )
 
     parser.add_argument(
