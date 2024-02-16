@@ -80,4 +80,33 @@ def report_dNdS(nt_containment_df,prot_containment_df):
     #report
     return(df)
 
+def report_dNdS_multisearch(dna_cfrac_csv,protein_cfrac_csv,ksize):
+    """
+    Returns dataframe of dNdS reports between all pairwise estimations of protein coding sequences.
+    Uses dNdS_ratio() function to estimate dN/dS ratio.
+    dna_cfrac_csv: multisearch results csv file for dna 
+        Header of csv file contains ref, query, containment index, and ksize.
+    protein_cfrac_csv: multisearch results csv file for protein
+        Header of csv file contains ref, query, containment index, and ksize.
+    """
+    #read in nt_containment and protein_containment dataframe file and change column names
+    #nt_df = nt_containment_df.rename(columns={'containment':'DNA_Cfrac'})
+    dna_cfrac = pd.read_csv('results_dna.csv',sep=",")[['query_name','match_name','containment']].rename(columns={'query_name':'A','match_name':'B','containment':'DNA_Cfrac'})
+    #protein_df = prot_containment_df.rename(columns={'containment':'AA_Cfrac'})
+    protein_cfrac = pd.read_csv('results_protein.csv',sep=",")[['query_name','match_name','containment']].rename(columns={'query_name':'A','match_name':'B','containment':'AA_Cfrac'})
+
+    #join df into one
+    #df = pd.merge(nt_df, protein_df, on=['A','B','ksize'])
+    merge_df = pd.merge(dna_cfrac, protein_cfrac, on=['A','B'])
+    merge_df['ksize'] = ksize
+
+    #apply function
+    merge_df['PdN'] = (calc_PdN(protein_containment=merge_df['AA_Cfrac'],k=merge_df['ksize']))
+    merge_df['PdS'] = (calc_PdS(protein_containment=merge_df['AA_Cfrac'],nt_containment=merge_df['DNA_Cfrac'],k=merge_df['ksize']))
+    merge_df['PdN/PdS'] = dNdS_ratio(nt_containment=merge_df['DNA_Cfrac'],protein_containment=merge_df['AA_Cfrac'],k=merge_df['ksize'])
+    merge_df['dN/dS'] = dNdS_ratio_with_constant(nt_containment=merge_df['DNA_Cfrac'],protein_containment=merge_df['AA_Cfrac'],k=merge_df['ksize'])
+
+    #report
+    return(merge_df)
+
 
