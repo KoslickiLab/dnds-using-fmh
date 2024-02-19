@@ -20,7 +20,6 @@ def main(args):
     on = args.outname
     wd = args.working_dir
     m =args.mode
-    c= args.cores
 
     #num_cores = np.min(total_cores, np.ceil(total_num_signatures/1000))
     """branchwater manysketch produces a signature collection
@@ -119,12 +118,6 @@ if __name__ == "__main__":
         '--mode',
         type=str,
         help = 'Identify mode to run fmh_omega as single, multiple, branchwater'
-    )
-
-    parser.add_argument(
-        '--cores',
-        type=int,
-        help = 'Identify core usage'
     )
 
     parser.add_argument(
