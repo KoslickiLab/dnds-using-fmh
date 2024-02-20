@@ -88,18 +88,20 @@ def report_dNdS_multisearch(dna_cfrac_csv,protein_cfrac_csv,ksize):
         Header of csv file contains ref, query, containment index, and ksize.
     protein_cfrac_csv: multisearch results csv file for protein
         Header of csv file contains ref, query, containment index, and ksize.
+    ksize: ksize of protein
     """
     #read in nt_containment and protein_containment dataframe file and change column names
     #nt_df = nt_containment_df.rename(columns={'containment':'DNA_Cfrac'})
-    dna_cfrac = pd.read_csv('results_dna.csv',sep=",")[['query_name','match_name','containment']].rename(columns={'query_name':'A','match_name':'B','containment':'DNA_Cfrac'})
+    dna_cfrac = pd.read_csv(f'{dna_cfrac_csv}',sep=",")[['query_name','match_name','containment']].rename(columns={'query_name':'A','match_name':'B','containment':'DNA_Cfrac'})
     #protein_df = prot_containment_df.rename(columns={'containment':'AA_Cfrac'})
-    protein_cfrac = pd.read_csv('results_protein.csv',sep=",")[['query_name','match_name','containment']].rename(columns={'query_name':'A','match_name':'B','containment':'AA_Cfrac'})
+    protein_cfrac = pd.read_csv(f'{protein_cfrac_csv}',sep=",")[['query_name','match_name','containment']].rename(columns={'query_name':'A','match_name':'B','containment':'AA_Cfrac'})
 
     #join df into one
     #df = pd.merge(nt_df, protein_df, on=['A','B','ksize'])
     merge_df = pd.merge(dna_cfrac, protein_cfrac, on=['A','B'])
-    merge_df['ksize'] = ksize
+    merge_df['ksize'] = int(ksize)
 
+    print(merge_df['ksize'].dtype=='int64')
     #apply function
     merge_df['PdN'] = (calc_PdN(protein_containment=merge_df['AA_Cfrac'],k=merge_df['ksize']))
     merge_df['PdS'] = (calc_PdS(protein_containment=merge_df['AA_Cfrac'],nt_containment=merge_df['DNA_Cfrac'],k=merge_df['ksize']))
