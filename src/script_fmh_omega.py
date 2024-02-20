@@ -38,8 +38,6 @@ def main(args):
             fasta_files.append(f'{name}.translated.fasta')
     #total cores to use
     total_num_signatures = len(fastn_files)+len(fasta_files)
-    print(mp.cpu_count())
-    print(int(total_num_signatures/1000))
     total_cores = np.min(mp.cpu_count(), round(total_num_signatures/1000))
     #Translate before sketching protein
     for pos in range(len(fastn_files)):
