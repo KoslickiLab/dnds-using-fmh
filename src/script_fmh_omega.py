@@ -7,12 +7,14 @@ import subprocess
 import time
 import multiprocessing as mp
 import numpy as np
+import math
 
 def main(args):
 
     print(time.thread_time())
     print(time.process_time())
-
+    obj=time.gmtime(0)
+    start=time.asctime(obj)
     ### ARGUMENTS
     dna_fasta = args.fasta_input_list
     klst = args.klist
@@ -20,6 +22,7 @@ def main(args):
     on = args.outname
     wd = args.directory
     m =args.mode
+    translate_cds=args.translate
 
     ### PREPARING RUN
     #kmers list for sourmash
@@ -38,10 +41,12 @@ def main(args):
             fasta_files.append(f'{name}.translated.fasta')
     #total cores to use
     total_num_signatures = len(fastn_files)+len(fasta_files)
-    total_cores = np.min(mp.cpu_count(), round(total_num_signatures/1000))
+    total_cores = min(mp.cpu_count(), math.ceil(total_num_signatures/2))
+
+    if translate_cds == 'yes':
     #Translate before sketching protein
-    for pos in range(len(fastn_files)):
-        helperfuncs.translate_CDS(cds_fasta=f'{fastn_files[pos]}', out_name=f'{fasta_files[pos]}')
+        for pos in range(len(fastn_files)):
+            helperfuncs.translate_CDS(cds_fasta=f'{fastn_files[pos]}', out_name=f'{fasta_files[pos]}')
 
     ### RUN WHEN NOT USING SOURMASH BRANCHWATER PLUGIN
     if m != "branchwater":
@@ -86,7 +91,9 @@ def main(args):
             ### Produce csv file with nt and protein containments with FMH OMEGA estimates
             report_dnds = dnds.report_dNdS_multisearch(f"{wd}/results_dna_{dna_k}.csv",f"{wd}/results_protein_{k}.csv",ksize=k)
             report_dnds.to_csv(f'{wd}/fmh_omega_{k}.csv')
-
+    end=time.asctime(obj)
+    print(f'started: {start}')
+    print(f'started: {end}')
     print(time.thread_time())
     print(time.process_time())
 
@@ -119,6 +126,12 @@ if __name__ == "__main__":
         '--mode',
         type=str,
         help = 'Identify mode to run fmh_omega as single, multiple, branchwater'
+    )
+
+    parser.add_argument(
+        '--translate',
+        type=str,
+        help='indicate yes or no to translate coding sequence'
     )
 
     parser.add_argument(
