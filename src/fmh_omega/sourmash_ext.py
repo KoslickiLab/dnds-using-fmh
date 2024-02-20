@@ -52,7 +52,7 @@ def compare_signatures(ref, query, ksize, molecule, working_dir):
         logger.error(f"Error occurred while comparing {ref} and {query}: {e}")
 
 """SOURMASH BRANCHWATER SCRIPTS"""
-def run_manysketch(fasta_file_csv,klist,scaled,cores,molecule):
+def run_manysketch(fasta_file_csv,klist,scaled,cores,molecule, working_dir):
     """sketch multiple dna or protein signature file of ref and query.
     fasta_file_csv: csv file that contains three columns (name, genome_filename, protein_filename) as discussed in sourmash branchwater
     klist: list of k-mer sizes
@@ -60,7 +60,7 @@ def run_manysketch(fasta_file_csv,klist,scaled,cores,molecule):
     molecule: identify the list of ksizes, ksizes depend on molecule
     cores:
     """
-    f'sourmash scripts manysketch {fasta_file_csv} -p {molecule},k={klist},scaled={scaled} -c {cores} -o {molecule}.zip'
+    cmd = f'sourmash scripts manysketch {fasta_file_csv} -p {molecule},k={klist},scaled={scaled} -c {cores} -o {working_dir}/{molecule}.zip'
     try:
         logger.info(f"Sketching {molecule} fasta file: {fasta_file_csv}")
         subprocess.run(cmd, shell=True, check=True)
@@ -68,8 +68,7 @@ def run_manysketch(fasta_file_csv,klist,scaled,cores,molecule):
     except subprocess.CalledProcessError as e:
         logger.error(f"Error occurred while sketching {fasta_file_csv}: {e}")
 
-
-def run_multisearch(ref_zipfile,query_zipfile, ksize, scaled, molecule, core, working_dir):
+def run_multisearch(ref_zipfile,query_zipfile, ksize, scaled, out_csv, cores, molecule):
     """compare dna or protein signature file of ref and query
     ref_zipfile: reference dna or protein signature zip file that was produced in manysketch
     query_zipfile: reference dna or protein signature zip file that was produced in manysketch
@@ -78,7 +77,7 @@ def run_multisearch(ref_zipfile,query_zipfile, ksize, scaled, molecule, core, wo
     molecule: identify the list of ksizes, ksizes depend on molecule
     cores:
     working_dir: working directory where to output results"""
-    cmd = f"sourmash scripts multisearch {ref_zipfile} {query_zipfile} -k {ksize} -s {scaled} -o {working_dir}/results_{molecule}_{ksize}.csv --cores {core}"
+    cmd = f"sourmash scripts multisearch {ref_zipfile} {query_zipfile} -k {ksize} -s {scaled} -m {molecule} -o {out_csv} --cores {cores}"
     try:
         logger.info(f"Comparing and obtaining containment index between {ref_zipfile} and {query_zipfile}")
         subprocess.run(cmd, shell=True, check=True)
