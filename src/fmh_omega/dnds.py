@@ -101,7 +101,6 @@ def report_dNdS_multisearch(dna_cfrac_csv,protein_cfrac_csv,ksize):
     merge_df = pd.merge(dna_cfrac, protein_cfrac, on=['A','B'])
     merge_df['ksize'] = int(ksize)
 
-    print(merge_df['ksize'].dtype=='int64')
     #apply function
     merge_df['PdN'] = (calc_PdN(protein_containment=merge_df['AA_Cfrac'],k=merge_df['ksize']))
     merge_df['PdS'] = (calc_PdS(protein_containment=merge_df['AA_Cfrac'],nt_containment=merge_df['DNA_Cfrac'],k=merge_df['ksize']))
