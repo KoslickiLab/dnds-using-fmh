@@ -8,48 +8,47 @@ import time
 import multiprocessing as mp
 import numpy as np
 
-print(time.thread_time())
-print(time.clock())
-
 def main(args):
 
-    ###Arguments
+    print(time.thread_time())
+    print(time.process_time())
+
+    ### ARGUMENTS
     dna_fasta = args.fasta_input_list
     klst = args.klist
     s = args.scaled_input
     on = args.outname
-    wd = args.working_dir
+    wd = args.directory
     m =args.mode
 
-    #num_cores = np.min(total_cores, np.ceil(total_num_signatures/1000))
-    """branchwater manysketch produces a signature collection
-    Branchwater says the foolowing:
-    "The manysketch command sketches one or more FASTA/FASTQ files into a zipped sourmash signature collection (zip). 
-    manysketch uses one thread per input file, so it can (very) efficiently sketch many files at once; and,
-    because sequence file parsing is entirely implemented in Rust, it is much, much faster than sourmash sketch for large FASTQ files."
-    so, should we only be using multiprocessing core function, here?
-    """
-
-    #Create signature directory
-    subprocess.run(f'mkdir {wd}/signatures', shell=True, check=True)
+    ### PREPARING RUN
     #kmers list for sourmash
     sm_dna_klst=helperfuncs.return_dna_klist_parameters(kmer_list=klst)
     sm_protein_klst=helperfuncs.return_protein_klist_parameters(kmer_list=klst)
     #Containments using sourmash compare and multisearch
     kmer_list=klst.split(',')
-    
     #store file information in lists
     fastn_files=[] #dna fasta file
     fasta_files=[] #protein fasta files
     for files in [line.strip() for line in open(f'{dna_fasta}', 'r')]:
-        fastn_files.append(files.split(',')[1])
-        fasta_files.append(f'{wd}/{files.split(',')[1].split(".")[0]}.translated.fasta')
-        
+        if files != '' and 'genome_filename' not in files:
+            fastn_filename = files.split(',')[1]
+            name = files.split(',')[1].split('.')[0]
+            fastn_files.append(fastn_filename)
+            fasta_files.append(f'{name}.translated.fasta')
+    #total cores to use
+    total_num_signatures = len(fastn_files)+len(fasta_files)
+    print(mp.cpu_count())
+    print(int(total_num_signatures/1000))
+    total_cores = np.min(mp.cpu_count(), round(total_num_signatures/1000))
     #Translate before sketching protein
     for pos in range(len(fastn_files)):
-        helperfuncs.translate_CDS(cds_fasta=f'{wd}/{fastn_files[pos]}', out_name=f'{fasta_files[pos]}')
+        helperfuncs.translate_CDS(cds_fasta=f'{fastn_files[pos]}', out_name=f'{fasta_files[pos]}')
 
+    ### RUN WHEN NOT USING SOURMASH BRANCHWATER PLUGIN
     if m != "branchwater":
+        #Create signature directory
+        subprocess.run(f'mkdir {wd}/signatures', shell=True, check=True)
         #Sketch signatures
         fastn_lst = f'{wd}/'+f' {wd}/'.join(fastn_files)
         fasta_lst = f' '.join(fasta_files)
@@ -76,18 +75,22 @@ def main(args):
             report_df = dnds.report_dNdS(nt_df,protein_df)
             report_df.to_csv(f'{wd}/fmh_omega_{k}.csv')
 
+    ### RUN WHEN USING SOURMASH BRANCHWATER PLUGIN
     elif m == 'branchwater':
-        sourmash_ext.run_manysketch(fasta_file_csv=dna_fasta, klist=sm_dna_klst, scaled=s, molecule='dna')
-        sourmash_ext.run_manysketch(fasta_file_csv=dna_fasta, klist=sm_protein_klst, scaled=s, molecule='protein')
+        sourmash_ext.run_manysketch(fasta_file_csv=dna_fasta, klist=sm_dna_klst, scaled=s, molecule='dna',cores=total_cores, working_dir=wd)
+        sourmash_ext.run_manysketch(fasta_file_csv=dna_fasta, klist=sm_protein_klst, scaled=s, molecule='protein',cores=total_cores, working_dir=wd)
     
         for k in kmer_list:
             dna_k = int(k)*3
             ### Run multisearch to estimate cfracs
-            sourmash_ext.run_multisearch(ref_zipfile=dna.zip,query_zipfile=dna.zip,ksize=dna_k,scaled=s,molecule=dna,core=c,working_dir={wd})
-            sourmash_ext.run_multisearch(ref_zipfile=protein.zip,query_zipfile=protein.zip,ksize=k,scaled=s,molecule=protein,core=c,working_dir={wd})
+            sourmash_ext.run_multisearch(ref_zipfile=f'{wd}/dna.zip',query_zipfile=f'{wd}/dna.zip',ksize=dna_k,scaled=s,out_csv=f'{wd}/results_dna_{dna_k}.csv',molecule='DNA',cores=total_cores)
+            sourmash_ext.run_multisearch(ref_zipfile=f'{wd}/protein.zip',query_zipfile=f'{wd}/protein.zip',ksize=k,scaled=s,out_csv=f'{wd}/results_protein_{k}.csv',molecule='protein',cores=total_cores)
             ### Produce csv file with nt and protein containments with FMH OMEGA estimates
-            report_dnds = dnds.report_dNdS(f"{wd}/results_dna_{ksize}.csv",f"{wd}/results_protein_{ksize}.csv")
+            report_dnds = dnds.report_dNdS_multisearch(f"{wd}/results_dna_{dna_k}.csv",f"{wd}/results_protein_{k}.csv",ksize=k)
             report_dnds.to_csv(f'{wd}/fmh_omega_{k}.csv')
+
+    print(time.thread_time())
+    print(time.process_time())
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -126,7 +129,8 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        '--working_dir',
+        '--directory',
+        type=str,
         help = 'Output directory for FMH Omega estimation.'
     )
 
