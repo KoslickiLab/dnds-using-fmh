@@ -88,12 +88,15 @@ def main(args):
             ### Run multisearch to estimate cfracs
             sourmash_ext.run_multisearch(ref_zipfile=f'{wd}/dna.zip',query_zipfile=f'{wd}/dna.zip',ksize=dna_k,scaled=s,out_csv=f'{wd}/results_dna_{dna_k}.csv',molecule='DNA',cores=total_cores)
             sourmash_ext.run_multisearch(ref_zipfile=f'{wd}/protein.zip',query_zipfile=f'{wd}/protein.zip',ksize=k,scaled=s,out_csv=f'{wd}/results_protein_{k}.csv',molecule='protein',cores=total_cores)
+            ### Run pairwise instead to estimate cfracs (quicker but does not really give pairwise?)
+            #sourmash_ext.run_pairwise(zipfile=f'{wd}/dna.zip',ksize=dna_k,scaled=s,out_csv=f'{wd}/results_dna_{dna_k}.csv',molecule='DNA',cores=total_cores)
+            #sourmash_ext.run_pairwise(zipfile=f'{wd}/protein.zip',ksize=k,scaled=s,out_csv=f'{wd}/results_protein_{k}.csv',molecule='protein',cores=total_cores)
             ### Produce csv file with nt and protein containments with FMH OMEGA estimates
             report_dnds = dnds.report_dNdS_multisearch(f"{wd}/results_dna_{dna_k}.csv",f"{wd}/results_protein_{k}.csv",ksize=k)
             report_dnds.to_csv(f'{wd}/fmh_omega_{k}.csv')
     end=time.asctime(obj)
-    print(f'started: {start}')
-    print(f'started: {end}')
+    print(f'Started: {start}')
+    print(f'Ended: {end}')
     print(time.thread_time())
     print(time.process_time())
 
