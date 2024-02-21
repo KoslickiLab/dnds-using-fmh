@@ -1,3 +1,4 @@
+#find does not include the entire pathway
 sort gtdb_proteins_aa_rep_list.txt >> gtdb_proteins_aa_rep_list_sorted.txt
 sort gtdb_proteins_nt_rep_list.txt >> gtdb_proteins_nt_rep_list_sorted.txt
 cat gtdb_proteins_aa_rep_list_sorted.txt | cut -d'/' -f4 | sed "s/_protein.*//" >> gtdb_proteins_rep_list_sort_names.txt
