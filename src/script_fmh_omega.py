@@ -30,26 +30,32 @@ def main(args):
     sm_protein_klst=helperfuncs.return_protein_klist_parameters(kmer_list=klst)
     #Containments using sourmash compare and multisearch
     kmer_list=klst.split(',')
-    #store file information in lists
-    fastn_files=[] #dna fasta file
-    fasta_files=[] #protein fasta files
-    for files in [line.strip() for line in open(f'{dna_fasta}', 'r')]:
-        if files != '' and 'genome_filename' not in files:
-            fastn_filename = files.split(',')[1]
-            name = files.split(',')[1].split('.')[0]
-            fastn_files.append(fastn_filename)
-            fasta_files.append(f'{name}.translated.fasta')
+    #get total expected signatures
+    total_num_signatures=-1
+    with open(f'{dna_fasta}') as infp:
+        for line in infp:
+            if line.strip():
+                total_num_signatures += 1
     #total cores to use
-    total_num_signatures = len(fastn_files)+len(fasta_files)
-    total_cores = min(mp.cpu_count(), math.ceil(total_num_signatures/2))
-
-    if translate_cds == 'yes':
-    #Translate before sketching protein
-        for pos in range(len(fastn_files)):
-            helperfuncs.translate_CDS(cds_fasta=f'{fastn_files[pos]}', out_name=f'{fasta_files[pos]}')
+    total_num_signatures = total_num_signatures-1 #subtract 1 for the header
+    total_cores = min(mp.cpu_count(), math.ceil(total_num_signatures/1000))
 
     ### RUN WHEN NOT USING SOURMASH BRANCHWATER PLUGIN
     if m != "branchwater":
+        #store file information in lists
+        fastn_files=[] #dna fasta file
+        fasta_files=[] #protein fasta files
+        for files in [line.strip() for line in open(f'{dna_fasta}', 'r')]:
+            if files != '' and 'genome_filename' not in files:
+                fastn_filename = files.split(',')[1]
+                name = files.split(',')[1].split('.')[0]
+                fastn_files.append(fastn_filename)
+                fasta_files.append(f'{name}.translated.fasta')
+        if translate_cds == 'yes':
+        #Translate before sketching protein
+            for pos in range(len(fastn_files)):
+                helperfuncs.translate_CDS(cds_fasta=f'{fastn_files[pos]}', out_name=f'{fasta_files[pos]}')
+
         #Create signature directory
         subprocess.run(f'mkdir {wd}/signatures', shell=True, check=True)
         #Sketch signatures
@@ -88,7 +94,7 @@ def main(args):
             ### Run multisearch to estimate cfracs
             sourmash_ext.run_multisearch(ref_zipfile=f'{wd}/dna.zip',query_zipfile=f'{wd}/dna.zip',ksize=dna_k,scaled=s,out_csv=f'{wd}/results_dna_{dna_k}.csv',molecule='DNA',cores=total_cores)
             sourmash_ext.run_multisearch(ref_zipfile=f'{wd}/protein.zip',query_zipfile=f'{wd}/protein.zip',ksize=k,scaled=s,out_csv=f'{wd}/results_protein_{k}.csv',molecule='protein',cores=total_cores)
-            ### Run pairwise instead to estimate cfracs (quicker but does not really give pairwise?)
+            ### Run pairwise instead to estimate cfracs (quicker but does not really give pairwise? yes, uses the pairwise max containment as result)
             #sourmash_ext.run_pairwise(zipfile=f'{wd}/dna.zip',ksize=dna_k,scaled=s,out_csv=f'{wd}/results_dna_{dna_k}.csv',molecule='DNA',cores=total_cores)
             #sourmash_ext.run_pairwise(zipfile=f'{wd}/protein.zip',ksize=k,scaled=s,out_csv=f'{wd}/results_protein_{k}.csv',molecule='protein',cores=total_cores)
             ### Produce csv file with nt and protein containments with FMH OMEGA estimates
