@@ -114,6 +114,7 @@ def report_dNdS_multisearch(dna_cfrac_csv,protein_cfrac_csv,ksize):
 def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
     """
     Returns dataframe of dNdS reports between all pairwise estimations of protein coding sequences.
+    it seems that the max containment is used when reporting pairwise containments 
     Uses dNdS_ratio() function to estimate dN/dS ratio.
     dna_cfrac_csv: multisearch results csv file for dna 
         Header of csv file contains ref, query, containment index, and ksize.
@@ -123,21 +124,20 @@ def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
     """
     #read in nt_containment and protein_containment dataframe file and change column names
     #nt_df = nt_containment_df.rename(columns={'containment':'DNA_Cfrac'})
-    dna_cfrac = pd.read_csv(f'{dna_cfrac_csv}',sep=",")[['query_name','match_name','containment']].rename(columns={'query_name':'A','match_name':'B','containment':'DNA_Cfrac'})
+    dna_cfrac = pd.read_csv(f'{dna_cfrac_csv}',sep=",")[['query_name','match_name','max_containment']].rename(columns={'max_containment':'DNA_max_Cfrac'})
+    dna_cfrac['A,B'] = dna_cfrac[['query_name', 'match_md5']].apply(sorted, axis=1).apply(tuple)
     #protein_df = prot_containment_df.rename(columns={'containment':'AA_Cfrac'})
-    protein_cfrac = pd.read_csv(f'{protein_cfrac_csv}',sep=",")[['query_name','match_name','containment']].rename(columns={'query_name':'A','match_name':'B','containment':'AA_Cfrac'})
-
+    protein_cfrac = pd.read_csv(f'{protein_cfrac_csv}',sep=",")[['query_name','match_name','max_containment']].rename(columns={'max_containment':'AA_max_Cfrac'})
+    protein_cfrac['A,B'] = protein_cfrac[['query_name', 'match_md5']].apply(sorted, axis=1).apply(tuple)
     #join df into one
-    #df = pd.merge(nt_df, protein_df, on=['A','B','ksize'])
-    merge_df = pd.merge(dna_cfrac, protein_cfrac, on=['A','B'])
-    merge_df = pd.merge(dna_cfrac, protein_cfrac, how='outer', left_on=['A', 'B'], right_on=['B', 'A'])
+    merge_df = pd.merge(dna_cfrac, protein_cfrac, on='A,B', how='inner')
     merge_df['ksize'] = int(ksize)
 
     #apply function
-    merge_df['PdN'] = (calc_PdN(protein_containment=merge_df['AA_Cfrac'],k=merge_df['ksize']))
-    merge_df['PdS'] = (calc_PdS(protein_containment=merge_df['AA_Cfrac'],nt_containment=merge_df['DNA_Cfrac'],k=merge_df['ksize']))
-    merge_df['PdN/PdS'] = dNdS_ratio(nt_containment=merge_df['DNA_Cfrac'],protein_containment=merge_df['AA_Cfrac'],k=merge_df['ksize'])
-    merge_df['dN/dS'] = dNdS_ratio_with_constant(nt_containment=merge_df['DNA_Cfrac'],protein_containment=merge_df['AA_Cfrac'],k=merge_df['ksize'])
+    merge_df['PdN'] = (calc_PdN(protein_containment=merge_df['AA_max_Cfrac'],k=merge_df['ksize']))
+    merge_df['PdS'] = (calc_PdS(protein_containment=merge_df['AA_max_Cfrac'],nt_containment=merge_df['DNA_max_Cfrac'],k=merge_df['ksize']))
+    merge_df['PdN/PdS'] = dNdS_ratio(nt_containment=merge_df['DNA_max_Cfrac'],protein_containment=merge_df['AA_max_Cfrac'],k=merge_df['ksize'])
+    merge_df['dN/dS'] = dNdS_ratio_with_constant(nt_containment=merge_df['DNA_max_Cfrac'],protein_containment=merge_df['AA_max_Cfrac'],k=merge_df['ksize'])
 
     #report
     return(merge_df)
