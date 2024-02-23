@@ -22,8 +22,8 @@ def main(args):
 
     ### PREPARING RUN
     #kmers list for sourmash
-    sm_dna_klst=helperfuncs.return_dna_klist_parameters(kmer_list=klst)
-    sm_protein_klst=helperfuncs.return_protein_klist_parameters(kmer_list=klst)
+    #sm_dna_klst=helperfuncs.return_dna_klist_parameters(kmer_list=klst)
+    #sm_protein_klst=helperfuncs.return_protein_klist_parameters(kmer_list=klst)
     #Containments using sourmash compare and multisearch
     #kmer_list=klst.split(',')
     dna_k = k*3
@@ -61,11 +61,11 @@ def main(args):
         dna_sig_outname = f'{wd}/signatures/{on}.dna.sig.gzip'
         prot_sig_outname = f'{wd}/signatures/{on}.protein.sig.gzip'
         if m == 'mult': #input are fastn files
-            sourmash_ext.sketch_genome_dna(fasta=fastn_lst, klist=sm_dna_klst, scaled=s, out_sigfile=dna_sig_outname, multiple={m})
-            sourmash_ext.sketch_genome_protein(fasta=fasta_lst, klist=sm_protein_klst, scaled=s, out_sigfile=prot_sig_outname, multiple={m})
+            sourmash_ext.sketch_genome_dna(fasta=fastn_lst, ksize=dna_k, scaled=s, out_sigfile=dna_sig_outname, multiple={m})
+            sourmash_ext.sketch_genome_protein(fasta=fasta_lst, ksize=k, scaled=s, out_sigfile=prot_sig_outname, multiple={m})
         elif m == 'sngl':
-            sourmash_ext.sketch_genome_dna(fasta=fastn_lst, klist=sm_dna_klst, scaled=s, out_sigfile=dna_sig_outname)
-            sourmash_ext.sketch_genome_protein(fasta=fasta_lst, klist=sm_protein_klst, scaled=s, out_sigfile=prot_sig_outname)
+            sourmash_ext.sketch_genome_dna(fasta=fastn_lst, ksize=dna_k, scaled=s, out_sigfile=dna_sig_outname)
+            sourmash_ext.sketch_genome_protein(fasta=fasta_lst, ksize=k, scaled=s, out_sigfile=prot_sig_outname)
         # Create compare directory
         #subprocess.run(f'mkdir {wd}/compare_dna', shell=True, check=True)
         #subprocess.run(f'mkdir {wd}/compare_protein', shell=True, check=True)
@@ -81,8 +81,8 @@ def main(args):
 
     ### RUN WHEN USING SOURMASH BRANCHWATER PLUGIN
     elif m == "bwmult" or m == "bwpair":
-        sourmash_ext.run_manysketch(fasta_file_csv=dna_fasta, klist=sm_dna_klst, scaled=s, molecule='dna',cores=total_cores, working_dir=wd)
-        sourmash_ext.run_manysketch(fasta_file_csv=dna_fasta, klist=sm_protein_klst, scaled=s, molecule='protein',cores=total_cores, working_dir=wd)
+        sourmash_ext.run_manysketch(fasta_file_csv=dna_fasta, ksize=dna_k, scaled=s, molecule='dna',cores=total_cores, working_dir=wd)
+        sourmash_ext.run_manysketch(fasta_file_csv=dna_fasta, ksize=k, scaled=s, molecule='protein',cores=total_cores, working_dir=wd)
         if m == "bwmult":
             ### Run multisearch to estimate cfracs
             sourmash_ext.run_multisearch(ref_zipfile=f'{wd}/dna.zip',query_zipfile=f'{wd}/dna.zip',ksize=dna_k,scaled=s,out_csv=f'{wd}/results_dna_{dna_k}.csv',molecule='DNA',cores=total_cores)
