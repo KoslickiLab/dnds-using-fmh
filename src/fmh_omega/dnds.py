@@ -125,10 +125,10 @@ def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
     #read in nt_containment and protein_containment dataframe file and change column names
     #nt_df = nt_containment_df.rename(columns={'containment':'DNA_Cfrac'})
     dna_cfrac = pd.read_csv(f'{dna_cfrac_csv}',sep=",")[['query_name','match_name','max_containment']].rename(columns={'max_containment':'DNA_max_Cfrac'})
-    dna_cfrac['A,B'] = dna_cfrac[['query_name', 'match_md5']].apply(sorted, axis=1).apply(tuple)
+    dna_cfrac['A,B'] = dna_cfrac[['query_name', 'match_name']].apply(sorted, axis=1).apply(tuple)
     #protein_df = prot_containment_df.rename(columns={'containment':'AA_Cfrac'})
     protein_cfrac = pd.read_csv(f'{protein_cfrac_csv}',sep=",")[['query_name','match_name','max_containment']].rename(columns={'max_containment':'AA_max_Cfrac'})
-    protein_cfrac['A,B'] = protein_cfrac[['query_name', 'match_md5']].apply(sorted, axis=1).apply(tuple)
+    protein_cfrac['A,B'] = protein_cfrac[['query_name', 'match_name']].apply(sorted, axis=1).apply(tuple)
     #join df into one
     merge_df = pd.merge(dna_cfrac, protein_cfrac, on='A,B', how='inner')
     merge_df['ksize'] = int(ksize)
