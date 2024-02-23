@@ -43,7 +43,7 @@ def compare_signatures(ref, query, ksize, molecule, working_dir):
     """ref: reference dna or protein signature"""
     """query: query dna or protein signature"""
     """outfile: signature name"""
-    cmd = f"sourmash compare {ref} {query} --containment --{molecule} --ksize {ksize} --csv {working_dir}/compare_{molecule}/compare.{molecule}.{ksize}.csv"
+    cmd = f"sourmash compare {ref} {query} --containment --{molecule} --ksize {ksize} --csv {working_dir}/compare.{molecule}.{ksize}.csv"
     try:
         logger.info(f"Comparing and obtaining containment index between {ref} and {query}")
         subprocess.run(cmd, shell=True, check=True)
