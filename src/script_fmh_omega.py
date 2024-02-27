@@ -19,6 +19,7 @@ def main(args):
     wd = args.directory
     m =args.mode
     translate_cds=args.translate
+    total_cores =args.cores
 
     ### PREPARING RUN
     #kmers list for sourmash
@@ -36,7 +37,7 @@ def main(args):
     #total cores to use
     #total_num_signatures = total_num_signatures-1 #subtract 1 for the header
     #total_cores = min(mp.cpu_count(), math.ceil(total_num_signatures/1000))
-    total_cores = 100 #testing
+    #total_cores = 100 #testing
 
     ### RUN WHEN NOT USING SOURMASH BRANCHWATER PLUGIN
     if m != "bwmult" and m !="bwpair":
@@ -145,6 +146,12 @@ if __name__ == "__main__":
         '--directory',
         type=str,
         help = 'Output directory for FMH Omega estimation.'
+    )
+
+    parser.add_argument(
+        '--cores',
+        type=int,
+        help = 'Set total cores. Use anything above 100 when using thousands of genomes.'
     )
 
     args = parser.parse_args()
