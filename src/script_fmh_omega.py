@@ -34,8 +34,9 @@ def main(args):
             if line.strip():
                 total_num_signatures += 1
     #total cores to use
-    total_num_signatures = total_num_signatures-1 #subtract 1 for the header
-    total_cores = min(mp.cpu_count(), math.ceil(total_num_signatures/1000))
+    #total_num_signatures = total_num_signatures-1 #subtract 1 for the header
+    #total_cores = min(mp.cpu_count(), math.ceil(total_num_signatures/1000))
+    total_cores = 100 #testing
 
     ### RUN WHEN NOT USING SOURMASH BRANCHWATER PLUGIN
     if m != "bwmult" and m !="bwpair":
