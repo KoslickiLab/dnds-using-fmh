@@ -46,6 +46,7 @@ def compare_signatures(ref, query, ksize, molecule, working_dir):
     cmd = f"sourmash compare {ref} {query} --containment --{molecule} --ksize {ksize} --csv {working_dir}/compare.{molecule}.{ksize}.csv"
     try:
         logger.info(f"Comparing and obtaining containment index between {ref} and {query}")
+        logger.info(f"{cmd}")
         subprocess.run(cmd, shell=True, check=True)
         logger.success(f"Successfully compared")
     except subprocess.CalledProcessError as e:
@@ -63,6 +64,7 @@ def run_manysketch(fasta_file_csv,ksize,scaled,cores,molecule, working_dir):
     cmd = f'sourmash scripts manysketch {fasta_file_csv} -p {molecule},k={ksize},scaled={scaled} -c {cores} -o {working_dir}/{molecule}.zip'
     try:
         logger.info(f"Sketching {molecule} fasta file: {fasta_file_csv}")
+        logger.info(f"{cmd}")
         subprocess.run(cmd, shell=True, check=True)
         logger.success(f"Successfully sketched {molecule}")
     except subprocess.CalledProcessError as e:
@@ -80,6 +82,7 @@ def run_multisearch(ref_zipfile,query_zipfile, ksize, scaled, out_csv, cores, mo
     cmd = f"sourmash scripts multisearch {ref_zipfile} {query_zipfile} -k {ksize} -s {scaled} -m {molecule} -t 0 -o {out_csv} --cores {cores}"
     try:
         logger.info(f"Comparing and obtaining containment index between {ref_zipfile} and {query_zipfile}")
+        logger.info(f"{cmd}")
         subprocess.run(cmd, shell=True, check=True)
         logger.success(f"Successfully compared")
     except subprocess.CalledProcessError as e:
@@ -97,6 +100,7 @@ def run_pairwise(zipfile, ksize, scaled, out_csv, cores, molecule):
     cmd = f"sourmash scripts pairwise {zipfile} -k {ksize} -s {scaled} -m {molecule} -t 0 -o {out_csv} --cores {cores}"
     try:
         logger.info(f"Obtaining pairwise containment index for {zipfile}")
+        logger.info(f"{cmd}")
         subprocess.run(cmd, shell=True, check=True)
         logger.success(f"Successfully compared")
     except subprocess.CalledProcessError as e:
