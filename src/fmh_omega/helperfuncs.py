@@ -3,6 +3,8 @@ import pandas as pd
 from Bio import SeqIO
 from Bio.Seq import Seq
 import os
+import gzip
+import random
 
 def extract_filename_without_extension(file_path):
     #return file_path.split('/')[-1].split('.')[0]
@@ -154,7 +156,7 @@ def positive_selection_based_on_mutation_rate_p(sequence,p_mutation_rate):
     decides whether the nucleotide at that position is mutated, 
     and adds on to the newly mutated sequence, which will then be return in the end."""
     mutated_sequence = ''
-    coding_sequence = list(sliced(sequence,3))
+    coding_sequence = get_coding_sequence(sequence)
     for codon in coding_sequence:
         mutated_sequence+=positive_selection_outcome(codon.upper(), p_mutation_rate)
     return(mutated_sequence.upper())
@@ -165,7 +167,20 @@ def negative_selection_based_on_mutation_rate_p(sequence,p_mutation_rate):
     decides whether the nucleotide at that position is mutated, 
     and adds on to the newly mutated sequence, which will then be return in the end."""
     mutated_sequence = ''
-    coding_sequence = list(sliced(sequence,3))
+    coding_sequence = get_coding_sequence(sequence)
     for codon in coding_sequence:
         mutated_sequence+=negative_selection_outcome(codon.upper(), p_mutation_rate)
     return(mutated_sequence.upper())
+
+# read in a fasta.gz format file
+def read_fasta_gz(file_path):
+    sequences = []
+    with gzip.open(file_path, "rt") as handle:
+        for record in SeqIO.parse(handle, "fasta"):
+            sequences.append(str(record.seq))
+    return(sequences)
+
+def get_coding_sequence(sequence):
+    coding_seq = [sequence[i:i+3] for i in range(0, len(sequence), 3)]
+    return(coding_seq)
+    
