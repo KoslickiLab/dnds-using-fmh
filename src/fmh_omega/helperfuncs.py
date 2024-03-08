@@ -174,10 +174,10 @@ def negative_selection_based_on_mutation_rate_p(sequence,p_mutation_rate):
 
 # read in a fasta.gz format file
 def read_fasta_gz(file_path):
-    sequences = []
+    sequences = {}
     with gzip.open(file_path, "rt") as handle:
         for record in SeqIO.parse(handle, "fasta"):
-            sequences.append(str(record.seq))
+            sequences[str(record.name)] = str(record.seq)
     return(sequences)
 
 def get_coding_sequence(sequence):
