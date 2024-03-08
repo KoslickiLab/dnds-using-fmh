@@ -18,29 +18,28 @@ file3=pd.read_csv(f'{file}',sep=',')[clmns]
 fig, axes = plt.subplots(1, 3, gridspec_kw={'width_ratios': [1, 1, 1]})
 
 # Get the colormap and reverse it
-cmap = plt.get_cmap('Blues')
-reversed_cmap = cmap.reversed()
+cmap = plt.get_cmap('vlag')
 
 # Plot the first heatmap
 heatmap1 = sns.heatmap(file1, ax=axes[0], annot=False,fmt='.4f',annot_kws={"size": 7}
-                ,yticklabels=False, cmap=reversed_cmap, vmin=0, vmax=1,
+                ,yticklabels=False, cmap=cmap, vmin=0, vmax=1, center=1,
                 cbar_kws={'label': 'FMH dN/dS'},cbar=False)
 axes[0].set_title('1')
-axes[0].set_xlabel('')
+axes[0].set_xticks([])
 print(file1.mean())
 
 heatmap2 = sns.heatmap(file2, ax=axes[1], annot=False,fmt='.4f',annot_kws={"size": 7}
-                ,yticklabels=False, cmap=reversed_cmap, vmin=0, vmax=1,
+                ,yticklabels=False, cmap=cmap, vmin=0, vmax=1, center=1,
                 cbar_kws={'label': 'FMH dN/dS'}, cbar=False)
 axes[1].set_title('10')
-axes[1].set_xlabel('')
+axes[1].set_xticks([])
 print(file2.mean())
 
 heatmap3 = sns.heatmap(file3, ax=axes[2], annot=False,fmt='.4f',annot_kws={"size": 7}
-                ,yticklabels=False, cmap=reversed_cmap, vmin=0, vmax=1,
+                ,yticklabels=False, cmap=cmap, vmin=0, vmax=1, center=1,
                 cbar_kws={'label': 'FMH dN/dS'}, cbar=False)
 axes[2].set_title('100')
-axes[2].set_xlabel('')
+axes[2].set_xticks([])
 print(file3.mean())
 
 
@@ -50,10 +49,6 @@ cbar = fig.colorbar(heatmap2.get_children()[0], cax=cbar_ax, orientation='vertic
 
 
 # Adjust layout
-#plt.tight_layout()
 plt.subplots_adjust(wspace=0.03)
-fig.text(0.5, 0.03, 'FMH dN/dS at differing scale factors at ksize=7', ha='center', va='center')
-
-#fig.set_title('ANI and AAI Ground Truth\n10,002 nt at p=0.01')
-#fig.figure.savefig(f"{wd}/ANI_and_AAI.png",bbox_inches='tight')
+plt.suptitle('Negative selection simulation on E. coli protein rep genome, p=0.01,ksize=7,scale=10')
 fig.figure.savefig(f"/data/jzr5814/sourmash_dnds_estimation/thesis_figures/fmh_dnds_genome_negative_selection_tests_heatmaps.tiff",bbox_inches='tight') 
