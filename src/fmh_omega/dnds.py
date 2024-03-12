@@ -3,7 +3,7 @@
 import pandas as pd
 import logging
 from loguru import logger
-
+import time
 
 def calc_PdN(protein_containment,k):
     """
@@ -124,6 +124,7 @@ def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
     """
     #read in nt_containment and protein_containment dataframe file and change column names
     #nt_df = nt_containment_df.rename(columns={'containment':'DNA_Cfrac'})
+    start_time = time.time()
     dna_cfrac = pd.read_csv(f'{dna_cfrac_csv}',sep=",")[['query_name','match_name','max_containment']].rename(columns={'max_containment':'DNA_max_Cfrac'})
     dna_cfrac['A,B'] = dna_cfrac[['query_name', 'match_name']].apply(sorted, axis=1).apply(tuple)
     #protein_df = prot_containment_df.rename(columns={'containment':'AA_Cfrac'})
@@ -139,6 +140,9 @@ def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
     merge_df['PdN/PdS'] = dNdS_ratio(nt_containment=merge_df['DNA_max_Cfrac'],protein_containment=merge_df['AA_max_Cfrac'],k=merge_df['ksize'])
     merge_df['dN/dS'] = dNdS_ratio_with_constant(nt_containment=merge_df['DNA_max_Cfrac'],protein_containment=merge_df['AA_max_Cfrac'],k=merge_df['ksize'])
 
+    end_time = time.time()
+    time_logged = end_time-start_time
+    print(f"Successfully estimated dN/dS in {time_logged} secconds")
     #report
     return(merge_df)
 
