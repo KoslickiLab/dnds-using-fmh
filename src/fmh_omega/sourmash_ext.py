@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import subprocess
 from loguru import logger
-
+import time
 """SKETCH FILES"""
 def sketch_genome_dna(fasta, ksize, scaled, out_sigfile, multiple=None):
     """sketch a DNA fasta file. Used when a fasta include genomic information of one species
@@ -53,7 +53,7 @@ def compare_signatures(ref, query, ksize, molecule, working_dir):
         logger.error(f"Error occurred while comparing {ref} and {query}: {e}")
 
 """SOURMASH BRANCHWATER SCRIPTS"""
-def run_manysketch(fasta_file_csv,ksize,scaled,cores,molecule, working_dir):
+def run_manysketch(fasta_file_csv,ksize,scaled,cores, working_dir):
     """sketch multiple dna or protein signature file of ref and query.
     fasta_file_csv: csv file that contains three columns (name, genome_filename, protein_filename) as discussed in sourmash branchwater
     klist: list of k-mer sizes
@@ -61,14 +61,20 @@ def run_manysketch(fasta_file_csv,ksize,scaled,cores,molecule, working_dir):
     molecule: identify the list of ksizes, ksizes depend on molecule
     cores:
     """
-    cmd = f'sourmash scripts manysketch {fasta_file_csv} -p {molecule},k={ksize},scaled={scaled} -c {cores} -o {working_dir}/{molecule}.zip'
+    #cmd = f'sourmash scripts manysketch {fasta_file_csv} -p {molecule},k={ksize},scaled={scaled} -c {cores} -o {working_dir}/{molecule}.zip'
+    cmd = f'sourmash scripts manysketch {fasta_file_csv} -p k={ksize*3},scaled={scaled} -p protein,k={ksize},scaled={scaled} -c {cores} -o {working_dir}/data.zip'
     try:
-        logger.info(f"Sketching {molecule} fasta file: {fasta_file_csv}")
+        logger.info(f"Sketching data fasta file: {fasta_file_csv}")
+        start_time = time.time()
         logger.info(f"{cmd}")
         subprocess.run(cmd, shell=True, check=True)
-        logger.success(f"Successfully sketched {molecule}")
+        end_time = time.time()
+        time_logged = end_time-start_time
+        logger.success(f"Successfully sketched data in {time_logged} secconds")
+        
     except subprocess.CalledProcessError as e:
         logger.error(f"Error occurred while sketching {fasta_file_csv}: {e}")
+    
 
 def run_multisearch(ref_zipfile,query_zipfile, ksize, scaled, out_csv, cores, molecule):
     """compare dna or protein signature file of ref and query
@@ -101,7 +107,10 @@ def run_pairwise(zipfile, ksize, scaled, out_csv, cores, molecule):
     try:
         logger.info(f"Obtaining pairwise containment index for {zipfile}")
         logger.info(f"{cmd}")
+        start_time = time.time()
         subprocess.run(cmd, shell=True, check=True)
-        logger.success(f"Successfully compared")
+        end_time = time.time()
+        time_logged = end_time-start_time
+        logger.success(f"Successfully pairwise compared in {time_logged} secconds")
     except subprocess.CalledProcessError as e:
         logger.error(f"Error occurred while comparing {zipfile}: {e}")
