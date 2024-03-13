@@ -94,7 +94,7 @@ def run_multisearch(ref_zipfile,query_zipfile, ksize, scaled, out_csv, cores, mo
     except subprocess.CalledProcessError as e:
         logger.error(f"Error occurred while comparing {ref_zipfile} and {query_zipfile}: {e}")
 
-def run_pairwise(zipfile, ksize, scaled, out_csv, cores, molecule):
+def run_pairwise(zipfile, ksize, scaled, out_csv, cores, molecule, threshold):
     """compare dna or protein signature file of ref and query
     ref_zipfile: reference dna or protein signature zip file that was produced in manysketch
     query_zipfile: reference dna or protein signature zip file that was produced in manysketch
@@ -103,7 +103,7 @@ def run_pairwise(zipfile, ksize, scaled, out_csv, cores, molecule):
     molecule: identify the list of ksizes, ksizes depend on molecule
     cores:
     working_dir: working directory where to output results"""
-    cmd = f"sourmash scripts pairwise {zipfile} -k {ksize} -s {scaled} -m {molecule} -t 0 -o {out_csv} --cores {cores}"
+    cmd = f"sourmash scripts pairwise {zipfile} -k {ksize} -s {scaled} -m {molecule} -t {threshold} -o {out_csv} --cores {cores}"
     try:
         logger.info(f"Obtaining pairwise containment index for {zipfile}")
         logger.info(f"{cmd}")
