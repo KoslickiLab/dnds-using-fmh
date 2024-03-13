@@ -20,6 +20,7 @@ def main(args):
     m =args.mode
     translate_cds=args.translate
     total_cores =args.cores
+    thresh =args.threshold
 
     ### PREPARING RUN
     #kmers list for sourmash
@@ -95,9 +96,8 @@ def main(args):
             report_dnds.to_csv(f'{wd}/fmh_omega_{k}.csv')
         elif m == "bwpair":
             ### Run pairwise instead to estimate cfracs
-            #sourmash_ext.run_pairwise(zipfile=f'{wd}/dna.zip',ksize=dna_k,scaled=s,out_csv=f'{wd}/results_dna_{dna_k}.csv',molecule='DNA',cores=total_cores)
-            #sourmash_ext.run_pairwise(zipfile=f'{wd}/protein.zip',ksize=k,scaled=s,out_csv=f'{wd}/results_protein_{k}.csv',molecule='protein',cores=total_cores)
-            sourmash_ext.run_pairwise(zipfile=f'{wd}/data.zip',ksize=k,scaled=s,out_csv=f'{wd}/results_protein_{k}.csv',molecule='protein',cores=total_cores)
+            sourmash_ext.run_pairwise(zipfile=f'{wd}/data.zip',ksize=dna_k,scaled=s,out_csv=f'{wd}/results_dna_{dna_k}.csv',molecule='DNA',cores=total_cores, threshold=thresh)
+            sourmash_ext.run_pairwise(zipfile=f'{wd}/data.zip',ksize=k,scaled=s,out_csv=f'{wd}/results_protein_{k}.csv',molecule='protein',cores=total_cores, threshold=thresh)
             ### Produce csv file with nt and protein containments with FMH OMEGA estimates
             report_dnds = dnds.report_dNdS_pairwise(f"{wd}/results_dna_{dna_k}.csv",f"{wd}/results_protein_{k}.csv",ksize=k)
             report_dnds.to_csv(f'{wd}/fmh_omega_{k}.csv')
@@ -155,6 +155,12 @@ if __name__ == "__main__":
         type=int,
         help = 'Set total cores. Use anything above 100 when using thousands of genomes.'
     )
+
+    parser.add_argument(
+        '--threshold',
+        type=float,
+        help = 'Set containment threshold for sourmash plugin branchwater commands.'
+    )    
 
     args = parser.parse_args()
 
