@@ -6,6 +6,18 @@ import os
 import gzip
 import random
 
+def extract_containment_matrix(mat_csv):
+    #read in df
+    df = pd.read_csv(mat_csv,sep=',')
+    #record gene header into list
+    gene_name_header_list = df.T.index.to_list()
+    subset_number = int(len(gene_name_header_list)/2) #containment matrix produced by sourmash is not perfect square
+    subset = df.iloc[0:subset_number, 0:subset_number]
+    #make the gene header list into a column to set as index
+    subset['A'] = gene_name_header_list[:subset_number]
+    subset = subset.set_index('A').stack().reset_index().rename(columns={'level_1':'B',0:'containment'})
+    return(subset)
+
 def extract_filename_without_extension(file_path):
     #return file_path.split('/')[-1].split('.')[0]
     return file_path.split('/')[-1].split('.')[0]
