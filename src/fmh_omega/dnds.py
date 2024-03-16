@@ -5,6 +5,17 @@ import logging
 from loguru import logger
 import time
 
+def ANI_approx(nt_containment,k):
+    ##k is protein ksize, and will be converted to dna ksize
+    dna_k = k*3
+    approx_ANI = (nt_containment)**(1/dna_k)
+    return(approx_ANI)
+
+def AAI_approx(protein_containment,k):
+    #k is protein ksize
+    approx_AAI = (protein_containment)**(1/k)
+    return(approx_AAI)
+
 def calc_PdN(protein_containment,k):
     """
     Returns nonsynonymous mutation rate between two protein sequences
@@ -139,6 +150,8 @@ def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
     merge_df['PdS'] = (calc_PdS(protein_containment=merge_df['AA_max_Cfrac'],nt_containment=merge_df['DNA_max_Cfrac'],k=merge_df['ksize']))
     merge_df['PdN/PdS'] = dNdS_ratio(nt_containment=merge_df['DNA_max_Cfrac'],protein_containment=merge_df['AA_max_Cfrac'],k=merge_df['ksize'])
     merge_df['dN/dS'] = dNdS_ratio_with_constant(nt_containment=merge_df['DNA_max_Cfrac'],protein_containment=merge_df['AA_max_Cfrac'],k=merge_df['ksize'])
+    merge_df['ANI_approx'] = ANI_approx(nt_containment=merge_df['DNA_max_Cfrac'],k=merge_df['ksize'])
+    merge_df['AAI_approx'] = AAI_approx(protein_containment=merge_df['AA_max_Cfrac'],k=merge_df['ksize'])
 
     end_time = time.time()
     time_logged = end_time-start_time
