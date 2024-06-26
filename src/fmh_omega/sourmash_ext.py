@@ -37,6 +37,24 @@ def sketch_genome_protein(fasta, ksize, scaled, out_sigfile, multiple=None):
     except subprocess.CalledProcessError as e:
         logger.error(f"Error occurred while sketching {fasta}: {e}")
 
+def sketch_genome(fasta, ksize, scaled, out_sigfile, multiple=None):
+    """sketch a DNA fasta file. Used when a fasta include genomic information of one species
+    fasta: Fasta input file
+    klist: list of k-mer sizes
+    scaled: scaled factor
+    outfile: signature name"""
+    ksize_dna = ksize*3
+    if multiple: #Used when a fastn include genomic information of one species
+        cmd = f"sourmash sketch fromfile {fasta} -p k={ksize_dna},scaled={scaled} -p protein,k={ksize},scaled={scaled} -o {out_sigfile}"
+    else: #Used when a fastn file include multiple species entries
+        cmd = f"sourmash sketch fromfile --singleton {fasta} -p dna,k={ksize_dna},scaled={scaled} -p protein,k={ksize},scaled={scaled} -o {out_sigfile}"
+    try:
+        logger.info(f"Sketching DNA fasta file: {fasta}")
+        subprocess.run(cmd, shell=True, check=True)
+        logger.success(f"Successfully sketched DNA and Protein")
+    except subprocess.CalledProcessError as e:
+        logger.error(f"Error occurred while sketching {fasta}: {e}")
+
 """COMPARE SIGNATURES VIA CONTAINMENT INDEX"""
 def compare_signatures(ref, query, ksize, molecule, working_dir):
     """compare dna or protein signature file of ref and query."""
@@ -61,7 +79,6 @@ def run_manysketch(fasta_file_csv,ksize,scaled,cores, working_dir):
     molecule: identify the list of ksizes, ksizes depend on molecule
     cores:
     """
-    #cmd = f'sourmash scripts manysketch {fasta_file_csv} -p {molecule},k={ksize},scaled={scaled} -c {cores} -o {working_dir}/{molecule}.zip'
     cmd = f'sourmash scripts manysketch {fasta_file_csv} -p k={ksize*3},scaled={scaled} -p protein,k={ksize},scaled={scaled} -c {cores} -o {working_dir}/data.zip'
     try:
         logger.info(f"Sketching data fasta file: {fasta_file_csv}")
