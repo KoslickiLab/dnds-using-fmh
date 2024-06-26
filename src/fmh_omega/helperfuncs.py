@@ -18,6 +18,18 @@ def extract_containment_matrix(mat_csv):
     subset = subset.set_index('A').stack().reset_index().rename(columns={'level_1':'B',0:'containment'})
     return(subset)
 
+def extract_axi_matrix(mat_csv,axi):
+    #read in df
+    df = pd.read_csv(mat_csv,sep=',')
+    #record gene header into list
+    gene_name_header_list = df.T.index.to_list()
+    subset_number = int(len(gene_name_header_list)/2) #containment matrix produced by sourmash is not perfect square
+    subset = df.iloc[0:subset_number, 0:subset_number]
+    #make the gene header list into a column to set as index
+    subset['A'] = gene_name_header_list[:subset_number]
+    subset = subset.set_index('A').stack().reset_index().rename(columns={'level_1':'B',0:f'{axi}'})
+    return(subset)
+
 def extract_filename_without_extension(file_path):
     #return file_path.split('/')[-1].split('.')[0]
     return file_path.split('/')[-1].split('.')[0]
@@ -41,7 +53,6 @@ def containments(mat_df,ksize,multiple):
         subset['B']=subset['B'].apply(extract_filename_without_extension)
         print('change B')
         print(subset['B'])
-        
     #dont forget to add ksize column!
     subset['ksize']=ksize
     return(subset)
@@ -88,11 +99,14 @@ def return_signature_list(working_dir, molecule):
     return sigs
 
 #The following functions create a random sequence for selection
+def slice_sequence(sequence, length):
+    return [sequence[i:i+length] for i in range(0, len(sequence), length)]
 
 def get_coding_sequence_from_nucleotide_sequence(nt_sequence):
     """This functioin returns the coding sequence as a list when given a nucleotide sequence.
     nt_sequence: nucleotide sequence, preferably a protein coding gene sequence"""
-    coding_sequence = list(sliced(nt_sequence,3))     #coding sequence
+    coding_sequence = slice_sequence(nt_sequence,3)
+#    coding_sequence = list(sliced(nt_sequence,3))     #coding sequence
     codons_to_remove = ['TGA', 'TAA', 'TAG']     #list of stop codons
     filtered_codons = [codon for codon in coding_sequence if codon not in codons_to_remove]     # Remove stop codons
     return(filtered_codons)
