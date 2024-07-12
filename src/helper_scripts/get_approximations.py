@@ -17,7 +17,7 @@ def main(args):
     k = args.ksize
     on = args.outname
 
-    df = pd.read_csv(f'{data}')
+    df = pd.read_csv(f'{data}').rename(columns={'DNA_Cfrac':'DNA_max_Cfrac','AA_Cfrac':'AA_max_Cfrac'})
     df['ANI_approx'] = dnds.ANI_approx(df['DNA_max_Cfrac'],k) #this function gets dna ksize for you
     df['AAI_approx'] = dnds.AAI_approx(df['AA_max_Cfrac'],k)
 

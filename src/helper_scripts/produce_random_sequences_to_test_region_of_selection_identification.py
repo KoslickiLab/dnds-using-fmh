@@ -6,7 +6,8 @@ from Bio.Seq import Seq
 
 WD='/data/jzr5814/sourmash_dnds_estimation/tests/results/dnds_practical_considerations/lengths/'
 #sequence length
-str_len = 5001
+str_len = 10002
+shared_len = 1000
 
 #mutation rate p for mutation purposes
 mutation_rate_p = 0.01
@@ -22,7 +23,7 @@ NEGATIVE_SELECTION_QUERIES_NT = open(f'{WD}negative_selection_queries_{str_len}_
 NEGATIVE_SELECTION_QUERIES_PROTEIN = open(f'{WD}negative_selection_translated_queries_{str_len}_{mutation_rate_p}.faa','w')
 
 # Create 100 random mutated sequences
-ITERATIONS = 100
+ITERATIONS = 3
 
 #Create a random X nt long sequence for simulation
 REF = ''.join(random.choices(['A', 'C', 'G', 'T'], k=str_len))
@@ -57,7 +58,7 @@ for i in range(ITERATIONS):
     POSITIVE_SELECTION_QUERIES_NT.write(f'>positive_{mutation_rate_p}_{i}\n')
     POSITIVE_SELECTION_QUERIES_NT.write(f'{query_positive_nt_seq}\n')
 
-    #Translated mutated sequences 
+    #Translated mutated sequenceså
     translated_positive_queries = Seq(query_positive_nt_seq).translate()
     POSITIVE_SELECTION_QUERIES_PROTEIN.write(f'>positive_{mutation_rate_p}_{i}\n')
     POSITIVE_SELECTION_QUERIES_PROTEIN.write(f'{translated_positive_queries}\n')
@@ -71,4 +72,33 @@ for i in range(ITERATIONS):
     translated_negative_queries = Seq(query_negative_nt_seq).translate()
     NEGATIVE_SELECTION_QUERIES_PROTEIN.write(f'>negative_{mutation_rate_p}_{i}\n')
     NEGATIVE_SELECTION_QUERIES_PROTEIN.write(f'{translated_negative_queries}\n')
+
+    #Create a random region X nt long that is shared in both selected sequences
+    shared_len = random.randint(1000, 5000)
+    SHARED_REGION = ''.join(random.choices(['A','C','G','T'], k=shared_len))
+
+    #insert shared region in positive selected sequence
+    positive_position = random.randint(2500, 7500)
+    POSITIVE_SHARED_SEQUENCE = query_positive_nt_seq.replace(SHARED_REGION[positive_position:len(SHARED_REGION)],SHARED_REGION)
+    POSITIVE_SELECTION_QUERIES_NT.write(f'>positive_shared_{mutation_rate_p}_{i}\n')
+    POSITIVE_SELECTION_QUERIES_NT.write(f'{query_positive_nt_seq}\n')
+
+    #Translated with shared region 
+    translated_positive_shared_queries = Seq(POSITIVE_SHARED_SEQUENCE).translate()
+    POSITIVE_SELECTION_QUERIES_PROTEIN.write(f'>positive_shared_{mutation_rate_p}_{i}\n')
+    POSITIVE_SELECTION_QUERIES_PROTEIN.write(f'{translated_positive_shared_queries}\n')
+
+    #Insert shared region in negative selected sequence
+    negative_position = random.randint(2500, 7500)
+    NEGATIVE_SHARED_SEQUENCE = query_negative_nt_seq.replace(SHARED_REGION[negative_position:len(SHARED_REGION)],SHARED_REGION)
+    NEGATIVE_SELECTION_QUERIES_NT.write(f'>negative_shared_{mutation_rate_p}_{i}\n')
+    NEGATIVE_SELECTION_QUERIES_NT.write(f'{query_negative_nt_seq}\n')
+
+    #Translated with shared region 
+    translated_negative_shared_queries = Seq(NEGATIVE_SHARED_SEQUENCE).translate()
+    NEGATIVE_SELECTION_QUERIES_PROTEIN.write(f'>negative_shared_{mutation_rate_p}_{i}\n')
+    NEGATIVE_SELECTION_QUERIES_PROTEIN.write(f'{translated_negative_shared_queries}\n')
+
+
+
 
