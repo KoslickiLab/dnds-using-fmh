@@ -71,7 +71,7 @@ def compare_signatures(ref, query, ksize, molecule, working_dir):
         logger.error(f"Error occurred while comparing {ref} and {query}: {e}")
 
 """SOURMASH BRANCHWATER SCRIPTS"""
-def run_manysketch(fasta_file_csv,ksize,scaled,cores, working_dir):
+def run_manysketch(fasta_file_csv,ksize,scaled,cores, working_dir,molecule=None):
     """sketch multiple dna or protein signature file of ref and query.
     fasta_file_csv: csv file that contains three columns (name, genome_filename, protein_filename) as discussed in sourmash branchwater
     klist: list of k-mer sizes
@@ -79,7 +79,10 @@ def run_manysketch(fasta_file_csv,ksize,scaled,cores, working_dir):
     molecule: identify the list of ksizes, ksizes depend on molecule
     cores:
     """
-    cmd = f'sourmash scripts manysketch {fasta_file_csv} -p k={ksize*3},scaled={scaled} -p protein,k={ksize},scaled={scaled} -c {cores} -o {working_dir}/data.zip'
+    if molecule=="dna":
+        cmd = f'sourmash scripts manysketch {fasta_file_csv} -p k={ksize},scaled={scaled} -c {cores} -o {working_dir}/dna.zip'
+    else:
+        cmd = f'sourmash scripts manysketch {fasta_file_csv} -p k={ksize*3},scaled={scaled} -p protein,k={ksize},scaled={scaled} -c {cores} -o {working_dir}/data.zip'
     try:
         logger.info(f"Sketching data fasta file: {fasta_file_csv}")
         start_time = time.time()
