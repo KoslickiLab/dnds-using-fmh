@@ -75,15 +75,16 @@ def main(args):
     # Run when we are using raw reads or entire genomes
     elif args.mode == "translate":
         ## Concat translate sketches
-        subprocess.run(f"sourmash signature cat {args.directory}/translate_signatures/ -o {args.directory}/translate.zip", shell=True, check=True)
+        #subprocess.run(f"sourmash signature cat {args.directory}/translate_signatures/ -o {args.directory}/translate.zip", shell=True, check=True)
         ## Run manysketch to produce dna signature
-        sourmash_ext.run_manysketch(fasta_file_csv=args.fasta_input_list, ksize=dna_k, scaled=args.scaled_input, cores=args.cores, working_dir=args.directory, molecule='dna')
+        #sourmash_ext.run_manysketch(fasta_file_csv=args.fasta_input_list, ksize=dna_k, scaled=args.scaled_input, cores=args.cores, working_dir=args.directory, molecule='dna')
         ### Run pairwise instead to estimate cfracs
-        sourmash_ext.run_pairwise(zipfile=f'{args.directory}/dna.zip',ksize=dna_k,scaled=args.scaled_input,out_csv=f'{args.directory}/results_dna_{dna_k}.csv',molecule='DNA',cores=args.cores, threshold=args.threshold)
-        sourmash_ext.run_pairwise(zipfile=f'{args.directory}/translate.zip',ksize=args.ksize,scaled=args.scaled_input,out_csv=f'{args.directory}/results_translate_{args.ksize}.csv',molecule='protein',cores=args.cores, threshold=args.threshold)
+        #sourmash_ext.run_pairwise(zipfile=f'{args.directory}/dna.zip',ksize=dna_k,scaled=args.scaled_input,out_csv=f'{args.directory}/results_dna_{dna_k}.csv',molecule='DNA',cores=args.cores, threshold=args.threshold)
+        #sourmash_ext.run_pairwise(zipfile=f'{args.directory}/translate.zip',ksize=args.ksize,scaled=args.scaled_input,out_csv=f'{args.directory}/results_translate_{args.ksize}.csv',molecule='protein',cores=args.cores, threshold=args.threshold)
         ### Produce csv file with nt and protein containments with FMH OMEGA estimates
-        report_dnds = dnds.report_dNdS_pairwise(f"{args.directory}/results_dna_{dna_k}.csv",f"{args.directory}/results_translate_{args.ksize}.csv",ksize=args.ksize)
-        report_dnds.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv')
+        #report_dnds = dnds.report_dNdS_pairwise(f"{args.directory}/results_dna_{dna_k}.csv",f"{args.directory}/results_translate_{args.ksize}.csv",ksize=args.ksize)
+        report_dnds = dnds.report_dnds_pairwise_using_numpy(f"{args.directory}/results_dna_{dna_k}.csv",f"{args.directory}/results_translate_{args.ksize}.csv",ksize=args.ksize)
+        report_dnds.to_csv(f'{args.directory}/fmh_omega_{args.ksize}_time_test2_numpy_version.csv')
         
     elif args.mode == "bwmult" or args.mode == "bwpair" or args.mode == "sngl":
         if args.mode == "bwmult" or args.mode == "bwpair":
