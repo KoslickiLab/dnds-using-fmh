@@ -70,7 +70,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--input',
         type=str,
-        help = 'Input fasta file of randomly generated sequences, make sure your reference is the first entry.'
+        help = 'Input fasta file of randomly generated sequences. (1) reference sequence is your first entry and (2) all sequences are the same size and divisible by 3'
     )
 
     parser.add_argument(
@@ -85,12 +85,6 @@ if __name__ == "__main__":
         help = 'Identify the working directory where output files will be produced.'
     )
     
-    parser.add_argument(
-        '--short',
-        action='store_true',  # This makes the argument a boolean flag
-        help='When applying on shorter sequences, less than 1000 nucleotides long (default: False)'
-    )
-
     args = parser.parse_args()
 
     main(args)
