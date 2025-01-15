@@ -73,43 +73,55 @@ def main(args):
 
     ### RUN WHEN USING SOURMASH BRANCHWATER PLUGIN
     # Run when we are using raw reads or entire genomes
-    elif args.mode == "translate":
-        ## Concat translate sketches
-        subprocess.run(f"sourmash signature cat {args.directory}/translate_signatures/ -o {args.directory}/translate.zip", shell=True, check=True)
-        ## Run manysketch to produce dna signature
-        sourmash_ext.run_manysketch(fasta_file_csv=args.fasta_input_list, ksize=dna_k, scaled=args.scaled_input, cores=args.cores, working_dir=args.directory, molecule='dna')
-        ### Run pairwise instead to estimate cfracs
-        sourmash_ext.run_pairwise(zipfile=f'{args.directory}/dna.zip',ksize=dna_k,scaled=args.scaled_input,out_csv=f'{args.directory}/results_dna_{dna_k}.csv',molecule='DNA',cores=args.cores, threshold=args.threshold)
-        sourmash_ext.run_pairwise(zipfile=f'{args.directory}/translate.zip',ksize=args.ksize,scaled=args.scaled_input,out_csv=f'{args.directory}/results_translate_{args.ksize}.csv',molecule='protein',cores=args.cores, threshold=args.threshold)
-        ### Produce csv file with nt and protein containments with FMH OMEGA estimates
-        #report_dnds = dnds.report_dNdS_pairwise(f"{args.directory}/results_dna_{dna_k}.csv",f"{args.directory}/results_translate_{args.ksize}.csv",ksize=args.ksize)
-        report_dnds = dnds.report_dnds_pairwise_using_numpy(f"{args.directory}/results_dna_{dna_k}.csv",f"{args.directory}/results_translate_{args.ksize}.csv",ksize=args.ksize)
-        report_dnds.to_csv(f'{args.directory}/fmh_omega_{args.ksize}_time_test2_numpy_version.csv')
+    elif args.mode == "translate" or args.mode == "sngl_translate":
+        if args.mode == "translate":
+            ## Concat translate sketches
+            subprocess.run(f"sourmash signature cat {args.directory}/translate_signatures/ -o {args.directory}/translate.zip", shell=True, check=True)
+            ## Run manysketch to produce dna signature
+            sourmash_ext.run_manysketch(fasta_file_csv=args.fasta_input_list, ksize=dna_k, scaled=args.scaled_input, cores=args.cores, working_dir=args.directory, molecule='dna')
+            ### Run pairwise instead to estimate cfracs
+            sourmash_ext.run_pairwise(zipfile=f'{args.directory}/dna.zip',ksize=dna_k,scaled=args.scaled_input,out_csv=f'{args.directory}/results_dna_{dna_k}.csv',molecule='DNA',cores=args.cores, threshold=args.threshold)
+            sourmash_ext.run_pairwise(zipfile=f'{args.directory}/translate.zip',ksize=args.ksize,scaled=args.scaled_input,out_csv=f'{args.directory}/results_translate_{args.ksize}.csv',molecule='protein',cores=args.cores, threshold=args.threshold)
+            ### Produce csv file with nt and protein containments with FMH OMEGA estimates
+            report_dnds = dnds.report_dNdS_pairwise(f"{args.directory}/results_dna_{dna_k}.csv",f"{args.directory}/results_translate_{args.ksize}.csv",ksize=args.ksize)
+            report_dnds.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv')
+
+        elif args.mode == "sngl_translate":
+            sourmash_ext.sketch_genome_dna(fasta=args.dna_fasta, ksize=dna_k, scaled=args.scaled_input, out_sigfile=f'{args.directory}/dna.zip')
+            sourmash_ext.sketch_genome_translate(fasta=args.dna_fasta, ksize=args.ksize, scaled=args.scaled_input, out_sigfile=f'{args.directory}/translate.zip')
+            ### Run pairwise instead to estimate cfracs
+            sourmash_ext.compare_signatures(ref=f'{args.directory}/dna.zip',query=f'{args.directory}/dna.zip',ksize=dna_k,molecule='dna',working_dir=args.directory)
+            sourmash_ext.compare_signatures(ref=f'{args.directory}/translate.zip',query=f'{args.directory}/translate.zip',ksize=args.ksize,molecule='protein',working_dir=args.directory)
+            #Report containments
+            nt_df = helperfuncs.extract_containment_matrix(mat_csv=f'{args.directory}/compare.dna.{dna_k}.csv')
+            protein_df = helperfuncs.extract_containment_matrix(mat_csv=f'{args.directory}/compare.protein.{args.ksize}.csv')
+            ### Produce csv file with nt and protein containments with FMH OMEGA estimates
+            report_df = dnds.report_dNdS_6frame(nt_df,protein_df,ksize=args.ksize) #constant is incorrected
+            #report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv') #does not include p_nt_mut nor p_no_mut
+            report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}_with_additional_calculations.csv')
         
     elif args.mode == "bwmult" or args.mode == "bwpair" or args.mode == "sngl":
-        if args.mode == "bwmult" or args.mode == "bwpair":
-            #get total expected signatures
-            total_num_signatures=-1
-            with open(f'{args.fasta_input_list}') as infp:
-                for line in infp:
-                    if line.strip():
-                        total_num_signatures += 1
-            sourmash_ext.run_manysketch(fasta_file_csv=args.fasta_input_list, ksize=args.ksize, scaled=args.scaled_input, cores=args.cores, working_dir=args.directory)
-            if args.mode == "bwmult":
-                ### Run multisearch to estimate cfracs
-                sourmash_ext.run_multisearch(ref_zipfile=f'{args.directory}/dna.zip',query_zipfile=f'{args.directory}/dna.zip',ksize=dna_k,scaled=args.scaled_input,out_csv=f'{args.directory}/results_dna_{dna_k}.csv',molecule='DNA',cores=args.cores)
-                sourmash_ext.run_multisearch(ref_zipfile=f'{args.directory}/protein.zip',query_zipfile=f'{args.directory}/protein.zip',ksize=args.ksize,scaled=args.scaled_input,out_csv=f'{args.directory}/results_protein_{args.ksize}.csv',molecule='protein',cores=args.cores)
-                ### Produce csv file with nt and protein containments with FMH OMEGA estimates
-                report_dnds = dnds.report_dNdS_multisearch(f"{args.directory}/results_dna_{dna_k}.csv",f"{args.directory}/results_protein_{args.ksize}.csv",ksize=args.ksize)
-                report_dnds.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv')
-            elif args.mode == "bwpair":
-                ### Run pairwise instead to estimate cfracs
-                sourmash_ext.run_pairwise(zipfile=f'{args.directory}/data.zip',ksize=dna_k,scaled=args.scaled_input,out_csv=f'{args.directory}/results_dna_{dna_k}.csv',molecule='DNA',cores=args.cores, threshold=args.threshold)
-                sourmash_ext.run_pairwise(zipfile=f'{args.directory}/data.zip',ksize=args.ksize,scaled=args.scaled_input,out_csv=f'{args.directory}/results_protein_{args.ksize}.csv',molecule='protein',cores=args.cores, threshold=args.threshold)
-                ### Produce csv file with nt and protein containments with FMH OMEGA estimates
-                report_dnds = dnds.report_dNdS_pairwise(f"{args.directory}/results_dna_{dna_k}.csv",f"{args.directory}/results_protein_{args.ksize}.csv",ksize=args.ksize)
-                report_dnds.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv')
-        #new code
+        ###get total expected signatures
+        total_num_signatures=-1
+        with open(f'{args.fasta_input_list}') as infp:
+            for line in infp:
+                if line.strip():
+                    total_num_signatures += 1
+        sourmash_ext.run_manysketch(fasta_file_csv=args.fasta_input_list, ksize=args.ksize, scaled=args.scaled_input, cores=args.cores, working_dir=args.directory)
+        if args.mode == "bwmult":
+            ### Run multisearch to estimate cfracs
+            sourmash_ext.run_multisearch(ref_zipfile=f'{args.directory}/dna.zip',query_zipfile=f'{args.directory}/dna.zip',ksize=dna_k,scaled=args.scaled_input,out_csv=f'{args.directory}/results_dna_{dna_k}.csv',molecule='DNA',cores=args.cores)
+            sourmash_ext.run_multisearch(ref_zipfile=f'{args.directory}/protein.zip',query_zipfile=f'{args.directory}/protein.zip',ksize=args.ksize,scaled=args.scaled_input,out_csv=f'{args.directory}/results_protein_{args.ksize}.csv',molecule='protein',cores=args.cores)
+            ### Produce csv file with nt and protein containments with FMH OMEGA estimates
+            report_dnds = dnds.report_dNdS_multisearch(f"{args.directory}/results_dna_{dna_k}.csv",f"{args.directory}/results_protein_{args.ksize}.csv",ksize=args.ksize)
+            report_dnds.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv')
+        elif args.mode == "bwpair":
+            ### Run pairwise instead to estimate cfracs
+            sourmash_ext.run_pairwise(zipfile=f'{args.directory}/data.zip',ksize=dna_k,scaled=args.scaled_input,out_csv=f'{args.directory}/results_dna_{dna_k}.csv',molecule='DNA',cores=args.cores, threshold=args.threshold)
+            sourmash_ext.run_pairwise(zipfile=f'{args.directory}/data.zip',ksize=args.ksize,scaled=args.scaled_input,out_csv=f'{args.directory}/results_protein_{args.ksize}.csv',molecule='protein',cores=args.cores, threshold=args.threshold)
+            ### Produce csv file with nt and protein containments with FMH OMEGA estimates
+            report_dnds = dnds.report_dNdS_pairwise(f"{args.directory}/results_dna_{dna_k}.csv",f"{args.directory}/results_protein_{args.ksize}.csv",ksize=args.ksize)
+            report_dnds.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv')
         elif args.mode == 'sngl':
             sourmash_ext.sketch_genome_dna(fasta=args.dna_fasta, ksize=dna_k, scaled=args.scaled_input, out_sigfile=f'{args.directory}/dna.zip')
             sourmash_ext.sketch_genome_protein(fasta=args.protein_fasta, ksize=args.ksize, scaled=args.scaled_input, out_sigfile=f'{args.directory}/protein.zip')
@@ -118,13 +130,14 @@ def main(args):
             sourmash_ext.compare_signatures(ref=f'{args.directory}/protein.zip',query=f'{args.directory}/protein.zip',ksize=args.ksize,molecule='protein',working_dir=args.directory)
             #Report containments
             nt_df = helperfuncs.extract_containment_matrix(mat_csv=f'{args.directory}/compare.dna.{dna_k}.csv')
-            print(nt_df)
+            #print(nt_df)
             protein_df = helperfuncs.extract_containment_matrix(mat_csv=f'{args.directory}/compare.protein.{args.ksize}.csv')
-            print(protein_df)
+            #print(protein_df)
             ### Produce csv file with nt and protein containments with FMH OMEGA estimates
-            report_df = dnds.report_dNdS(nt_df,protein_df,ksize=args.ksize)
-            report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv')        
-
+            report_df = dnds.report_dNdS(nt_df,protein_df,ksize=args.ksize) #constant is incorrected
+            #report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv') #does not include p_nt_mut nor p_no_mut
+            report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}_with_additional_calculations.csv')
+        
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description = 'dN/dS estimator for metagenomic data using the containment index between k-mer sets of genomic samples'
