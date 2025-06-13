@@ -135,8 +135,8 @@ def main(args):
             #print(protein_df)
             ### Produce csv file with nt and protein containments with FMH OMEGA estimates
             report_df = dnds.report_dNdS(nt_df,protein_df,ksize=args.ksize) #constant is incorrected
-            #report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv') #does not include p_nt_mut nor p_no_mut
-            report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}_with_additional_calculations.csv')
+            report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv') #does not include p_nt_mut nor p_no_mut
+            #report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}_with_additional_calculations.csv')
         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -151,23 +151,11 @@ if __name__ == "__main__":
         This csv file follows sourmash scripts example, where in the first column is name, second column is dna fasta filename, and third column is protein fasta filename.'
     )
 
-    parser.add_argument(
-        '--dna_fasta',
-        nargs='?',
-        const='arg_was_not_given',
-        help = 'Input filename that contains dna entries for sketching using --singleton parameter.'
-    )
-
-    parser.add_argument(
-        '--protein_fasta',
-        nargs='?',
-        const='arg_was_not_given',
-        help = 'Input filename that contains protein entries for sketching using --singleton parameter.'
-    )
 
     parser.add_argument(
         '--ksize',
         type=int,
+        default=7,
         help = 'Identify a ksize used to produce sketches. Specifically, here it refers to the protein ksize.\
         ksize is required to be the same used in both the containment indexes calculated for nucleotide and protein sequences.'
     )
@@ -175,25 +163,9 @@ if __name__ == "__main__":
     parser.add_argument(
         '--scaled_input',
         type=int,
+        default=500,
         help = 'Identify a scaled factor for signature sketches.\
-        E.g., A scaled factor = 1 will include all k-mers in final signature.'
-    )
-
-    parser.add_argument(
-        '--mode',
-        type=str,
-        help = 'Identify mode to run fmh_omega as sngl, mult, bwmult, bwpair'
-    )
-
-    parser.add_argument(
-        '--translate',
-        type=str,
-        help='indicate yes or no to translate coding sequence'
-    )
-
-    parser.add_argument(
-        '--outname',
-        help = 'Name your study for FMH OMEGA Estimations. Prefix for output files.'
+        Use a scale factor of at least 10 for thousands of genomes'
     )
 
     parser.add_argument(
@@ -211,11 +183,50 @@ if __name__ == "__main__":
     parser.add_argument(
         '--threshold',
         type=float,
-        default=0.0,
+        default=0.05,
         nargs='?',
         const='arg_was_not_given',
         help = 'Set containment threshold for sourmash plugin branchwater commands.'
     )    
+
+    parser.add_argument(
+        '--mode',
+        type=str,
+        default="bwmult",
+        help="Enables the use of multithreading from sourmash branchwater plugin"
+        #help = 'Identify mode to run fmh_omega as sngl, mult, bwmult, bwpair'
+    )
+
+''' ############### DEPRECATED ARGUMENTS
+    parser.add_argument(
+        '--dna_fasta',
+        nargs='?',
+        const='arg_was_not_given',
+        help = 'Input filename that contains dna entries for sketching using --singleton parameter.'
+    )
+
+    parser.add_argument(
+        '--protein_fasta',
+        nargs='?',
+        const='arg_was_not_given',
+        help = 'Input filename that contains protein entries for sketching using --singleton parameter.'
+    )
+
+
+
+    parser.add_argument(
+        '--translate',
+        type=str,
+        help='indicate yes or no to translate coding sequence'
+    )
+
+    parser.add_argument(
+        '--outname',
+        help = 'Name your study for FMH OMEGA Estimations. Prefix for output files.'
+    )
+    DEPRECATED ARGUMENTS ###############
+'''
+
 
     args = parser.parse_args()
 
