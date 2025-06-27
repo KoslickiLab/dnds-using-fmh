@@ -97,8 +97,8 @@ def main(args):
             protein_df = helperfuncs.extract_containment_matrix(mat_csv=f'{args.directory}/compare.protein.{args.ksize}.csv')
             ### Produce csv file with nt and protein containments with FMH OMEGA estimates
             report_df = dnds.report_dNdS_6frame(nt_df,protein_df,ksize=args.ksize) #constant is incorrected
-            #report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv') #does not include p_nt_mut nor p_no_mut
-            report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}_with_additional_calculations.csv')
+            report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}.csv') #does not include p_nt_mut nor p_no_mut
+            #report_df.to_csv(f'{args.directory}/fmh_omega_{args.ksize}_with_additional_calculations.csv')
         
     elif args.mode == "bwmult" or args.mode == "bwpair" or args.mode == "sngl":
         ###get total expected signatures
