@@ -33,7 +33,7 @@ The script utilizes the following required parameters.
 
 To execute, use the following commad: 
 
-```python3 script_fmh_omega.py --fasta_input_list datasets.csv --directory . ```
+```python3 fmh_dnds.py --fasta_input_list datasets.csv --directory . ```
 
 
 <!--
