@@ -2,7 +2,7 @@
 """New approach to estimaating dN/dS ratio of metagenomic data"""
 
 import argparse
-from fmh_omega import helperfuncs,dnds,sourmash_ext
+from fmh_dnds import helperfuncs,dnds,sourmash_ext
 import subprocess
 #import time
 #import multiprocessing as mp
