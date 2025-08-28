@@ -1,0 +1,6 @@
+name,genome_filename,protein_filename
+positive_sub1,/data/jzr5814/repositories/dnds-using-fmh/src/demo/branchwater/positive_sub1.fna,/data/jzr5814/repositories/dnds-using-fmh/src/demo/branchwater/positive_sub1.translated.fasta
+positive_sub2,/data/jzr5814/repositories/dnds-using-fmh/src/demo/branchwater/positive_sub2.fna,/data/jzr5814/repositories/dnds-using-fmh/src/demo/branchwater/positive_sub2.translated.fasta
+
+
+
