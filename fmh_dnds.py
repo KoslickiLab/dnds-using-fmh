@@ -165,7 +165,7 @@ if __name__ == "__main__":
         type=int,
         default=500,
         help = 'Identify a scaled factor for signature sketches.\
-        Use a scale factor of at least 10 for thousands of genomes'
+        Use a scale factor of at least 10 for thousands of genomes. The scale factor represents the compression level used (higher=more compression).'
     )
 
     parser.add_argument(
@@ -186,7 +186,7 @@ if __name__ == "__main__":
         default=0.05,
         nargs='?',
         const='arg_was_not_given',
-        help = 'Set containment threshold for sourmash plugin branchwater commands.'
+        help = 'Set containment threshold for sourmash plugin branchwater commands. In short, dN/dS values will not be calculated if the containment index is below this threshold (i.e. too distant of genomic sequences; not similar enough to compare).'
     )    
 
     parser.add_argument(
