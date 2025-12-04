@@ -189,6 +189,9 @@ def report_dNdS(nt_containment_df,prot_containment_df,ksize):
     #read in nt_containment and protein_containment dataframe file and change column names
     nt_df = nt_containment_df.rename(columns={'containment':'DNA_Cfrac'})
     protein_df = prot_containment_df.rename(columns={'containment':'AA_Cfrac'})
+    #Make sure the A and B string match for the scalability test
+    protein_df['A'] = protein_df['A'].str.replace('_1', '', regex=False)
+    protein_df['B'] = protein_df['B'].str.replace('_1', '', regex=False)
     #join df into one
     df = pd.merge(nt_df, protein_df, on=['A','B'])
     df['ksize'] = ksize
