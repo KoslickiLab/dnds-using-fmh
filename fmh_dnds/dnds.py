@@ -155,25 +155,6 @@ def dNdS_ratio_6_frame_translation_with_constant(protein_containment,nt_containm
         logging.error("ZeroDivisionError: ignore undefined dN/dS estimation")
     return(dNdS_constant)
 
-#DEPRECIATED, I thought the constant needed to be modified byt this constant is logically incorrect, removing
-#def dNdS_ratio_with_corrected_constant(protein_containment,nt_containment,k):
-#    """
-#    Returns dN/dS ratio between two protein sequences.
-#    Uses calc_PdN() and calc_PdS() functions for estimation
-#    nt_containment: The containment index between two nucleotide sequences (this is a float)
-#    protein_containment: The containment index between two protein sequences (this is a float)
-#    k: Identify the ksize used to produce containment index (this is an integer)
-#    """
-#    constant = 2.23/0.77
-#    try:
-#        logger.info(f"Estimating dN/dS using FMH")
-#        dNdS = calc_PdN(protein_containment,k)/calc_PdS(protein_containment,nt_containment,k)
-#        dNdS_constant = dNdS*constant
-#        logger.success(f"Successfully estimated")
-#    except ZeroDivisionError as e:
-#        logging.error("ZeroDivisionError: ignore undefined dN/dS estimation")
-#    return(dNdS_constant)
-
 def report_dNdS(nt_containment_df,prot_containment_df,ksize):
     """
     Returns dataframe of dNdS reports between all pairwise estimations of protein coding sequences.
@@ -199,9 +180,6 @@ def report_dNdS(nt_containment_df,prot_containment_df,ksize):
     df['PdS'] = (calc_PdS(protein_containment=df['AA_Cfrac'],nt_containment=df['DNA_Cfrac'],k=df['ksize']))
     df['PdN/PdS'] = dNdS_ratio(nt_containment=df['DNA_Cfrac'],protein_containment=df['AA_Cfrac'],k=df['ksize'])
     df['dN/dS'] = dNdS_ratio_with_constant(nt_containment=df['DNA_Cfrac'],protein_containment=df['AA_Cfrac'],k=df['ksize'])
-
-#    df['ANI_approx'] = ANI_approx(nt_containment=df['DNA_Cfrac'],k=df['ksize'])
-#    df['AAI_approx'] = AAI_approx(protein_containment=df['AA_Cfrac'],k=df['ksize'])
     
     end_time = time.time()
     time_logged = end_time-start_time
@@ -235,9 +213,6 @@ def report_dNdS_6frame(nt_containment_df,prot_containment_df,ksize):
     df['PdS_6frame'] = (calc_PdS_modified(protein_containment=df['AA_Cfrac'],nt_containment=df['DNA_Cfrac'],k=df['ksize'], translate=True))
     df['PdN/PdS_6frame'] = dNdS_ratio_6_frame_translation(nt_containment=df['DNA_Cfrac'],protein_containment=df['AA_Cfrac'],k=df['ksize'])
     df['dN/dS_6frame_constant'] = dNdS_ratio_6_frame_translation_with_constant(nt_containment=df['DNA_Cfrac'],protein_containment=df['AA_Cfrac'],k=df['ksize'])
-
-#    df['ANI_approx'] = ANI_approx(nt_containment=df['DNA_Cfrac'],k=df['ksize'])
-#    df['AAI_approx'] = AAI_approx(protein_containment=df['AA_Cfrac'],k=df['ksize'])
     
     end_time = time.time()
     time_logged = end_time-start_time
@@ -245,44 +220,6 @@ def report_dNdS_6frame(nt_containment_df,prot_containment_df,ksize):
 
     #report
     return(df)
-
-### DEPRECIATED THIS FUNCTION IS NOT USED FOOR ANY ANALYSIS, we use 'sourmash script pairwise' instead
-#def report_dNdS_multisearch(dna_cfrac_csv,protein_cfrac_csv,ksize):
-#    """
-#    Returns dataframe of dNdS reports between all pairwise estimations of protein coding sequences.
-#    Uses dNdS_ratio() function to estimate dN/dS ratio.
-#    dna_cfrac_csv: multisearch results csv file for dna 
-#        Header of csv file contains ref, query, containment index, and ksize.
-#    protein_cfrac_csv: multisearch results csv file for protein
-#        Header of csv file contains ref, query, containment index, and ksize.
-#    ksize: ksize of protein
-#    """
-#    #read in nt_containment and protein_containment dataframe file and change column names
-#    #nt_df = nt_containment_df.rename(columns={'containment':'DNA_Cfrac'})
-#    start_time = time.time()
-#    dna_cfrac = pd.read_csv(f'{dna_cfrac_csv}',sep=",")[['query_name','match_name','containment']].rename(columns={'query_name':'A','match_name':'B','containment':'DNA_Cfrac'})
-#    #protein_df = prot_containment_df.rename(columns={'containment':'AA_Cfrac'})
-#    protein_cfrac = pd.read_csv(f'{protein_cfrac_csv}',sep=",")[['query_name','match_name','containment']].rename(columns={'query_name':'A','match_name':'B','containment':'AA_Cfrac'})
-
-#    #join df into one
-#    #df = pd.merge(nt_df, protein_df, on=['A','B','ksize'])
-#    merge_df = pd.merge(dna_cfrac, protein_cfrac, on=['A','B'])
-#    merge_df['ksize'] = int(ksize)
-
-#    #apply function
-#    merge_df['PdN'] = (calc_PdN(protein_containment=merge_df['AA_Cfrac'],k=merge_df['ksize']))
-#    merge_df['PdS'] = (calc_PdS(protein_containment=merge_df['AA_Cfrac'],nt_containment=merge_df['DNA_Cfrac'],k=merge_df['ksize']))
-#    merge_df['PdN/PdS'] = dNdS_ratio(nt_containment=merge_df['DNA_Cfrac'],protein_containment=merge_df['AA_Cfrac'],k=merge_df['ksize'])
-#    merge_df['dN/dS'] = dNdS_ratio_with_constant(nt_containment=merge_df['DNA_Cfrac'],protein_containment=merge_df['AA_Cfrac'],k=merge_df['ksize'])
-#    merge_df['ANI_approx'] = ANI_approx(nt_containment=merge_df['DNA_Cfrac'],k=merge_df['ksize'])
-#    merge_df['AAI_approx'] = AAI_approx(protein_containment=merge_df['AA_Cfrac'],k=merge_df['ksize'])
-    
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully estimated dN/dS in {time_logged} secconds")
-
-#    #report
-#    return(merge_df)
 
 
 def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
@@ -296,8 +233,6 @@ def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
         Header of csv file contains ref, query, containment index, and ksize.
     ksize: ksize of protein
     """
-    #read in nt_containment and protein_containment dataframe file and change column names
-    #nt_df = nt_containment_df.rename(columns={'containment':'DNA_Cfrac'})
     begin_time = time.time()
 
     start_time = time.time()
@@ -392,19 +327,6 @@ def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
     time_logged = end_time-start_time
     print(f"Successfully calculated dN/dS (with constant) in {time_logged} secconds")
 
-    ## depreciated, I don't think these are calculating approximations correctly
-    #start_time = time.time()
-    #concat_df['ANI_approx'] = ANI_approx(nt_containment=concat_df['DNA_max_Cfrac'],k=concat_df['ksize'])
-    #end_time = time.time()
-    #time_logged = end_time-start_time
-    #print(f"Successfully calculated ANI_approx in {time_logged} secconds")
-
-    #start_time = time.time()
-    #concat_df['AAI_approx'] = AAI_approx(protein_containment=concat_df['AA_max_Cfrac'],k=concat_df['ksize'])
-    #end_time = time.time()
-    #time_logged = end_time-start_time
-    #print(f"Successfully calculated AAI_approx in {time_logged} secconds")
-
     final_time = time.time()
     time_logged = final_time-begin_time
     print(f"Successfully estimated dN/dS in {time_logged} secconds")
@@ -412,119 +334,3 @@ def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
     return(concat_df)
 
 
-#DEPRECIATED, function has been created to test how fast we can make our analysis but we figured out it was the expression to modifiy the files name that was slowing down analysis
-##function that utlizes NumPy arrays to make estimation faster
-#def report_dnds_pairwise_using_numpy(dna_cfrac_csv,protein_cfrac_csv,ksize):
-#    # Load data
-#    start_time = time.time()
-#    dna_cfrac = pd.read_csv(dna_cfrac_csv, sep=",", usecols=['query_name', 'match_name', 'max_containment']).rename(columns={'max_containment': 'DNA_max_Cfrac'})
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully read csv file for DNA containments in {time_logged} secconds")
-
-#    start_time = time.time()
-#    protein_cfrac = pd.read_csv(protein_cfrac_csv, sep=",", usecols=['query_name', 'match_name', 'max_containment']).rename(columns={'max_containment': 'AA_max_Cfrac'})
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully read csv file for protein containments in {time_logged} secconds")
-
-#    # Process query_name and match_name for protein_cfrac
-#    start_time = time.time()
-#    protein_query_names = protein_cfrac['query_name'].str.split('/').str[-1].str.split('_').str[:2].str.join('_')
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully modified genome query_name of protein containments in {time_logged} secconds")
-
-#    start_time = time.time()
-#    protein_match_names = protein_cfrac['match_name'].str.split('/').str[-1].str.split('_').str[:2].str.join('_')
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully modified genome matcht_name of protein containments in {time_logged} secconds")
-
-#    # Create tuples for 'A,B' column
-#    start_time = time.time()
-#    dna_names = np.array(list(zip(dna_cfrac['query_name'], dna_cfrac['match_name'])))
-#    protein_names = np.array(list(zip(protein_query_names, protein_match_names)))
-
-#    dna_names_sorted = np.array([tuple(sorted(pair)) for pair in dna_names])
-#    protein_names_sorted = np.array([tuple(sorted(pair)) for pair in protein_names])
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully sorted genome names for protein containments in {time_logged} secconds")
-
-#    # Set index
-#    start_time = time.time()
-#    dna_cfrac_indexed = pd.DataFrame(dna_cfrac['DNA_max_Cfrac'].values, index=dna_names_sorted, columns=['DNA_max_Cfrac'])
-#    end_time = time.time()  
-#    time_logged = end_time-start_time
-#    print(f"Successfully set index for DNA in {time_logged} secconds")
-
-#    start_time = time.time()
-#    protein_cfrac_indexed = pd.DataFrame(protein_cfrac['AA_max_Cfrac'].values, index=protein_names_sorted, columns=['AA_max_Cfrac'])
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully set index for protein in {time_logged} secconds")
-
-#    # Concatenate DataFrames
-#    start_time = time.time()
-#    concat_df = pd.concat([dna_cfrac_indexed, protein_cfrac_indexed], axis=1, join='outer').reset_index()
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully concatenated dataframes of DNA and protein containments in {time_logged} secconds")
-
-#    # Add ksize and perform calculations
-#    start_time = time.time()
-#    concat_df['ksize'] = int(ksize)
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully converted string ksize to integer ksize of concatenated dataframe in {time_logged} secconds")
-
-#    # Calculate values using numpy arrays to speed up operations
-#    start_time = time.time()
-#    AA_max_Cfrac = concat_df['AA_max_Cfrac'].to_numpy()
-#    DNA_max_Cfrac = concat_df['DNA_max_Cfrac'].to_numpy()
-#    ksize_array = concat_df['ksize'].to_numpy()
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully converted columns to numpy in {time_logged} secconds")
-
-#    start_time = time.time()
-#    concat_df['PdN'] = calc_PdN(protein_containment=AA_max_Cfrac, k=ksize_array)
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully calculated PdN in {time_logged} secconds")
-
-#    start_time = time.time()
-#    concat_df['PdS'] = calc_PdS(protein_containment=AA_max_Cfrac, nt_containment=DNA_max_Cfrac, k=ksize_array)
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully calculated PdS in {time_logged} secconds")
-
-#    start_time = time.time()
-#    concat_df['PdN/PdS'] = dNdS_ratio(nt_containment=DNA_max_Cfrac, protein_containment=AA_max_Cfrac, k=ksize_array)
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully calculated PdN/PdS in {time_logged} secconds")
-
-#    start_time = time.time()
-#    concat_df['dN/dS'] = dNdS_ratio_with_constant(nt_containment=DNA_max_Cfrac, protein_containment=AA_max_Cfrac, k=ksize_array)
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully calculated dN/dS in {time_logged} secconds")
-
-#    start_time = time.time()
-#    concat_df['ANI_approx'] = ANI_approx(nt_containment=DNA_max_Cfrac, k=ksize_array)
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully calculated ANI_approx in {time_logged} secconds")
-
-#    start_time = time.time()
-#    concat_df['AAI_approx'] = AAI_approx(protein_containment=AA_max_Cfrac, k=ksize_array)
-#    end_time = time.time()
-#    time_logged = end_time-start_time
-#    print(f"Successfully calculated AAI_approx in {time_logged} secconds")
-
-#    return(concat_df)
-
-#    # Note: Ensure that the functions calc_PdN, calc_PdS, dNdS_ratio, dNdS_ratio_with_constant, ANI_approx, AAI_approx 
-#    # are capable of handling NumPy arrays for this to work efficiently.
