@@ -1,0 +1,31 @@
+name: fmh_dnds
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - pytest
+  - pandas
+  - more-itertools
+  - biopython
+  - kakscalculator2
+  - sourmash
+  - seaborn
+  - openpyxl
+  - jinja2
+  - loguru
+  - sourmash_plugin_branchwater
+  - time
+  - fastcluster
+  - csvkit
+  - r-base
+  - r-metacoder
+  - prodigal
+  - matplotlib-venn
+  - bioawk
+  - upsetplot
+  - xlsxwriter
+  - fuzzywuzzy
+  - blast
+  - reportlab
+prefix: /home/grads/jzr5814/miniconda3/envs/fmh_dnds
