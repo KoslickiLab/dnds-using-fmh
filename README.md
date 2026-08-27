@@ -1,4 +1,6 @@
-# FracMinHash d<sub>N</sub>/d<sub>S</sub>: an alignment-free measure of selection pressures for metagenomic samples 
+## FracOmega
+
+FracMinHash d<sub>N</sub>/d<sub>S</sub>: an alignment-free measure of selection pressures for metagenomic samples 
 
 Traditional d<sub>N</sub>/d<sub>S</sub> models infer selection pressues of protein-coding genes by estimating the rates of nonsynonymous substitutions to synonymous ones using sequence alignments. However, as sequencing becomes more accessible and data volumes grow, alignment-free methods are gaining traction. Therefore, we developed an alignment-free d<sub>N</sub>/d<sub>S</sub> estimator to apply on pairwise analyses of longer sequences such as genomes. 
 
@@ -16,12 +18,35 @@ Manuscript under preparation. Recent available status can be found here:
 
 This is a quick demonstration for users to learn how to use FracMinHash d<sub>N</sub>/d<sub>S</sub> at a larger scale. In the following commands users can pairwuse obtain estimations of FracMinHash d<sub>N</sub>/d<sub>S</sub> estimations of a small dataset. 
 
+
+### Contents
+
+- [FracOmega](#fracomega)
+   * [Quick start](#quick-start)
+   * [FracOmega setup](#fracomega-setup)
+   * [Usage](#usage)
+      + [FracOmega workflow](#fracminhash-d<sub>n</sub>/d<sub>s</sub>-workflow)
+      + [FracOmega Commands Overview](#executing-fracminhash-d<sub>n</sub>/d<sub>s</sub>)
+
+
+## FracOmega setup
+
+To use FracOmega, execute the following commands.
+
 ```
+# Clone github repository
+git clone https://github.com/KoslickiLab/dnds-using-fmh.git
+cd dnds-using-fmh
+```
+
+```
+# Create environment to use FracOmega
 conda create -n fracomega python=3.11
 conda activate fracomega
 pip install -r requirements.txt
 ```
 
+A Conda package will come soon!
 
 ## FracMinHash d<sub>N</sub>/d<sub>S</sub> Workflow
 
