@@ -1,12 +1,27 @@
 # FracMinHash d<sub>N</sub>/d<sub>S</sub>: an alignment-free measure of selection pressures for metagenomic samples 
 
-## Summary
-
 Traditional d<sub>N</sub>/d<sub>S</sub> models infer selection pressues of protein-coding genes by estimating the rates of nonsynonymous substitutions to synonymous ones using sequence alignments. However, as sequencing becomes more accessible and data volumes grow, alignment-free methods are gaining traction. Therefore, we developed an alignment-free d<sub>N</sub>/d<sub>S</sub> estimator to apply on pairwise analyses of longer sequences such as genomes. 
 
 The FracMinHash containment index has been linked to the simple mutation model, enabling alignment-free estimation of average nucleotide identity (ANI) and mutation rates between genomes. This framework has been extended to protein sequences via average amino acid identity (AAI), allowing joint estimation of d<sub>N</sub>/d<sub>S</sub> ratios for genomic selection pressures.
 
 In short, by sketching genomes with FracMinHash and comparing containments, evolutionary metrics such as d<sub>N</sub>/d<sub>S</sub> can be inferred without sequence alignments. 
+
+
+Manuscript under preparation. Recent available status can be found here:
+>Rodriguez, J. S., Hera, M. R., & Koslicki, D. (2025). Leveraging FracMinHash containment for genomic dN/dS. bioRxiv. https://doi.org/10.1101/2025.11.12.688019
+
+</br>
+
+## Quick start
+
+This is a quick demonstration for users to learn how to use FracMinHash d<sub>N</sub>/d<sub>S</sub> at a larger scale. In the following commands users can pairwuse obtain estimations of FracMinHash d<sub>N</sub>/d<sub>S</sub> estimations of a small dataset. 
+
+```
+conda create -n fracomega python=3.11
+conda activate fracomega
+pip install -r requirements.txt
+```
+
 
 ## FracMinHash d<sub>N</sub>/d<sub>S</sub> Workflow
 
