@@ -157,6 +157,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--cores',
         type=int,
+        default=1,
         help = 'Set total cores. Use anything above 100 when using thousands of genomes.'
     )
 
