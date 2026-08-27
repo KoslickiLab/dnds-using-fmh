@@ -11,20 +11,8 @@ import subprocess
 
 def main(args):
     
-    ### ARGUMENTS
-    #dna_fasta = args.fasta_input_list
-    #k = args.ksize
-    #s = args.scaled_input
-    #on = args.outname
-    #wd = args.directory
-    #m =args.mode
-    #translate_cds=args.translate
-    #total_cores =args.cores
-    #thresh =args.threshold
-
     ### PREPARING RUN
     dna_k = args.ksize*3
-
 
     ### RUN WHEN NOT USING SOURMASH BRANCHWATER PLUGIN
     #if m == "bwmult" and m !="bwpair":
@@ -38,10 +26,6 @@ def main(args):
                 name = files.split(',')[1].split('.')[0]
                 fastn_files.append(fastn_filename)
                 fasta_files.append(f'{name}.translated.fasta')
-        if args.translate == 'yes':
-        #Translate before sketching protein
-            for pos in range(len(fastn_files)):
-                helperfuncs.translate_CDS(cds_fasta=f'{fastn_files[pos]}', out_name=f'{fasta_files[pos]}')
 
         #Create signature directory
         subprocess.run(f'mkdir {args.directory}/signatures', shell=True, check=True)
@@ -197,38 +181,6 @@ if __name__ == "__main__":
         #help = 'Identify mode to run fmh_omega as sngl, mult, bwmult, bwpair'
     )
 
-''' ############### DEPRECATED ARGUMENTS
-    parser.add_argument(
-        '--dna_fasta',
-        nargs='?',
-        const='arg_was_not_given',
-        help = 'Input filename that contains dna entries for sketching using --singleton parameter.'
-    )
-
-    parser.add_argument(
-        '--protein_fasta',
-        nargs='?',
-        const='arg_was_not_given',
-        help = 'Input filename that contains protein entries for sketching using --singleton parameter.'
-    )
-
-
-
-    parser.add_argument(
-        '--translate',
-        type=str,
-        help='indicate yes or no to translate coding sequence'
-    )
-
-    parser.add_argument(
-        '--outname',
-        help = 'Name your study for FMH OMEGA Estimations. Prefix for output files.'
-    )
-    DEPRECATED ARGUMENTS ###############
-'''
-
-
     args = parser.parse_args()
 
     main(args)
-
