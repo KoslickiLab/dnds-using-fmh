@@ -4,10 +4,6 @@
 import argparse
 from fmh_dnds import helperfuncs,dnds,sourmash_ext
 import subprocess
-#import time
-#import multiprocessing as mp
-#import numpy as np
-#import math
 
 def main(args):
     
