@@ -173,7 +173,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--mode',
         type=str,
-        default="bwmult",
+        default="bwpair",
         help="Enables the use of multithreading from sourmash branchwater plugin"
         #help = 'Identify mode to run fmh_omega as sngl, mult, bwmult, bwpair'
     )
