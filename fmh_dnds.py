@@ -2,7 +2,7 @@
 """New approach to estimaating dN/dS ratio of metagenomic data"""
 
 import argparse
-from fmh_dnds import helperfuncs,dnds,sourmash_ext
+from src import helperfuncs,dnds,sourmash_ext
 import subprocess
 
 def main(args):
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     parser.add_argument(
         '--mode',
         type=str,
-        default="bwmult",
+        default="bwpair",
         help="Enables the use of multithreading from sourmash branchwater plugin"
         #help = 'Identify mode to run fmh_omega as sngl, mult, bwmult, bwpair'
     )
