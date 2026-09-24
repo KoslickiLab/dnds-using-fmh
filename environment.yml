@@ -1,0 +1,18 @@
+name: fmhdnds
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - sourmash-minimal
+  - sourmash_plugin_branchwater
+  - biopython
+  - loguru
+  - pandas
+  - numpy
+  - scipy
+  - matplotlib
+  - more-itertools
+  - pip
+  - pip:
+    - fuzzywuzzy
+    - python-dateutil

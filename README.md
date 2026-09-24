@@ -29,9 +29,11 @@ This is a quick demonstration for users to learn how to use FracMinHash d<sub>N<
       + [FracOmega Commands Overview](#executing-fracminhash-d<sub>n</sub>/d<sub>s</sub>)
 
 
-## FracOmega setup
+## Setup
 
-To use FracOmega, execute the following commands.
+### Clone GitHub Repo to your machine
+
+FracOmega is yet to become a package that can be directly installed (sadly) but feel free to clone the git repository with the following command.
 
 ```
 # Clone github repository
@@ -39,14 +41,39 @@ git clone https://github.com/KoslickiLab/dnds-using-fmh.git
 cd dnds-using-fmh
 ```
 
+### Environment setup
+
+There are two ways to setup an environment to run FracOmega. You can either setup your environemtn the long way or the quick way. We first present the long way to setting up the enviroment.
+
+
+Create and activate conda environment with core dependencies via `mamba`:
 ```
-# Create environment to use FracOmega
-conda create -n fracomega python=3.11
-conda activate fracomega
-pip install -r requirements.txt
+mamba create -y -n fmhdnds sourmash-minimal
+mamba activate fmhdnds
 ```
 
-A Conda package will come soon!
+Install the following dependencies using mamba and pip:
+```
+# mamba install
+mamba install -c conda-forge sourmash_plugin_branchwater biopython loguru pandas numpy scipy matplotlib more-itertools
+
+# pip install
+pip install fuzzywuzzy python-dateutil
+```
+
+A quicker way to setup your environment is by using the environment.yml file and running the following commands:
+```
+# Create environment to use FracOmega
+mamba env create -f environment.yml
+mamba activate fmhdnds
+```
+
+### Notes
+If `mamba` is not found after installing Miniforge, run:
+```bash
+  mamba shell init --shell bash --root-prefix=~/miniforge3
+  source ~/.bashrc
+```
 
 ## FracMinHash d<sub>N</sub>/d<sub>S</sub> Workflow
 
