@@ -82,7 +82,7 @@ def run_manysketch(fasta_file_csv,ksize,scaled,cores, working_dir,molecule=None)
     if molecule=="dna":
         cmd = f'sourmash scripts manysketch {fasta_file_csv} -p k={ksize},scaled={scaled} -c {cores} -o {working_dir}/dna.zip'
     else:
-        cmd = f'sourmash scripts manysketch {fasta_file_csv} -p k={ksize*3},scaled={scaled} -p protein,k={ksize},scaled={scaled} -c {cores} -o {working_dir}/data.zip'
+        cmd = f'sourmash scripts manysketch {fasta_file_csv} -p DNA,k={ksize*3},scaled={scaled} -p protein,k={ksize},scaled={scaled} -c {cores} -o {working_dir}/data.zip'
     try:
         logger.info(f"Sketching data fasta file: {fasta_file_csv}")
         start_time = time.time()
