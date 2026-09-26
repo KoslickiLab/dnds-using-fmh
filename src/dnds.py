@@ -166,8 +166,10 @@ def report_dNdS(nt_containment_df,prot_containment_df,ksize):
         produced by grab_containment_from_mat() function from reportCI.py. 
         Dataframe contains ref, query, containment index, and ksize.
     """
+    
     start_time = time.time()
     #read in nt_containment and protein_containment dataframe file and change column names
+    
     nt_df = nt_containment_df.rename(columns={'containment':'DNA_Cfrac'})
     protein_df = prot_containment_df.rename(columns={'containment':'AA_Cfrac'})
     #join df into one
@@ -254,21 +256,21 @@ def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
     print(f"Successfully read csv file for protein containments in {time_logged} secconds")
 
     #make sure pathway information is removed
-    start_time = time.time()
-    protein_cfrac['query_name'] = protein_cfrac['query_name'].str.extract(r'([^/]+)\_genomic\.fna\.gz')
-    protein_cfrac['query_name'] = protein_cfrac['query_name'].str.split('/').str[-1].str.split('_').str[:2].str.join('_')
-    end_time = time.time()
-    time_logged = end_time-start_time
-    print(f"Successfully modified genome query_name of protein containments in {time_logged} secconds")
-    print(protein_cfrac['query_name'])
+    #start_time = time.time()
+    #protein_cfrac['query_name'] = protein_cfrac['query_name'].str.extract(r'([^/]+)\_genomic\.fna\.gz')
+    #protein_cfrac['query_name'] = protein_cfrac['query_name'].str.split('/').str[-1].str.split('_').str[:2].str.join('_')
+    #end_time = time.time()
+    #time_logged = end_time-start_time
+    #print(f"Successfully modified genome query_name of protein containments in {time_logged} secconds")
+    #print(protein_cfrac['query_name'])
 
-    start_time = time.time()
-    protein_cfrac['match_name'] = protein_cfrac['match_name'].str.extract(r'([^/]+)\_genomic\.fna\.gz')
-    protein_cfrac['match_name'] = protein_cfrac['match_name'].str.split('/').str[-1].str.split('_').str[:2].str.join('_')
-    end_time = time.time()
-    time_logged = end_time-start_time
-    print(f"Successfully modified genome match_name of protein containments in {time_logged} secconds")
-    print(protein_cfrac['match_name'])
+    #start_time = time.time()
+    #protein_cfrac['match_name'] = protein_cfrac['match_name'].str.extract(r'([^/]+)\_genomic\.fna\.gz')
+    #protein_cfrac['match_name'] = protein_cfrac['match_name'].str.split('/').str[-1].str.split('_').str[:2].str.join('_')
+    #end_time = time.time()
+    #time_logged = end_time-start_time
+    #print(f"Successfully modified genome match_name of protein containments in {time_logged} secconds")
+    #print(protein_cfrac['match_name'])
     start_time = time.time()
     protein_cfrac['A,B'] = protein_cfrac[['query_name', 'match_name']].apply(sorted, axis=1).apply(tuple)
     end_time = time.time()
