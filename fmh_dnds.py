@@ -2,7 +2,6 @@
 """Approach to estimaating dN/dS ratio of genomes within metagenomic data"""
 
 import argparse
-#from src import helperfuncs,dnds,sourmash_ext
 from src import dnds,sourmash_ext
 import subprocess
 
@@ -100,14 +99,6 @@ if __name__ == "__main__":
         const='arg_was_not_given',
         help = 'Set containment threshold for sourmash plugin branchwater commands. In short, dN/dS values will not be calculated if the containment index is below this threshold (i.e. too distant of genomic sequences; not similar enough to compare).'
     )    
-
-#    parser.add_argument(
-#        '--mode',
-#        type=str,
-#        default="bwpair",
-#        help="Enables the use of multithreading from sourmash branchwater plugin"
-        #help = 'Identify mode to run fmh_omega as sngl, mult, bwmult, bwpair'
-#    )
 
     args = parser.parse_args()
 
