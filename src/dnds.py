@@ -146,10 +146,10 @@ def dNdS_ratio_6_frame_translation_with_constant(protein_containment,nt_containm
     """
     constant = 0.77/2.23*1/6
     try:
-        logger.info(f"Estimating dN/dS using FMH")
+        logger.info("Estimating dN/dS using FMH")
         dNdS = calc_PdN_6_frame_translation(protein_containment,k)/calc_PdS_modified(protein_containment,nt_containment,k,translate=True)
         dNdS_constant = dNdS*constant
-        logger.success(f"Successfully estimated")
+        logger.success("Successfully estimated")
     except ZeroDivisionError as e:
         logging.error("ZeroDivisionError: ignore undefined dN/dS estimation")
         return np.nan
@@ -185,7 +185,7 @@ def report_dNdS(nt_containment_df,prot_containment_df,ksize):
     
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully estimated dN/dS in {time_logged} secconds")
+    logger.info(f"Successfully estimated dN/dS in {time_logged} seconds")
 
     #report
     return(df)
@@ -218,7 +218,7 @@ def report_dNdS_6frame(nt_containment_df,prot_containment_df,ksize):
     
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully estimated dN/dS in {time_logged} secconds")
+    logger.info(f"Successfully estimated dN/dS in {time_logged} seconds")
 
     #report
     return(df)
@@ -241,19 +241,19 @@ def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
     dna_cfrac = pd.read_csv(f'{dna_cfrac_csv}',sep=",")[['query_name','match_name','max_containment']].rename(columns={'max_containment':'DNA_max_Cfrac'})
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully read csv file for DNA containments in {time_logged} secconds")
+    logger.info(f"Successfully read csv file for DNA containments in {time_logged} seconds")
 
     start_time = time.time()
     dna_cfrac['A,B'] = dna_cfrac[['query_name', 'match_name']].apply(sorted, axis=1).apply(tuple)
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully sorted genome names for DNA containments in {time_logged} secconds")
+    logger.info(f"Successfully sorted genome names for DNA containments in {time_logged} seconds")
 
     start_time = time.time()
     protein_cfrac = pd.read_csv(f'{protein_cfrac_csv}',sep=",")[['query_name','match_name','max_containment']].rename(columns={'max_containment':'AA_max_Cfrac'})
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully read csv file for protein containments in {time_logged} secconds")
+    logger.info(f"Successfully read csv file for protein containments in {time_logged} seconds")
 
     #make sure pathway information is removed
     #start_time = time.time()
@@ -275,33 +275,33 @@ def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
     protein_cfrac['A,B'] = protein_cfrac[['query_name', 'match_name']].apply(sorted, axis=1).apply(tuple)
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully sorted genome names for protein containments in {time_logged} secconds")
+    logger.info(f"Successfully sorted genome names for protein containments in {time_logged} seconds")
 
     #extract columns that you'll use
     start_time = time.time()
     dna_cfrac=dna_cfrac[['A,B','query_name','match_name','DNA_max_Cfrac']].set_index('A,B')
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully extract columns of interest for DNA containments in {time_logged} secconds")
+    logger.info(f"Successfully extract columns of interest for DNA containments in {time_logged} seconds")
 
     start_time = time.time()
     protein_cfrac=protein_cfrac[['A,B','AA_max_Cfrac']].set_index('A,B')
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully extract columns of interest for protein containments in {time_logged} secconds")
+    logger.info(f"Successfully extract columns of interest for protein containments in {time_logged} seconds")
 
     #join df into one
     start_time = time.time()
     concat_df=pd.concat([dna_cfrac, protein_cfrac], axis=1).reset_index()
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully concatenated dataframes of DNA and protein containments in {time_logged} secconds")
+    logger.info(f"Successfully concatenated dataframes of DNA and protein containments in {time_logged} seconds")
 
     start_time = time.time()
     concat_df['ksize'] = int(ksize)
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully converted string ksize to integer ksize of concatenated dataframe in {time_logged} secconds")
+    logger.info(f"Successfully converted string ksize to integer ksize of concatenated dataframe in {time_logged} seconds")
 
 
     #apply function
@@ -309,29 +309,29 @@ def report_dNdS_pairwise(dna_cfrac_csv,protein_cfrac_csv,ksize):
     concat_df['PdN'] = (calc_PdN(protein_containment=concat_df['AA_max_Cfrac'],k=concat_df['ksize']))
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully calculated PdN in {time_logged} secconds")
+    logger.info(f"Successfully calculated PdN in {time_logged} seconds")
 
     start_time = time.time()
     concat_df['PdS'] = (calc_PdS(protein_containment=concat_df['AA_max_Cfrac'],nt_containment=concat_df['DNA_max_Cfrac'],k=concat_df['ksize']))
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully calculated PdS in {time_logged} secconds")
+    logger.info(f"Successfully calculated PdS in {time_logged} seconds")
 
     start_time = time.time()
     concat_df['PdN/PdS'] = dNdS_ratio(nt_containment=concat_df['DNA_max_Cfrac'],protein_containment=concat_df['AA_max_Cfrac'],k=concat_df['ksize'])
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully calculated PdN/PdS in {time_logged} secconds")
+    logger.info(f"Successfully calculated PdN/PdS in {time_logged} seconds")
 
     start_time = time.time()
     concat_df['dN/dS'] = dNdS_ratio_with_constant(nt_containment=concat_df['DNA_max_Cfrac'],protein_containment=concat_df['AA_max_Cfrac'],k=concat_df['ksize'])
     end_time = time.time()
     time_logged = end_time-start_time
-    print(f"Successfully calculated dN/dS (with constant) in {time_logged} secconds")
+    logger.info(f"Successfully calculated dN/dS (with constant) in {time_logged} seconds")
 
     final_time = time.time()
     time_logged = final_time-begin_time
-    print(f"Successfully estimated dN/dS in {time_logged} secconds")
+    logger.info(f"Successfully estimated dN/dS in {time_logged} seconds")
     #report
     return(concat_df)
 
