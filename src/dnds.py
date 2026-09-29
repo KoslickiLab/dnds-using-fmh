@@ -44,34 +44,32 @@ def calc_P_no_mut(nt_containment,k):
     """
     nt_k = 3*k
     P_nt_mut = 1 - nt_containment**(1/nt_k)
-    P_no_mut = (1-P_nt_mut)**3
+    P_no_mut = (1-P_nt_mut)**3 #probability that there is no mutation in the protein sequence
     return(P_no_mut)
 
 def calc_PdS(protein_containment,nt_containment,k):
     """
     Returns synonymous mutation rate between two protein sequences.
-    Uses calc_nomutation() function for estimation.
     nt_containment: The containment index between two nucleotide sequences (this is a float)
     protein_containment: The containment index between two protein sequences (this is a float)
     k: Identify the ksize used to produce containment index (this is an integer)
     """
     nt_k = 3*k
     P_nt_mut = 1 - nt_containment**(1/nt_k)
-    P_no_mut = (1-P_nt_mut)**3
+    P_no_mut = (1-P_nt_mut)**3 #probability that there is no mutation in the protein sequence
     PdS = 1 - calc_PdN(protein_containment,k) - P_no_mut
     return(PdS)
 
 def calc_PdS_modified(protein_containment,nt_containment,k,translate=None):
     """
     Returns synonymous mutation rate between two protein sequences.
-    Uses calc_nomutation() function for estimation.
     nt_containment: The containment index between two nucleotide sequences (this is a float)
     protein_containment: The containment index between two protein sequences (this is a float)
     k: Identify the ksize used to produce containment index (this is an integer)
     """
     nt_k = 3*k
     P_nt_mut = 1 - nt_containment**(1/nt_k)
-    P_no_mut = (1-P_nt_mut)**3
+    P_no_mut = (1-P_nt_mut)**3 #probability that there is no mutation in the protein sequence
     if translate:
         PdS = 1 - calc_PdN_6_frame_translation(protein_containment,k) - P_no_mut
     else:
@@ -104,6 +102,7 @@ def dNdS_ratio_with_constant(protein_containment,nt_containment,k):
         logger.success(f"Successfully estimated")
     except ZeroDivisionError as e:
         logging.error("ZeroDivisionError: ignore undefined dN/dS estimation")
+        return np.nan
     return(dNdS_constant)
 
 def calc_PdN_6_frame_translation(protein_containment,k):
@@ -153,6 +152,7 @@ def dNdS_ratio_6_frame_translation_with_constant(protein_containment,nt_containm
         logger.success(f"Successfully estimated")
     except ZeroDivisionError as e:
         logging.error("ZeroDivisionError: ignore undefined dN/dS estimation")
+        return np.nan
     return(dNdS_constant)
 
 def report_dNdS(nt_containment_df,prot_containment_df,ksize):
