@@ -23,7 +23,7 @@ def run_manysketch(fasta_file_csv,kaa,scaled,cores, working_dir,molecule=None):
         subprocess.run(cmd, shell=True, check=True)
         end_time = time.time()
         time_logged = end_time-start_time
-        logger.success(f"Successfully sketched data in {time_logged} secconds")
+        logger.success(f"Successfully sketched data in {time_logged} seconds")
         
     except subprocess.CalledProcessError as e:
         logger.error(f"Error occurred while sketching {fasta_file_csv}: {e}")
@@ -47,7 +47,7 @@ def run_pairwise(zipfile, k, scaled, out_csv, cores, molecule, threshold):
         subprocess.run(cmd, shell=True, check=True)
         end_time = time.time()
         time_logged = end_time-start_time
-        logger.success(f"Successfully pairwise compared in {time_logged} secconds")
+        logger.success(f"Successfully pairwise compared in {time_logged} seconds")
     except subprocess.CalledProcessError as e:
         logger.error(f"Error occurred while comparing {zipfile}: {e}")
 
