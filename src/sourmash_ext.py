@@ -6,7 +6,7 @@ import subprocess
 from loguru import logger
 import time
 
-def run_manysketch(fasta_file_csv,kaa,scaled,cores, working_dir,molecule=None):
+def run_manysketch(fasta_file_csv,ksize,scaled,cores, working_dir,molecule=None):
     """sketch multiple dna or protein signature file of ref and query.
     fasta_file_csv: csv file that contains three columns (name, genome_filename, protein_filename) as discussed in sourmash branchwater
     kaa: k-mer size at an amino acid level
@@ -17,9 +17,9 @@ def run_manysketch(fasta_file_csv,kaa,scaled,cores, working_dir,molecule=None):
     if molecule not in ("dna", "protein"):
         raise ValueError(f"molecule must be 'dna' or 'protein', got {molecule!r}")
     if molecule=="dna":
-        cmd = f'sourmash scripts manysketch {fasta_file_csv} -p k={kaa},scaled={scaled} -c {cores} -o {working_dir}/dna.zip'
+        cmd = f'sourmash scripts manysketch {fasta_file_csv} -p k={ksize},scaled={scaled} -c {cores} -o {working_dir}/dna.zip'
     else:
-        cmd = f'sourmash scripts manysketch {fasta_file_csv} -p DNA,k={kaa*3},scaled={scaled} -p protein,k={kaa},scaled={scaled} -c {cores} -o {working_dir}/data.zip'
+        cmd = f'sourmash scripts manysketch {fasta_file_csv} -p DNA,k={ksize*3},scaled={scaled} -p protein,k={ksize},scaled={scaled} -c {cores} -o {working_dir}/data.zip'
     try:
         logger.info(f"Sketching data fasta file: {fasta_file_csv}")
         start_time = time.time()
