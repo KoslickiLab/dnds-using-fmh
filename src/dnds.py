@@ -88,7 +88,7 @@ def dNdS_ratio(protein_containment,nt_containment,k):
 
 def dNdS_ratio_with_constant(protein_containment,nt_containment,k):
     """
-    Returns dN/dS ratio between two protein sequences.
+    Returns dN/dS ratio between two protein sequences using constant for synonymous site ratio.
     Uses calc_PdN() and calc_PdS() functions for estimation
     nt_containment: The containment index between two nucleotide sequences (this is a float)
     protein_containment: The containment index between two protein sequences (this is a float)
@@ -138,7 +138,7 @@ def dNdS_ratio_6_frame_translation(protein_containment,nt_containment,k):
 
 def dNdS_ratio_6_frame_translation_with_constant(protein_containment,nt_containment,k):
     """
-    Returns dN/dS ratio front a six frame translation.
+    Returns dN/dS ratio front a six frame translation with synonymous site ratio
     Uses calc_PdN_6_frame_translation() and calc_PdS_6_frame_translation() functions for estimation
     nt_containment: The containment index between two nucleotide sequences (this is a float)
     protein_containment: The containment index between two protein sequences (this is a float)
