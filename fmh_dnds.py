@@ -51,7 +51,14 @@ def main(args):
     elif args.mode == "6frametranslate":
          ## Create signatures folder for translate sketches and parallel file
         subprocess.run(f'mkdir {args.directory}/translate_signatures', shell=True, check=True)
-        subprocess.run(f"tail -n +2 {args.fasta_input_list} | cut -d ',' -f 2 | sed 's/^/sourmash sketch translate -f -p k={args.ksize},scaled={args.scaled_input} /' | sed 's/.*\\/\\([^\\/]*\\)\\.fna\\.gz/& -o translate_signatures\\/\\1.sig.gz/' > {args.directory}/parallel.txt", shell=True, check=True)
+        #subprocess.run(f"tail -n +2 {args.fasta_input_list} | grep -v '^$' | cut -d ',' -f 2 | sed 's/^/sourmash sketch translate -f -p k={args.ksize},scaled={args.scaled_input} /' | sed 's/.*\\/\\([^\\/]*\\)\\.fna\\.gz\?/& -o translate_signatures\\/\\1.sig/' > {args.directory}/parallel.txt", shell=True, check=True)
+        cmd = (
+        f"tail -n +2 {args.fasta_input_list} | grep -v '^$' | cut -d ',' -f 2 "
+        f"| sed 's/^/sourmash sketch translate -f -p k={args.ksize},scaled={args.scaled_input} /' "
+        r"| sed 's/\([^ ]*\)$/& -o translate_signatures\/\1.sig/' "
+        f"> {args.directory}/parallel.txt"
+        )
+        subprocess.run(cmd, shell=True, check=True)
         subprocess.run(f'parallel < {args.directory}/parallel.txt', shell=True, check=True)
         ## Concat translate sketches
         subprocess.run(f"sourmash signature cat {args.directory}/translate_signatures/ -o {args.directory}/translate.zip", shell=True, check=True)
