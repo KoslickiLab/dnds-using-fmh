@@ -14,7 +14,7 @@ def run_manysketch(fasta_file_csv,ksize,scaled,cores, working_dir,molecule=None)
     molecule: identify the DNA or protein, ksizes depend on molecule
     cores:
     """
-    if molecule not in ("dna", "protein"):
+    if molecule not in ("dna", "protein", None):
         raise ValueError(f"molecule must be 'dna' or 'protein', got {molecule!r}")
     if molecule=="dna":
         cmd = f'sourmash scripts manysketch {fasta_file_csv} -p k={ksize},scaled={scaled} -c {cores} -o {working_dir}/dna.zip'
