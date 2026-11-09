@@ -16,7 +16,7 @@ Manuscript under preparation. Recent available status can be found here:
 
 ## Quick start
 
-This is a quick demonstration for users to learn how to use FracMinHash d<sub>N</sub>/d<sub>S</sub> at a larger scale. In the following commands users can pairwuse obtain estimations of FracMinHash d<sub>N</sub>/d<sub>S</sub> estimations of a small dataset. 
+This is a quick demonstration for users to learn how to use FracMinHash d<sub>N</sub>/d<sub>S</sub> at a larger scale. Go to [Demo](https://github.com/KoslickiLab/dnds-using-fmh/tree/main/demo) to perform pairwuse estimations of FracMinHash d<sub>N</sub>/d<sub>S</sub> estimations of a small dataset. 
 
 
 ### Contents
