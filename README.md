@@ -102,6 +102,51 @@ To execute, use the following commad:
 
 ```python3 fmh_dnds.py --fasta_input_list datasets.csv --directory . ```
 
+## All pairs of many closely related genomes: `--mode reference`
+
+`--mode main` compares every pair of sketches with `sourmash scripts pairwise`. For a large collection
+of closely related genomes, such as tens of thousands of isolates of one species, almost every hash
+is shared by almost every genome, and comparing complete sketches pair by pair repeats the same work
+for every pair. `--mode reference` reports the same numbers by a faster route:
+
+* the sketches are made exactly as in `main` (`sourmash scripts manysketch`, nucleotide k = 3 × ksize
+  and protein k = ksize, from the same input csv), or read from existing sketch files (`--sketches`);
+* each sketch is compared once with the sketch of one genome of your choice (`--reference`), keeping
+  only the hashes it lacks and the hashes it adds relative to that genome;
+* the intersection of every pair then follows exactly from
+  `|S_i ∩ S_j| = |R| − |lacks_i| − |lacks_j| + |lacks_i ∩ lacks_j| + |adds_i ∩ adds_j|`,
+  and the two `∩` counts of all pairs come from one sparse matrix product;
+* max containment, PdN, PdS, PdN/PdS and dN/dS are then computed by the same functions in
+  `src/dnds.py` as in `main`, with the same formula and the same constant (0.77/2.23).
+
+The identity is exact for any genomes, so the containments and dN/dS values are identical to those
+of `main` (`tests/check_reference_mode.py` checks this pair by pair). It is only *faster* when the
+genomes are close to the reference; for diverged genomes use `main`.
+
+  | Parameter (reference mode) | Explanation |
+  | -------------------------- | ----------- |
+  | reference     | Name (first column of the csv) of the genome to compare the others with. Any genome gives the same numbers; one close to all others is fastest. Required. |
+  | sketches      | Existing sketch zip files to use instead of sketching `fasta_input_list`. |
+  | scaled_input  | Scale factor of the comparison. With `--sketches`, set it to the scale factor the sketches were made with (or coarser). |
+  | downsample_to | Comma-separated coarser scale factors at which to repeat the comparison from the same sketches, e.g. `2,5,10`. Downsampling keeps the hashes at or below sourmash's maximum hash for that scale factor, which is what sketching at that scale factor gives. |
+  | names         | File with one genome name per line, to compare only those genomes (and the reference). |
+  | sketch_shards | Sketch the input csv in this many parts side by side, one zip per part (default 1). The sketches are the same; for thousands of genomes at small scale factors, writing a single zip is otherwise the slowest step. |
+  | write_csv     | Also write each result as one `fmh_omega_<ksize>.csv`, as `main` does (for up to a few million pairs). |
+  | threshold     | As in `main`: a pair is reported for a molecule when its max containment exceeds the threshold; a pair reported for only one molecule has no value for the other and no dN/dS. |
+
+Output: one folder per scale factor, `<directory>/reference_scaled<S>/`, holding the pairs as parquet
+files in `pairs/` (read them all with `pandas.read_parquet("<folder>/pairs")`) with the columns of
+`main`'s `fmh_omega_<ksize>.csv` (`query_name`, `match_name`, `DNA_max_Cfrac`, `AA_max_Cfrac`, `ksize`,
+`PdN`, `PdS`, `PdN/PdS`, `dN/dS`), and a `run.json` with the number of sketches and pairs and the run
+times. The numerator (`PdN`) and denominator (`PdS`) of the estimate are reported separately, as in
+`main`, so either can be used on its own.
+
+```
+python3 fmh_dnds.py --mode reference --reference GENOME_NAME \
+    --fasta_input_list datasets.csv --scaled_input 1 --downsample_to 2,5,10 \
+    --sketch_shards 50 --directory out --cores 100 --threshold 0
+```
+
 
 <!--
 FRACdNdS is a scalable dN/dS estimator for genomes that leverages the sketching approach FracMinHash.
