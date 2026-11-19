@@ -10,6 +10,7 @@ dependencies:
   - pandas
   - numpy
   - scipy
+  - pyarrow
   - matplotlib
   - more-itertools
   - pip
